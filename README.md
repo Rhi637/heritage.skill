@@ -40,11 +40,11 @@
 |🎨 多非遗支持|剪纸、皮影戏、刺绣等，每个技艺对应独立智能体|
 
 <!-- TODO: 添加功能截图/动图
-!\\\\\\\[对话界面截图](docs/screenshots/chat-demo.gif)
-!\\\\\\\[知识点追踪](docs/screenshots/knowledge-tracking.png)
-!\\\\\\\[蒸馏笔记](docs/screenshots/distillation-notes.png)
+!\\\\\\\\\\\\\\\[对话界面截图](docs/screenshots/chat-demo.gif)
+!\\\\\\\\\\\\\\\[知识点追踪](docs/screenshots/knowledge-tracking.png)
+!\\\\\\\\\\\\\\\[蒸馏笔记](docs/screenshots/distillation-notes.png)
 
-\\\\---
+\\\\\\\\---
 
 ## 🛠️ 技术栈
 
@@ -55,9 +55,9 @@
 |AI 对话|RAG + 定制 System Prompt（计划接入 DeepSeek API）|
 |数据库|Supabase pgvector（计划）|
 |部署|Vercel（计划）|
-|开发工具|\\\[\\\*\\\*Trae\\\*\\\*](https://trae.ai)|
+|开发工具|\\\\\\\[\\\\\\\*\\\\\\\*Trae\\\\\\\*\\\\\\\*](https://trae.ai)|
 
-\\\\---
+\\\\\\\\---
 
 ## 🚀 安装与运行
 
@@ -87,7 +87,7 @@ npm run dev
 打开浏览器访问 `http://localhost:3000` 即可体验。
 
 
-\\---
+\\\\---
 
 ## 📁 项目结构
 
@@ -103,59 +103,60 @@ heritage.skill/
 ├── backend/                 # FastAPI 后端
 │   ├── main.py             # API 端点
 │   └── requirements.txt
-├── knowledge\\\\\\\_base\\\\\\\_shadow\\\\\\\_puppet.json  # 皮影戏蒸馏知识库
-├── system\\\\\\\_prompt\\\\\\\_template.txt         # 系统提示词模板
+├── knowledge\\\\\\\\\\\\\\\_base\\\\\\\\\\\\\\\_shadow\\\\\\\\\\\\\\\_puppet.json  # 皮影戏蒸馏知识库
+├── system\\\\\\\\\\\\\\\_prompt\\\\\\\\\\\\\\\_template.txt         # 系统提示词模板
 └── .gitignore
 ```
 
-\\---
+\\\\---
 
 ## 🤝 贡献指南
 
 欢迎任何形式的贡献！
 
-1. \*\*Fork\*\* 本仓库
+1. \\\*\\\*Fork\\\*\\\* 本仓库
 2. 创建特性分支：`git checkout -b feature/你的功能`
 3. 提交更改：`git commit -m "feat: 添加某功能"`
 4. 推送分支：`git push origin feature/你的功能`
-5. 提交 \*\*Pull Request\*\*
+5. 提交 \\\*\\\*Pull Request\\\*\\\*
 
 ### 反馈与建议
 
-\* 通过 \[Issue](https://github.com/Rhi637/heritage.skill/issues) 提交 Bug 或功能建议
-\* 讨论请在 Issue 中使用 `discussion` 标签
+\\\* 通过 \\\[Issue](https://github.com/Rhi637/heritage.skill/issues) 提交 Bug 或功能建议
+\\\* 讨论请在 Issue 中使用 `discussion` 标签
 
-\\---
+\\\\---
 
 ## 🔮 未来计划
 
-\* \\\[ ] 接入真实 LLM（DeepSeek API）替换 Mock 后端
-\* \\\[ ] 搭建 RAG 检索管道（Supabase pgvector）
-\* \\\[ ] 新增更多非遗项目智能体（剪纸、刺绣、泥塑……）
-\* \\\[ ] 知识点掌握度可视化面板
-\* \\\[ ] 语音对话支持
-\* \\\[ ] 用户学习进度持久化
-\* \\\[ ] 部署到 Vercel（零成本在线访问）
-\* \\\[ ] 多语言支持（英文界面）
+\\\* \\\\\\\[ ] 接入真实 LLM（DeepSeek API）替换 Mock 后端
+\\\* \\\\\\\[ ] 搭建 RAG 检索管道（Supabase pgvector）
+\\\* \\\\\\\[ ] 新增更多非遗项目智能体（剪纸、刺绣、泥塑……）
+\\\* \\\\\\\[ ] 知识点掌握度可视化面板
+\\\* \\\\\\\[ ] 语音对话支持
+\\\* \\\\\\\[ ] 用户学习进度持久化
+\\\* \\\\\\\[ ] 部署到 Vercel（零成本在线访问）
+\\\* \\\\\\\[ ] 多语言支持（英文界面）
 
-\\---
+\\\\---
 
 ## 📄 许可证
 
-> 本项目基于 \\\[GNU General Public License v3.0](LICENSE)   开源。
+> 本项目基于 \\\\\\\[GNU General Public License v3.0](LICENSE)   开源。
 
-\\---
+\\\\---
 
 ## 👤 作者
 
-\*\*\\\[你的名字]\*\*
+\\\*\\\*\\\\\\\[你的名字]\\\*\\\*
 
-\* GitHub：\[@Rhi637](https://github.com/Rhi637)
+\\\* GitHub：\\\[@Rhi637](https://github.com/Rhi637)
 
-\\---
+\\\\---
 
 <p align="center">
   用技术守护传承，让非遗触手可及 🌟
 </p>
+
 
 
