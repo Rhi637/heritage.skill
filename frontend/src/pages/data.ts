@@ -1,0 +1,343 @@
+import { HeritageCraft, UserAvatar, KnowledgePoint } from './types';
+
+// ========== 用户可选数字人形象 ==========
+
+export const AVATARS: UserAvatar[] = [
+  { id: 'avatar_01', name: '星辰旅者', emoji: '🚀', color: '#6366F1' },
+  { id: 'avatar_02', name: '时光学者', emoji: '🔮', color: '#8B5CF6' },
+  { id: 'avatar_03', name: '文化探索者', emoji: '🌟', color: '#EC4899' },
+  { id: 'avatar_04', name: '非遗守护者', emoji: '🛡️', color: '#14B8A6' },
+  { id: 'avatar_05', name: '时空旅人', emoji: '⏳', color: '#F59E0B' },
+  { id: 'avatar_06', name: '匠心学徒', emoji: '🎨', color: '#EF4444' },
+];
+
+// ========== 皮影戏知识点 ==========
+
+const shadowPuppetKnowledgePoints: KnowledgePoint[] = [
+  {
+    id: 'kp_sp_001',
+    title: '皮影的选材与制皮工艺',
+    category: '基本技法',
+    difficulty: 'beginner',
+    content: '传统皮影选用秦川黄牛皮，经过泡制、刮薄、磨平、撑平等工序。一张好牛皮要薄如蝉翼、透光均匀。刮皮是最关键的步骤，要用特制的刮刀反复刮几十遍，直到牛皮厚度均匀、半透明。',
+    suggestedQuestions: ['皮影是用什么材料做的？', '牛皮怎么处理才能做皮影？', '制皮工艺中最关键的一步是什么？'],
+  },
+  {
+    id: 'kp_sp_002',
+    title: '皮影雕刻的基本刀法',
+    category: '基本技法',
+    difficulty: 'beginner',
+    content: '皮影雕刻有推刀、拉刀、顿刀、转刀四种基本刀法。推刀用于直线，拉刀用于弧线，顿刀用于转折处，转刀用于圆形。初学者从推刀练起，在废皮上反复练习直线和直角。',
+    suggestedQuestions: ['皮影雕刻有哪几种刀法？', '初学者应该从哪种刀法练起？', '推刀和拉刀分别用来刻什么？'],
+  },
+  {
+    id: 'kp_sp_003',
+    title: '皮影人物的结构与关节设计',
+    category: '核心技艺',
+    difficulty: 'intermediate',
+    content: '一个完整的皮影人物由头茬、身段、两臂、两手、两腿共11个部件组成，用线连成关节。关节连接的松紧很关键——太紧动作僵硬，太松动作散架。一般在关节处打小结，留出活动余量。',
+    suggestedQuestions: ['皮影人物由哪些部件组成？', '关节连接有什么讲究？', '皮影是怎么动起来的？'],
+  },
+  {
+    id: 'kp_sp_004',
+    title: '皮影的色彩搭配原则',
+    category: '核心技艺',
+    difficulty: 'intermediate',
+    content: '皮影传统用色以红、绿、黑三色为主，黄为辅。红代表忠勇（如关公），绿代表奸诈，黑代表刚正。上色用矿物颜料，先上浅色再上深色，最后用透明漆罩面固色。',
+    suggestedQuestions: ['皮影的颜色有什么讲究？', '为什么关公的脸是红色的？', '皮影上色的顺序是什么？'],
+  },
+  {
+    id: 'kp_sp_005',
+    title: '皮影操纵的基本手法',
+    category: '表演技法',
+    difficulty: 'intermediate',
+    content: '操纵皮影需要双手各持一根操纵杆。基本手法有"平举"（人物站立）、"弯腰"（人物鞠躬）、"甩袖"（人物激动）、"走步"（人物移动）。走步是最难的，要让皮影的步伐看起来自然流畅。',
+    suggestedQuestions: ['怎么操纵皮影？', '皮影走步为什么最难？', '皮影有哪些基本操纵手法？'],
+  },
+  {
+    id: 'kp_sp_006',
+    title: '皮影戏台的基本搭建',
+    category: '基本技法',
+    difficulty: 'beginner',
+    content: '传统皮影戏台由亮子（白色幕布）、灯泡（光源）、操纵台三部分组成。亮子一般用白棉布，大小约1.2米×0.8米。灯泡放在亮子后方约0.5米处，光线要均匀照射整个幕布。',
+    suggestedQuestions: ['皮影戏台怎么搭建？', '亮子是什么？', '皮影戏台由哪几部分组成？'],
+  },
+];
+
+// ========== 剪纸知识点 ==========
+
+const paperCuttingKnowledgePoints: KnowledgePoint[] = [
+  {
+    id: 'kp_pc_001',
+    title: '剪纸的基本工具与材料',
+    category: '基本技法',
+    difficulty: 'beginner',
+    content: '剪纸的基本工具是剪刀和刻刀。传统剪纸使用大红纸、宣纸或蜡光纸。剪刀要选用尖头小剪刀，刀刃锋利、咬合紧密。刻刀则用于精细图案，常用手术刀或专业刻刀。纸张要选择韧性好的，太脆的纸容易断裂。',
+    suggestedQuestions: ['剪纸需要什么工具？', '用什么纸剪最好？', '剪刀和刻刀有什么区别？'],
+  },
+  {
+    id: 'kp_pc_002',
+    title: '阴刻与阳刻技法',
+    category: '基本技法',
+    difficulty: 'beginner',
+    content: '阴刻是把图案的线条剪去（留底），阳刻是把图案以外的部分剪去（留线）。阴刻效果粗犷豪放，阳刻效果精细秀丽。还有一种"阴阳结合"的技法，在同一幅作品中同时使用阴刻和阳刻，形成丰富的层次感。',
+    suggestedQuestions: ['什么是阴刻和阳刻？', '阴刻和阳刻有什么区别？', '能同时用阴刻和阳刻吗？'],
+  },
+  {
+    id: 'kp_pc_003',
+    title: '折叠剪纸技法',
+    category: '核心技艺',
+    difficulty: 'intermediate',
+    content: '折叠剪纸是将纸对折后剪制，展开后形成对称图案。常见有二折（左右对称）、四折（四面对称）、六折、八折等。折叠剪纸的关键是找准对称轴，剪的时候要考虑到展开后的整体效果。团花就是典型的折叠剪纸作品。',
+    suggestedQuestions: ['折叠剪纸怎么折？', '团花是怎么剪出来的？', '四折剪纸和二折有什么不同？'],
+  },
+  {
+    id: 'kp_pc_004',
+    title: '常见剪纸纹样',
+    category: '核心技艺',
+    difficulty: 'intermediate',
+    content: '剪纸的基本纹样有锯齿纹、月牙纹、水滴纹、柳叶纹等。锯齿纹像梳子齿，表现动物的毛皮和植物的边缘；月牙纹呈弧形，表现衣褶和花瓣；水滴纹表现雨滴和露珠；柳叶纹表现草叶和柳枝。这些纹样是剪纸的"语言"。',
+    suggestedQuestions: ['剪纸有哪些基本纹样？', '锯齿纹用来表现什么？', '月牙纹长什么样？'],
+  },
+  {
+    id: 'kp_pc_005',
+    title: '剪纸的构图原则',
+    category: '核心技艺',
+    difficulty: 'advanced',
+    content: '剪纸构图讲究"疏可走马，密不透风"，即疏密对比要强烈。构图要饱满，不留太多空白。传统剪纸常用"满构图"，把画面填得满满当当。还要注意"线线相连"，剪纸不能有断线，否则作品会散架。这是剪纸和绘画最大的区别。',
+    suggestedQuestions: ['剪纸构图有什么讲究？', '为什么剪纸要线线相连？', '什么是满构图？'],
+  },
+];
+
+// ========== 苏绣知识点 ==========
+
+const embroideryKnowledgePoints: KnowledgePoint[] = [
+  {
+    id: 'kp_em_001',
+    title: '苏绣的基本工具与材料',
+    category: '基本技法',
+    difficulty: 'beginner',
+    content: '苏绣的基本工具有绣架、绣针、丝线和底料。绣架分为立式和卧式两种，传统多用立式绣架。绣针极细，常用11-12号针。丝线是苏绣的灵魂，一根丝线可以劈成16丝甚至更细。底料多用真丝塔夫绸或绢。',
+    suggestedQuestions: ['苏绣需要什么工具？', '苏绣的丝线有多细？', '绣架有哪几种？'],
+  },
+  {
+    id: 'kp_em_002',
+    title: '平绣技法',
+    category: '基本技法',
+    difficulty: 'beginner',
+    content: '平绣是苏绣最基本的针法，针脚平整、线条均匀。基本针法有齐针（针脚整齐排列）、抢针（颜色过渡）、套针（分层绣制）。平绣要求"针脚齐、丝缕直、边缘光"，是学习苏绣的第一步。一幅好的平绣作品，正反面几乎看不出区别。',
+    suggestedQuestions: ['什么是平绣？', '苏绣最基本的针法是什么？', '齐针和抢针有什么区别？'],
+  },
+  {
+    id: 'kp_em_003',
+    title: '双面绣技法',
+    category: '核心技艺',
+    difficulty: 'advanced',
+    content: '双面绣是苏绣的绝技，在一块绣料的正反两面绣出不同的图案。更高级的"双面三异绣"能做到正反两面图案不同、颜色不同、针法不同。双面绣要求绣娘有极高的技艺，每一针都要精确到位，不能有任何差错。',
+    suggestedQuestions: ['什么是双面绣？', '双面三异绣有多难？', '双面绣怎么绣？'],
+  },
+  {
+    id: 'kp_em_004',
+    title: '乱针绣技法',
+    category: '核心技艺',
+    difficulty: 'intermediate',
+    content: '乱针绣是民国时期杨守玉创立的新针法，用长短不一、方向各异的针脚交叉排列，类似油画的笔触。乱针绣打破了传统刺绣"排比其针，密接其线"的规则，以针代笔、以线代色，可以绣出光影变化和立体感。',
+    suggestedQuestions: ['什么是乱针绣？', '乱针绣和油画有什么关系？', '乱针绣是谁发明的？'],
+  },
+  {
+    id: 'kp_em_005',
+    title: '苏绣的色彩搭配',
+    category: '核心技艺',
+    difficulty: 'intermediate',
+    content: '苏绣讲究"和色"，即颜色的和谐搭配。传统苏绣用色雅致，以淡雅为主。色彩过渡用"晕色"技法，通过丝线的粗细和颜色的深浅渐变来实现。一幅作品往往用到几十种甚至上百种颜色的丝线，才能绣出逼真的效果。',
+    suggestedQuestions: ['苏绣怎么配色的？', '什么是晕色技法？', '一幅苏绣用多少种颜色？'],
+  },
+];
+
+// ========== 泥塑知识点 ==========
+
+const clayFigurineKnowledgePoints: KnowledgePoint[] = [
+  {
+    id: 'kp_cf_001',
+    title: '泥塑的材料选择与处理',
+    category: '基本技法',
+    difficulty: 'beginner',
+    content: '泥塑选用的泥土以黄河流域的胶泥为最佳，这种泥细腻、黏性好、不易开裂。采来的泥要经过晾晒、捣碎、过筛、浸泡、揉炼等工序。揉泥时要反复摔打，排出气泡，使泥质均匀细腻。好的泥料手感像面团一样柔软有弹性。',
+    suggestedQuestions: ['泥塑用什么泥最好？', '泥巴怎么处理才能用？', '为什么要摔打泥巴？'],
+  },
+  {
+    id: 'kp_cf_002',
+    title: '泥塑的基本塑形手法',
+    category: '基本技法',
+    difficulty: 'beginner',
+    content: '泥塑的基本手法有"捏、塑、雕、贴、刻、划"六种。捏是最基础的手法，用手指捏出基本形状；塑是在捏的基础上进一步塑造细节；雕是用工具雕刻纹理；贴是粘贴附加部件；刻和划是制作表面肌理。初学者从捏圆球、圆柱等基本形体开始练习。',
+    suggestedQuestions: ['泥塑有哪些基本手法？', '初学者怎么开始学泥塑？', '捏和塑有什么区别？'],
+  },
+  {
+    id: 'kp_cf_003',
+    title: '彩绘上色技法',
+    category: '核心技艺',
+    difficulty: 'intermediate',
+    content: '泥塑彩绘讲究"三分塑七分彩"。先用白粉打底（"白描"），再上色。传统用矿物颜料加胶水调色，从浅色到深色分层上色。面部彩绘最考验功力，眉毛、眼睛、嘴唇要用极细的笔一笔一笔地画，表情才能生动传神。',
+    suggestedQuestions: ['泥塑怎么上色？', '为什么说三分塑七分彩？', '泥人的表情是怎么画出来的？'],
+  },
+  {
+    id: 'kp_cf_004',
+    title: '泥人张传统技法',
+    category: '核心技艺',
+    difficulty: 'intermediate',
+    content: '天津泥人张始于清代张明山，以"捏塑"见长，能在袖中捏塑，片刻即成。泥人张的特点是"形神兼备"，注重捕捉人物的瞬间神态。传统技法讲究"一印、二捏、三镶、四滚"，每个步骤都有严格的要求。作品取材广泛，从民俗生活到戏曲人物都有。',
+    suggestedQuestions: ['泥人张有什么特点？', '泥人张是怎么捏的？', '泥人张有多少年历史了？'],
+  },
+  {
+    id: 'kp_cf_005',
+    title: '泥塑的保存与保养',
+    category: '基本技法',
+    difficulty: 'beginner',
+    content: '泥塑作品完成后要阴干，不能暴晒或吹风，否则容易开裂。干燥后可以刷一层清漆保护。保存时要注意防潮、防虫、防震。如果泥塑出现裂纹，可以用同样材质的泥浆修补。传统泥塑可以保存上百年，关键在于制作时的泥料处理和干燥控制。',
+    suggestedQuestions: ['泥塑怎么保存？', '泥塑干了会裂吗？', '泥塑能保存多久？'],
+  },
+];
+
+// ========== 非遗项目数据 ==========
+
+export const HERITAGE_CRAFTS: HeritageCraft[] = [
+  {
+    id: 'craft_shadow_puppet',
+    name: '皮影戏',
+    emoji: '🎭',
+    category: '传统戏剧',
+    description: '皮影戏是一种以兽皮或纸板做成的人物剪影，在灯光照射下用隔亮布进行演戏，是中国民间古老的传统艺术，距今已有两千多年历史。',
+    sceneColor: '#1a1a2e',
+    knowledgePoints: shadowPuppetKnowledgePoints,
+    inheritors: [
+      {
+        id: 'inheritor_wang',
+        name: '王景民',
+        era: 'modern',
+        region: '陕西华县',
+        experienceYears: 50,
+        description: '华县皮影戏国家级代表性传承人，从艺五十年，精通皮影雕刻与操纵表演。',
+        avatarEmoji: '👴',
+        avatarImage: 'avatars/inheritor_wang.jpg',
+        catchphrases: ['皮影这东西，得用心去感受', '来，我教你最基本的选皮'],
+        skills: ['皮影雕刻', '操纵表演', '唱腔念白', '皮影制作'],
+        story: '王景民自幼跟随父亲学习皮影戏，12岁便能独立表演。五十年来，他走遍陕西各地演出，培养了数十名徒弟，致力于将这门古老艺术传承下去。',
+      },
+      {
+        id: 'inheritor_li',
+        name: '李氏皮影班',
+        era: 'ancient',
+        region: '陕西华县',
+        dynasty: '清代',
+        experienceYears: 40,
+        description: '清代陕西华县著名皮影戏班社，以精湛的雕刻技艺和生动的唱腔闻名乡里。',
+        avatarEmoji: '🧓',
+        avatarImage: 'avatars/inheritor_li.jpg',
+        catchphrases: ['这皮子得选上等的', '刻刀要稳，心要静'],
+        skills: ['牛皮处理', '刀法雕刻', '矿物上色', '秦腔唱段'],
+        story: '清代嘉庆年间，李氏皮影班在陕西华县一带享有盛名。班主李老先生独创了"透光雕刻法"，使皮影人物更加栩栩如生，每逢庙会演出，十里八乡的百姓都来观看。',
+      },
+    ],
+  },
+  {
+    id: 'craft_paper_cutting',
+    name: '剪纸',
+    emoji: '✂️',
+    category: '传统美术',
+    description: '剪纸是中国最古老的民间艺术之一，以剪刀或刻刀在纸上剪刻花纹，用于装点生活或配合民俗活动，2009年入选联合国教科文组织非遗名录。',
+    sceneColor: '#2d1b00',
+    knowledgePoints: paperCuttingKnowledgePoints,
+    inheritors: [
+      {
+        id: 'inheritor_zhou',
+        name: '周桂兰',
+        era: 'modern',
+        region: '陕西安塞',
+        experienceYears: 60,
+        description: '安塞剪纸国家级代表性传承人，作品粗犷豪放、质朴生动，极具黄土高原特色。',
+        avatarEmoji: '👵',
+        avatarImage: 'avatars/inheritor_zhou.jpg',
+        catchphrases: ['剪纸讲究个手劲和耐心', '你看这锯齿纹，得一刀一刀来'],
+        skills: ['窗花剪纸', '团花剪纸', '染色剪纸', '民俗剪纸'],
+        story: '周桂兰六岁起跟着祖母学剪纸，一把剪刀用了六十年。她的作品被中国美术馆收藏，多次代表中国非遗走向世界展览。她说："剪纸就是我的一生，纸在手上，心里就踏实。"',
+      },
+      {
+        id: 'inheritor_gao',
+        name: '高金爱',
+        era: 'ancient',
+        region: '陕西安塞',
+        dynasty: '明代',
+        experienceYears: 35,
+        description: '明代安塞民间剪纸艺人，擅长窗花和刺绣底样，作品充满生活气息。',
+        avatarEmoji: '👩‍🦳',
+        avatarImage: 'avatars/inheritor_gao.jpg',
+        catchphrases: ['剪花娘子要有巧手', '这纸一转，花样就出来了'],
+        skills: ['窗花', '喜花', '刺绣底样', '祭祀剪纸'],
+        story: '高金爱生活在明代安塞的窑洞里，每到过年，全村的窗花都出自她手。她的剪纸不用画稿，心中所想便能剪出，乡邻们称她为"剪花娘子"。',
+      },
+    ],
+  },
+  {
+    id: 'craft_embroidery',
+    name: '苏绣',
+    emoji: '🪡',
+    category: '传统美术',
+    description: '苏绣是中国四大名绣之一，以苏州为中心，以针为笔、以线为墨，绣品精细雅洁，有"以针作画"之称，2006年入选国家级非遗名录。',
+    sceneColor: '#1a0a2e',
+    knowledgePoints: embroideryKnowledgePoints,
+    inheritors: [
+      {
+        id: 'inheritor_yao',
+        name: '姚建萍',
+        era: 'modern',
+        region: '江苏苏州',
+        experienceYears: 40,
+        description: '苏绣国家级代表性传承人，擅长双面绣，作品多次作为国礼赠送外国元首。',
+        avatarEmoji: '👩',
+        avatarImage: 'avatars/inheritor_yao.jpg',
+        catchphrases: ['刺绣要静心，一针一线都是修行', '你看这丝线劈得多细'],
+        skills: ['双面绣', '乱针绣', '平绣', '打籽绣'],
+        story: '姚建萍出生于苏州刺绣世家，从小在绣架旁长大。她的双面绣作品《猫》被作为国礼赠送给多国领导人。她创办了刺绣学校，培养了上千名绣娘，让苏绣走向世界。',
+      },
+      {
+        id: 'inheritor_shen',
+        name: '沈寿',
+        era: 'ancient',
+        region: '江苏苏州',
+        dynasty: '清末民初',
+        experienceYears: 30,
+        description: '清末民初苏绣大师，创立"仿真绣"，将西方绘画技法融入传统刺绣。',
+        avatarEmoji: '👩‍🎓',
+        avatarImage: 'avatars/inheritor_shen.jpg',
+        catchphrases: ['绣花要像画一样传神', '色线要自己配，不能偷懒'],
+        skills: ['仿真绣', '双面三异绣', '肖像绣', '书法绣'],
+        story: '沈寿原名沈云芝，清末民初苏州刺绣大师。她将西方绘画的光影技法融入刺绣，创立了"仿真绣"，其作品《耶稣像》在巴拿马博览会上获金奖，被誉为"绣圣"。',
+      },
+    ],
+  },
+  {
+    id: 'craft_clay_figurine',
+    name: '泥塑',
+    emoji: '🏺',
+    category: '传统美术',
+    description: '泥塑是中国传统民间艺术，以黏土为原料，手工捏制成人物、动物等形象，天津泥人张最为著名，2006年入选国家级非遗名录。',
+    sceneColor: '#2e1a0a',
+    knowledgePoints: clayFigurineKnowledgePoints,
+    inheritors: [
+      {
+        id: 'inheritor_zhang',
+        name: '张宇',
+        era: 'modern',
+        region: '天津',
+        experienceYears: 30,
+        description: '天津泥人张第六代传人，继承家族百年技艺，作品形神兼备。',
+        avatarEmoji: '👨‍🎨',
+        avatarImage: 'avatars/inheritor_zhang.jpg',
+        catchphrases: ['泥巴是有灵性的', '捏泥人先要懂人'],
+        skills: ['人物塑形', '彩绘上色', '微缩雕塑', '泥人张技法'],
+        story: '张宇是天津泥人张第六代传人，自幼在父亲的工作室里玩泥巴。他不仅继承了传统技法，还融入现代雕塑理念，作品多次在国内外展出，让百年泥人张焕发新生。',
+      },
+    ],
+  },
+];

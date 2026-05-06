@@ -1,0 +1,195 @@
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AVATARS } from '../data';
+import { UserAvatar } from '../types';
+import { playSound } from '../utils/audio';
+
+// ========== 移动端检测 hook ==========
+
+function useIsMobile(): boolean {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
+  return isMobile;
+}
+
+export default function AvatarSelectPage() {
+  const navigate = useNavigate();
+  const isMobile = useIsMobile();
+  const [selected, setSelected] = useState<UserAvatar | null>(null);
+  const [name, setName] = useState('');
+
+  const handleConfirm = () => {
+    if (!selected || !name.trim()) return;
+    playSound('click');
+    const profile = {
+      name: name.trim(),
+      avatar: selected,
+      createdAt: Date.now(),
+    };
+    localStorage.setItem('heritage_user', JSON.stringify(profile));
+    playSound('navigate');
+    navigate('/museum');
+  };
+
+  return (
+    <div style={styles.container}>
+      <div style={{
+        ...styles.content,
+        padding: isMobile ? '20px 16px' : undefined,
+      }}>
+        <h1 style={{
+          ...styles.title,
+          fontSize: isMobile ? 22 : 28,
+        }}>选择你的数字形象</h1>
+        <p style={styles.subtitle}>你将以这个形象穿梭于非遗文化博物馆</p>
+
+        <div style={{
+          ...styles.grid,
+          gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)',
+          gap: isMobile ? 10 : 16,
+          marginBottom: isMobile ? 20 : 32,
+        }}>
+          {AVATARS.map((avatar) => (
+            <div
+              key={avatar.id}
+              style={{
+                ...styles.card,
+                padding: isMobile ? 14 : 20,
+                borderColor: selected?.id === avatar.id ? avatar.color : 'rgba(255,255,255,0.1)',
+                boxShadow: selected?.id === avatar.id ? `0 0 20px ${avatar.color}40` : 'none',
+              }}
+              onClick={() => {
+                setSelected(avatar);
+                playSound('click');
+              }}
+            >
+              <div style={{
+                ...styles.emoji,
+                backgroundColor: `${avatar.color}20`,
+                width: isMobile ? 44 : 56,
+                height: isMobile ? 44 : 56,
+                fontSize: isMobile ? 22 : 28,
+              }}>
+                {avatar.emoji}
+              </div>
+              <div style={{
+                ...styles.cardName,
+                fontSize: isMobile ? 11 : 13,
+              }}>{avatar.name}</div>
+            </div>
+          ))}
+        </div>
+
+        <div style={styles.inputGroup}>
+          <input
+            style={{
+              ...styles.input,
+              padding: isMobile ? '10px 16px' : '12px 20px',
+              fontSize: isMobile ? 14 : 16,
+            }}
+            type="text"
+            placeholder="输入你的探索者名称..."
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            maxLength={12}
+          />
+        </div>
+
+        <button
+          style={{
+            ...styles.confirmBtn,
+            padding: isMobile ? '12px 36px' : '14px 48px',
+            fontSize: isMobile ? 14 : 16,
+            opacity: selected && name.trim() ? 1 : 0.4,
+            cursor: selected && name.trim() ? 'pointer' : 'not-allowed',
+          }}
+          onClick={handleConfirm}
+        >
+          进入博物馆 →
+        </button>
+      </div>
+    </div>
+  );
+}
+
+const styles: Record<string, React.CSSProperties> = {
+  container: {
+    width: '100vw',
+    height: '100vh',
+    backgroundColor: '#050510',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontFamily: '"Microsoft YaHei", sans-serif',
+    color: '#e0e7ff',
+    overflowY: 'auto',
+  },
+  content: {
+    maxWidth: 600,
+    width: '90%',
+    textAlign: 'center',
+  },
+  title: {
+    fontWeight: 700,
+    marginBottom: 8,
+    background: 'linear-gradient(135deg, #a5b4fc, #ec4899)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+  },
+  subtitle: {
+    fontSize: 14,
+    color: '#6b7280',
+    marginBottom: 32,
+  },
+  grid: {
+    display: 'grid',
+    marginBottom: 32,
+  },
+  card: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: 8,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255,255,255,0.03)',
+    border: '2px solid rgba(255,255,255,0.1)',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+  },
+  emoji: {
+    borderRadius: '50%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cardName: {
+    color: '#9ca3af',
+  },
+  inputGroup: {
+    marginBottom: 24,
+  },
+  input: {
+    width: '100%',
+    maxWidth: 300,
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    border: '1px solid rgba(255,255,255,0.1)',
+    borderRadius: 12,
+    color: '#e0e7ff',
+    outline: 'none',
+    textAlign: 'center',
+    fontFamily: 'inherit',
+  },
+  confirmBtn: {
+    backgroundColor: '#6366f1',
+    color: '#fff',
+    border: 'none',
+    borderRadius: 50,
+    fontWeight: 600,
+    letterSpacing: 1,
+    transition: 'all 0.3s ease',
+  },
+};
