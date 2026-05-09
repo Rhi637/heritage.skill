@@ -94,6 +94,128 @@ function StarField() {
   return <Stars radius={100} depth={50} count={3000} factor={4} saturation={0} fade speed={1} />;
 }
 
+// ========== 非遗项目3D形象 ==========
+
+function ShadowPuppetFigure() {
+  // 皮影人物剪影（简单人形）
+  const shape = useMemo(() => {
+    const s = new THREE.Shape();
+    // 头部
+    s.moveTo(0, 0.8);
+    s.absarc(0, 0.8, 0.2, 0, Math.PI * 2);
+    // 身体
+    s.moveTo(-0.15, 0.6);
+    s.lineTo(-0.15, 0.1);
+    s.lineTo(-0.3, -0.2);
+    s.lineTo(-0.25, -0.25);
+    s.lineTo(-0.1, -0.1);
+    s.lineTo(-0.1, 0.1);
+    s.lineTo(0.1, 0.1);
+    s.lineTo(0.1, -0.1);
+    s.lineTo(0.25, -0.25);
+    s.lineTo(0.3, -0.2);
+    s.lineTo(0.15, 0.1);
+    s.lineTo(0.15, 0.6);
+    s.closePath();
+    return s;
+  }, []);
+
+  return (
+    <mesh position={[0, 1.2, 0]} rotation={[0, 0, 0]}>
+      <shapeGeometry args={[shape]} />
+      <meshStandardMaterial
+        color="#f59e0b"
+        emissive="#f59e0b"
+        emissiveIntensity={0.5}
+        transparent
+        opacity={0.9}
+        side={THREE.DoubleSide}
+      />
+    </mesh>
+  );
+}
+
+function PaperCuttingFigure() {
+  // 剪纸团花（圆形对称图案）
+  const shape = useMemo(() => {
+    const s = new THREE.Shape();
+    const petals = 6;
+    const outerRadius = 0.4;
+    const innerRadius = 0.15;
+    for (let i = 0; i < petals; i++) {
+      const angle = (i / petals) * Math.PI * 2;
+      const nextAngle = ((i + 1) / petals) * Math.PI * 2;
+      const midAngle = (angle + nextAngle) / 2;
+      s.moveTo(0, 0);
+      s.lineTo(Math.cos(angle) * outerRadius, Math.sin(angle) * outerRadius);
+      s.quadraticCurveTo(
+        Math.cos(midAngle) * innerRadius,
+        Math.sin(midAngle) * innerRadius,
+        Math.cos(nextAngle) * outerRadius,
+        Math.sin(nextAngle) * outerRadius
+      );
+      s.closePath();
+    }
+    return s;
+  }, []);
+
+  return (
+    <mesh position={[0, 1.2, 0]} rotation={[0, 0, 0]}>
+      <shapeGeometry args={[shape]} />
+      <meshStandardMaterial
+        color="#ef4444"
+        emissive="#ef4444"
+        emissiveIntensity={0.4}
+        transparent
+        opacity={0.9}
+        side={THREE.DoubleSide}
+      />
+    </mesh>
+  );
+}
+
+function EmbroideryFigure() {
+  // 绣花绷子（环形 + 绣品平面）
+  return (
+    <group position={[0, 1.2, 0]}>
+      {/* 绣花绷子外环 */}
+      <mesh rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[0.35, 0.04, 16, 32]} />
+        <meshStandardMaterial color="#ec4899" emissive="#ec4899" emissiveIntensity={0.3} />
+      </mesh>
+      {/* 绣品平面 */}
+      <mesh rotation={[Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[0.3, 32]} />
+        <meshStandardMaterial
+          color="#fdf2f8"
+          emissive="#ec4899"
+          emissiveIntensity={0.1}
+          transparent
+          opacity={0.8}
+        />
+      </mesh>
+    </group>
+  );
+}
+
+function ClayFigurineFigure() {
+  // 泥人（头部 + 身体）
+  return (
+    <group position={[0, 1.2, 0]}>
+      {/* 身体 */}
+      <mesh position={[0, -0.1, 0]}>
+        <cylinderGeometry args={[0.2, 0.3, 0.4, 16]} />
+        <meshStandardMaterial color="#8B4513" emissive="#8B4513" emissiveIntensity={0.2} roughness={0.8} />
+      </mesh>
+      {/* 头部 */}
+      <mesh position={[0, 0.2, 0]}>
+        <sphereGeometry args={[0.15, 16, 16]} />
+        <meshStandardMaterial color="#D2691E" emissive="#D2691E" emissiveIntensity={0.2} roughness={0.7} />
+      </mesh>
+    </group>
+  );
+}
+
 // ========== 发光展台 ==========
 
 interface ExhibitProps {
@@ -125,6 +247,22 @@ function Exhibit({ position, color, label, emoji, mosaicStyle, onClick }: Exhibi
     }
   });
 
+  // 根据样式选择对应的3D形象
+  const FigureComponent = useMemo(() => {
+    switch (mosaicStyle) {
+      case 'shadow_puppet':
+        return <ShadowPuppetFigure />;
+      case 'paper_cutting':
+        return <PaperCuttingFigure />;
+      case 'embroidery':
+        return <EmbroideryFigure />;
+      case 'clay_figurine':
+        return <ClayFigurineFigure />;
+      default:
+        return null;
+    }
+  }, [mosaicStyle]);
+
   return (
     <group ref={groupRef} position={position} onClick={onClick}>
       {/* 底座（使用马赛克纹理） */}
@@ -145,18 +283,9 @@ function Exhibit({ position, color, label, emoji, mosaicStyle, onClick }: Exhibi
         <meshStandardMaterial color={color} emissive={color} emissiveIntensity={1} />
       </mesh>
 
-      {/* 顶部发光球（也使用马赛克纹理） */}
-      <Float speed={2} rotationIntensity={0} floatIntensity={0.3}>
-        <mesh position={[0, 1.2, 0]}>
-          <sphereGeometry args={[0.3, 32, 32]} />
-          <meshStandardMaterial
-            map={mosaicTexture}
-            emissive={color}
-            emissiveIntensity={0.8}
-            transparent
-            opacity={0.8}
-          />
-        </mesh>
+      {/* 非遗项目3D形象 */}
+      <Float speed={2} rotationIntensity={0.2} floatIntensity={0.4}>
+        {FigureComponent}
       </Float>
 
       {/* 闪烁粒子（增加数量和大小） */}
