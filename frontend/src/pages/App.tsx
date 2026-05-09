@@ -6,7 +6,7 @@ import MuseumPage from './MuseumPage';
 import CraftPage from './CraftPage';
 import LearningPage from './LearningPage';
 import SettingsPage from './SettingsPage';
-import { isMuted, toggleMute, initAudioOnInteraction, getVolume, setVolume, updateBackgroundMusicVolume } from './utils/audio';
+import { isMuted, toggleMute, initAudioOnInteraction, getVolume, setVolume, updateBackgroundMusicVolume } from '../utils/audio';
 
 // ========== 全局音频控制按钮 ==========
 
