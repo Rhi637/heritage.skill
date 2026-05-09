@@ -157,14 +157,14 @@ function Exhibit({ position, color, label, emoji, mosaicStyle, onClick }: Exhibi
         </mesh>
       </Float>
 
-      {/* 闪烁粒子 */}
+      {/* 闪烁粒子（增加数量和大小） */}
       <Sparkles
-        count={20}
-        scale={[2, 0.5, 2]}
-        size={0.1}
-        speed={0.5}
+        count={30}
+        scale={[2.5, 0.6, 2.5]}
+        size={0.12}
+        speed={0.6}
         color={color}
-        opacity={0.6}
+        opacity={0.7}
       />
 
       {/* 3D 空间中的 HTML 标签（支持中文） */}
@@ -223,29 +223,42 @@ function CenterHologram() {
   const ringRef1 = useRef<THREE.Mesh>(null);
   const ringRef2 = useRef<THREE.Mesh>(null);
   const ringRef3 = useRef<THREE.Mesh>(null);
+  const ringRef4 = useRef<THREE.Mesh>(null);
   const sparkleRef = useRef<THREE.Group>(null);
+  const innerSphereRef = useRef<THREE.Mesh>(null);
 
   useFrame((state) => {
     const t = state.clock.elapsedTime;
     if (ringRef1.current) ringRef1.current.rotation.x = t * 0.3;
     if (ringRef2.current) ringRef2.current.rotation.y = t * 0.5;
     if (ringRef3.current) ringRef3.current.rotation.z = t * 0.7;
+    if (ringRef4.current) ringRef4.current.rotation.x = t * 0.4;
+    if (ringRef4.current) ringRef4.current.rotation.y = t * 0.6;
     if (sparkleRef.current) {
       sparkleRef.current.rotation.y = t * 0.2;
+    }
+    if (innerSphereRef.current) {
+      innerSphereRef.current.rotation.x = t * 0.1;
+      innerSphereRef.current.rotation.y = t * 0.15;
     }
   });
 
   return (
     <group position={[0, 1.5, 0]}>
-      {/* 中心球体 */}
+      {/* 中心球体（内部发光） */}
       <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
-        <mesh>
+        <mesh ref={innerSphereRef}>
           <icosahedronGeometry args={[0.5, 1]} />
           <meshStandardMaterial color="#6366f1" emissive="#6366f1" emissiveIntensity={0.8} wireframe />
         </mesh>
+        {/* 内部发光小球 */}
+        <mesh>
+          <sphereGeometry args={[0.2, 16, 16]} />
+          <meshStandardMaterial color="#a5b4fc" emissive="#a5b4fc" emissiveIntensity={1} transparent opacity={0.6} />
+        </mesh>
       </Float>
 
-      {/* 旋转光环 */}
+      {/* 旋转光环（增加一个额外的环） */}
       <mesh ref={ringRef1}>
         <torusGeometry args={[1.2, 0.02, 16, 64]} />
         <meshStandardMaterial color="#8b5cf6" emissive="#8b5cf6" emissiveIntensity={1} transparent opacity={0.6} />
@@ -258,16 +271,20 @@ function CenterHologram() {
         <torusGeometry args={[1.8, 0.02, 16, 64]} />
         <meshStandardMaterial color="#14b8a6" emissive="#14b8a6" emissiveIntensity={1} transparent opacity={0.3} />
       </mesh>
+      <mesh ref={ringRef4}>
+        <torusGeometry args={[2.1, 0.015, 16, 64]} />
+        <meshStandardMaterial color="#f59e0b" emissive="#f59e0b" emissiveIntensity={0.8} transparent opacity={0.2} />
+      </mesh>
 
       {/* 闪烁粒子环 */}
       <group ref={sparkleRef}>
         <Sparkles
-          count={50}
-          scale={[3, 0.5, 3]}
-          size={0.15}
-          speed={0.3}
+          count={80}
+          scale={[4, 0.5, 4]}
+          size={0.12}
+          speed={0.4}
           color="#a5b4fc"
-          opacity={0.8}
+          opacity={0.9}
         />
       </group>
 

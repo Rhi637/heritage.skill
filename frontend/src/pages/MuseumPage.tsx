@@ -26,6 +26,11 @@ export default function MuseumPage() {
     return data ? JSON.parse(data) : null;
   });
 
+  // 确保背景音乐已启动
+  useEffect(() => {
+    startBackgroundMusic();
+  }, []);
+
   // 计算总学习进度
   const totalLearned = (() => {
     const allProgress = getAllProgress();
