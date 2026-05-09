@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
-import WelcomePage from './pages/WelcomePage';
-import AvatarSelectPage from './pages/AvatarSelectPage';
-import MuseumPage from './pages/MuseumPage';
-import CraftPage from './pages/CraftPage';
-import LearningPage from './pages/LearningPage';
-import SettingsPage from './pages/SettingsPage';
+import WelcomePage from './WelcomePage';
+import AvatarSelectPage from './AvatarSelectPage';
+import MuseumPage from './MuseumPage';
+import CraftPage from './CraftPage';
+import LearningPage from './LearningPage';
+import SettingsPage from './SettingsPage';
 import { isMuted, toggleMute, initAudioOnInteraction, getVolume, setVolume, updateBackgroundMusicVolume } from './utils/audio';
 
 // ========== 全局音频控制按钮 ==========
