@@ -202,7 +202,7 @@ function MuseumFloor() {
     <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.2, 0]}>
       <planeGeometry args={[60, 60]} />
       <MeshReflectorMaterial
-        mirror={0}
+        mirror={0 as number}
         blur={[300, 100]}
         resolution={1024}
         mixBlur={1}
