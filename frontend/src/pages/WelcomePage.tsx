@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { Canvas } from '@react-three/fiber';
 import { Stars } from '@react-three/drei';
 import { useState, useEffect } from 'react';
-import { playSound, initAudioOnInteraction } from '../utils/audio';
+import { playSound, initAudioOnInteraction, startBackgroundMusic } from '../utils/audio';
 
 // ========== 移动端检测 hook ==========
 
@@ -36,6 +36,7 @@ export default function WelcomePage() {
 
   const handleStart = () => {
     initAudioOnInteraction();
+    startBackgroundMusic();
     playSound('click');
     navigate('/avatar');
   };

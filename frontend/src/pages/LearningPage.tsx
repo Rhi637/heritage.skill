@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { HERITAGE_CRAFTS } from '../data';
 import { getAllProgress } from '../utils/storage';
 import { KnowledgePoint, DifficultyLevel } from '../types';
-import { playSound } from '../utils/audio';
+import { playSound, startBackgroundMusic } from '../utils/audio';
 
 // ========== 移动端检测 hook ==========
 
@@ -59,6 +59,16 @@ export default function LearningPage() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [expandedCraft, setExpandedCraft] = useState<string | null>(null);
+
+  // 确保背景音乐已启动
+  useEffect(() => {
+    startBackgroundMusic();
+  }, []);
+
+  // 确保背景音乐已启动
+  useEffect(() => {
+    startBackgroundMusic();
+  }, []);
 
   const progressData = useMemo(() => {
     const allProgress = getAllProgress();

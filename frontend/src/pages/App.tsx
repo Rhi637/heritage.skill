@@ -6,7 +6,7 @@ import MuseumPage from './pages/MuseumPage';
 import CraftPage from './pages/CraftPage';
 import LearningPage from './pages/LearningPage';
 import SettingsPage from './pages/SettingsPage';
-import { isMuted, toggleMute, initAudioOnInteraction, getVolume, setVolume } from './utils/audio';
+import { isMuted, toggleMute, initAudioOnInteraction, getVolume, setVolume, updateBackgroundMusicVolume } from './utils/audio';
 
 // ========== 全局音频控制按钮 ==========
 
@@ -25,6 +25,7 @@ function AudioControlButton() {
     const v = parseFloat(e.target.value);
     setVolumeState(v);
     setVolume(v);
+    updateBackgroundMusicVolume();
   };
 
   return (

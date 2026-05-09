@@ -276,6 +276,30 @@ export function isBackgroundMusicActive(): boolean {
   return bgMusicActive;
 }
 
+// 更新音量时调整背景音乐音量
+export function updateBackgroundMusicVolume(): void {
+  if (!bgMusicActive) return;
+  const masterVolume = getVolume();
+  if (bgMusicNodes.gain1) {
+    bgMusicNodes.gain1.gain.setValueAtTime(0.03 * masterVolume, getAudioContext().currentTime);
+  }
+  if (bgMusicNodes.gain2) {
+    bgMusicNodes.gain2.gain.setValueAtTime(0.015 * masterVolume, getAudioContext().currentTime);
+  }
+}
+
+// 更新音量时调整背景音乐音量
+export function updateBackgroundMusicVolume(): void {
+  if (!bgMusicActive) return;
+  const masterVolume = getVolume();
+  if (bgMusicNodes.gain1) {
+    bgMusicNodes.gain1.gain.setValueAtTime(0.03 * masterVolume, getAudioContext().currentTime);
+  }
+  if (bgMusicNodes.gain2) {
+    bgMusicNodes.gain2.gain.setValueAtTime(0.015 * masterVolume, getAudioContext().currentTime);
+  }
+}
+
 // ========== 初始化（恢复用户偏好） ==========
 
 export function initAudio(): void {

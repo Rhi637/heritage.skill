@@ -210,6 +210,7 @@ export const HERITAGE_CRAFTS: HeritageCraft[] = [
     description: '皮影戏是一种以兽皮或纸板做成的人物剪影，在灯光照射下用隔亮布进行演戏，是中国民间古老的传统艺术，距今已有两千多年历史。',
     sceneColor: '#1a1a2e',
     knowledgePoints: shadowPuppetKnowledgePoints,
+    mosaicStyle: 'shadow_puppet',
     inheritors: [
       {
         id: 'inheritor_wang',
@@ -248,6 +249,7 @@ export const HERITAGE_CRAFTS: HeritageCraft[] = [
     description: '剪纸是中国最古老的民间艺术之一，以剪刀或刻刀在纸上剪刻花纹，用于装点生活或配合民俗活动，2009年入选联合国教科文组织非遗名录。',
     sceneColor: '#2d1b00',
     knowledgePoints: paperCuttingKnowledgePoints,
+    mosaicStyle: 'paper_cutting',
     inheritors: [
       {
         id: 'inheritor_zhou',
@@ -286,6 +288,7 @@ export const HERITAGE_CRAFTS: HeritageCraft[] = [
     description: '苏绣是中国四大名绣之一，以苏州为中心，以针为笔、以线为墨，绣品精细雅洁，有"以针作画"之称，2006年入选国家级非遗名录。',
     sceneColor: '#1a0a2e',
     knowledgePoints: embroideryKnowledgePoints,
+    mosaicStyle: 'embroidery',
     inheritors: [
       {
         id: 'inheritor_yao',
@@ -324,6 +327,7 @@ export const HERITAGE_CRAFTS: HeritageCraft[] = [
     description: '泥塑是中国传统民间艺术，以黏土为原料，手工捏制成人物、动物等形象，天津泥人张最为著名，2006年入选国家级非遗名录。',
     sceneColor: '#2e1a0a',
     knowledgePoints: clayFigurineKnowledgePoints,
+    mosaicStyle: 'clay_figurine',
     inheritors: [
       {
         id: 'inheritor_zhang',

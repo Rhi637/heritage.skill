@@ -1,7 +1,92 @@
-import { useRef } from 'react';
+import { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Stars, Float, Html } from '@react-three/drei';
 import * as THREE from 'three';
+
+// ========== 马赛克纹理生成 ==========
+
+function createMosaicTexture(
+  style: 'paper_cutting' | 'shadow_puppet' | 'embroidery' | 'clay_figurine',
+  color: string
+): THREE.CanvasTexture {
+  const canvas = document.createElement('canvas');
+  canvas.width = 256;
+  canvas.height = 256;
+  const ctx = canvas.getContext('2d')!;
+
+  // 背景色
+  ctx.fillStyle = '#000000';
+  ctx.fillRect(0, 0, 256, 256);
+
+  // 根据样式生成不同的马赛克图案
+  const cellSize = 16; // 每个马赛克块的大小
+  const cols = canvas.width / cellSize;
+  const rows = canvas.height / cellSize;
+
+  // 解析颜色为 RGB
+  const tempDiv = document.createElement('div');
+  tempDiv.style.color = color;
+  document.body.appendChild(tempDiv);
+  const computedColor = getComputedStyle(tempDiv).color;
+  document.body.removeChild(tempDiv);
+  const rgbMatch = computedColor.match(/\d+/g);
+  const baseR = rgbMatch ? parseInt(rgbMatch[0]) : 100;
+  const baseG = rgbMatch ? parseInt(rgbMatch[1]) : 100;
+  const baseB = rgbMatch ? parseInt(rgbMatch[2]) : 100;
+
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      // 随机偏移颜色
+      const offsetR = (Math.random() - 0.5) * 60;
+      const offsetG = (Math.random() - 0.5) * 60;
+      const offsetB = (Math.random() - 0.5) * 60;
+      const rr = Math.min(255, Math.max(0, baseR + offsetR));
+      const gg = Math.min(255, Math.max(0, baseG + offsetG));
+      const bb = Math.min(255, Math.max(0, baseB + offsetB));
+
+      // 根据样式决定是否绘制该块
+      let draw = true;
+      if (style === 'paper_cutting') {
+        // 剪纸风格：随机留白，形成镂空效果
+        draw = Math.random() > 0.3;
+      } else if (style === 'shadow_puppet') {
+        // 皮影风格：半透明效果，随机透明度
+        draw = Math.random() > 0.2;
+      } else if (style === 'embroidery') {
+        // 苏绣风格：细密纹理，几乎全部填充
+        draw = Math.random() > 0.1;
+      } else if (style === 'clay_figurine') {
+        // 泥塑风格：粗糙质感，随机缺失
+        draw = Math.random() > 0.25;
+      }
+
+      if (draw) {
+        ctx.fillStyle = `rgb(${rr},${gg},${bb})`;
+        ctx.fillRect(c * cellSize, r * cellSize, cellSize, cellSize);
+      }
+    }
+  }
+
+  // 添加一些随机线条模拟剪纸/皮影的轮廓
+  ctx.strokeStyle = `rgba(255,255,255,0.2)`;
+  ctx.lineWidth = 1;
+  for (let i = 0; i < 20; i++) {
+    const x1 = Math.random() * 256;
+    const y1 = Math.random() * 256;
+    const x2 = Math.random() * 256;
+    const y2 = Math.random() * 256;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+  }
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(2, 2); // 重复纹理以覆盖更大面积
+  return texture;
+}
 
 // ========== 星空背景 ==========
 
@@ -16,11 +101,15 @@ interface ExhibitProps {
   color: string;
   label: string;
   emoji: string;
+  mosaicStyle: 'paper_cutting' | 'shadow_puppet' | 'embroidery' | 'clay_figurine';
   onClick?: () => void;
 }
 
-function Exhibit({ position, color, label, emoji, onClick }: ExhibitProps) {
+function Exhibit({ position, color, label, emoji, mosaicStyle, onClick }: ExhibitProps) {
   const ringRef = useRef<THREE.Mesh>(null);
+
+  // 生成马赛克纹理（缓存）
+  const mosaicTexture = useMemo(() => createMosaicTexture(mosaicStyle, color), [mosaicStyle, color]);
 
   useFrame((state) => {
     if (ringRef.current) {
@@ -30,10 +119,16 @@ function Exhibit({ position, color, label, emoji, onClick }: ExhibitProps) {
 
   return (
     <group position={position} onClick={onClick}>
-      {/* 底座 */}
+      {/* 底座（使用马赛克纹理） */}
       <mesh>
         <cylinderGeometry args={[1.2, 1.4, 0.3, 32]} />
-        <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.3} metalness={0.8} roughness={0.2} />
+        <meshStandardMaterial
+          map={mosaicTexture}
+          emissive={color}
+          emissiveIntensity={0.3}
+          metalness={0.8}
+          roughness={0.2}
+        />
       </mesh>
 
       {/* 发光光环 */}
@@ -42,11 +137,17 @@ function Exhibit({ position, color, label, emoji, onClick }: ExhibitProps) {
         <meshStandardMaterial color={color} emissive={color} emissiveIntensity={1} />
       </mesh>
 
-      {/* 顶部发光球 */}
+      {/* 顶部发光球（也使用马赛克纹理） */}
       <Float speed={2} rotationIntensity={0} floatIntensity={0.3}>
         <mesh position={[0, 1.2, 0]}>
           <sphereGeometry args={[0.3, 32, 32]} />
-          <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.8} transparent opacity={0.8} />
+          <meshStandardMaterial
+            map={mosaicTexture}
+            emissive={color}
+            emissiveIntensity={0.8}
+            transparent
+            opacity={0.8}
+          />
         </mesh>
       </Float>
 
@@ -156,10 +257,10 @@ interface MuseumSceneProps {
 
 export default function MuseumScene({ onSelectCraft }: MuseumSceneProps) {
   const crafts = [
-    { id: 'craft_shadow_puppet', label: '皮影戏', emoji: '🎭', color: '#f59e0b', position: [-4, 0, -3] as [number, number, number] },
-    { id: 'craft_paper_cutting', label: '剪纸', emoji: '✂️', color: '#ef4444', position: [4, 0, -3] as [number, number, number] },
-    { id: 'craft_embroidery', label: '苏绣', emoji: '🪡', color: '#ec4899', position: [-4, 0, 3] as [number, number, number] },
-    { id: 'craft_clay_figurine', label: '泥塑', emoji: '🏺', color: '#14b8a6', position: [4, 0, 3] as [number, number, number] },
+    { id: 'craft_shadow_puppet', label: '皮影戏', emoji: '🎭', color: '#f59e0b', mosaicStyle: 'shadow_puppet' as const, position: [-4, 0, -3] as [number, number, number] },
+    { id: 'craft_paper_cutting', label: '剪纸', emoji: '✂️', color: '#ef4444', mosaicStyle: 'paper_cutting' as const, position: [4, 0, -3] as [number, number, number] },
+    { id: 'craft_embroidery', label: '苏绣', emoji: '🪡', color: '#ec4899', mosaicStyle: 'embroidery' as const, position: [-4, 0, 3] as [number, number, number] },
+    { id: 'craft_clay_figurine', label: '泥塑', emoji: '🏺', color: '#14b8a6', mosaicStyle: 'clay_figurine' as const, position: [4, 0, 3] as [number, number, number] },
   ];
 
   return (
@@ -188,6 +289,7 @@ export default function MuseumScene({ onSelectCraft }: MuseumSceneProps) {
           color={craft.color}
           label={craft.label}
           emoji={craft.emoji}
+          mosaicStyle={craft.mosaicStyle}
           onClick={() => onSelectCraft(craft.id)}
         />
       ))}

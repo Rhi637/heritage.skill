@@ -4,7 +4,7 @@ import MuseumScene from '../components/MuseumScene';
 import { HERITAGE_CRAFTS } from '../data';
 import { UserProfile } from '../types';
 import { getAllProgress } from '../utils/storage';
-import { playSound } from '../utils/audio';
+import { playSound, startBackgroundMusic } from '../utils/audio';
 
 // ========== 移动端检测 hook ==========
 
@@ -47,6 +47,7 @@ export default function MuseumPage() {
     <div style={styles.container}>
       {/* 3D 场景（含中文标签） */}
       <MuseumScene onSelectCraft={handleSelectCraft} />
+      {/* 注意：MuseumScene 内部已经根据 craft 数据定义了 mosaicStyle，无需额外传递 */}
 
       {/* 顶部 HUD */}
       <div style={{

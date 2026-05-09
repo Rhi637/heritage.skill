@@ -37,6 +37,18 @@ html, body, #root {
   to { transform: rotate(360deg); }
 }
 
+/* 马赛克闪烁动画 */
+@keyframes mosaicPulse {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+/* 马赛克闪烁动画 */
+@keyframes mosaicPulse {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
 /* 打字指示器闪烁 */
 @keyframes blink {
   0%, 80%, 100% { opacity: 0.3; }

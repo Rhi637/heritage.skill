@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AVATARS } from '../data';
 import { UserAvatar } from '../types';
-import { playSound } from '../utils/audio';
+import { playSound, startBackgroundMusic } from '../utils/audio';
 
 // ========== 移动端检测 hook ==========
 
@@ -25,6 +25,7 @@ export default function AvatarSelectPage() {
   const handleConfirm = () => {
     if (!selected || !name.trim()) return;
     playSound('click');
+    startBackgroundMusic(); // 确保背景音乐已启动
     const profile = {
       name: name.trim(),
       avatar: selected,

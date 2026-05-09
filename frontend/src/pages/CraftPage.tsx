@@ -4,7 +4,7 @@ import { HERITAGE_CRAFTS } from '../data';
 import { HeritageCraft, Inheritor, Message, GLMMessage } from '../types';
 import { getApiKey, getRemainingQuota, isQuotaExhausted, incrementDailyUsage, markKnowledgePointsLearned } from '../utils/storage';
 import { buildSystemPrompt, callGLMApi, extractKnowledgePointIds } from '../utils/api';
-import { playSound } from '../utils/audio';
+import { playSound, startBackgroundMusic } from '../utils/audio';
 
 // ========== 移动端检测 hook ==========
 
@@ -52,6 +52,7 @@ export default function CraftPage() {
 
   const handleSelectInheritor = (inheritor: Inheritor) => {
     playSound('travel');
+    startBackgroundMusic(); // 确保背景音乐已启动
     setTravelingInheritor(inheritor);
     setIsTraveling(true);
     setTravelPhase(0);
