@@ -105,3 +105,4 @@ logs/
 *.tgz
 *.tar.gz
 *.zip
+.aider*
