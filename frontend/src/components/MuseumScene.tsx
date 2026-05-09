@@ -1,6 +1,6 @@
 import { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Stars, Float, Html } from '@react-three/drei';
+import { Stars, Float, Html, Sparkles, MeshReflectorMaterial } from '@react-three/drei';
 import * as THREE from 'three';
 
 // ========== 马赛克纹理生成 ==========
@@ -107,18 +107,24 @@ interface ExhibitProps {
 
 function Exhibit({ position, color, label, emoji, mosaicStyle, onClick }: ExhibitProps) {
   const ringRef = useRef<THREE.Mesh>(null);
+  const groupRef = useRef<THREE.Group>(null);
 
   // 生成马赛克纹理（缓存）
   const mosaicTexture = useMemo(() => createMosaicTexture(mosaicStyle, color), [mosaicStyle, color]);
 
   useFrame((state) => {
+    const t = state.clock.elapsedTime;
     if (ringRef.current) {
-      ringRef.current.rotation.z = state.clock.elapsedTime * 0.5;
+      ringRef.current.rotation.z = t * 0.5;
+    }
+    if (groupRef.current) {
+      // 让整个展台缓慢上下浮动
+      groupRef.current.position.y = Math.sin(t * 0.5) * 0.05;
     }
   });
 
   return (
-    <group position={position} onClick={onClick}>
+    <group ref={groupRef} position={position} onClick={onClick}>
       {/* 底座（使用马赛克纹理） */}
       <mesh>
         <cylinderGeometry args={[1.2, 1.4, 0.3, 32]} />
@@ -151,6 +157,16 @@ function Exhibit({ position, color, label, emoji, mosaicStyle, onClick }: Exhibi
         </mesh>
       </Float>
 
+      {/* 闪烁粒子 */}
+      <Sparkles
+        count={20}
+        scale={[2, 0.5, 2]}
+        size={0.1}
+        speed={0.5}
+        color={color}
+        opacity={0.6}
+      />
+
       {/* 3D 空间中的 HTML 标签（支持中文） */}
       <Html position={[0, 2.2, 0]} center distanceFactor={8}>
         <div style={{
@@ -179,13 +195,24 @@ function Exhibit({ position, color, label, emoji, mosaicStyle, onClick }: Exhibi
   );
 }
 
-// ========== 博物馆地面 ==========
+// ========== 博物馆地面（带反射） ==========
 
 function MuseumFloor() {
   return (
     <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.2, 0]}>
       <planeGeometry args={[60, 60]} />
-      <meshStandardMaterial color="#0a0a1a" metalness={0.9} roughness={0.1} />
+      <MeshReflectorMaterial
+        blur={[300, 100]}
+        resolution={1024}
+        mixBlur={1}
+        mixStrength={0.3}
+        roughness={0.2}
+        depthScale={1}
+        minDepthThreshold={0.4}
+        maxDepthThreshold={1.4}
+        color="#0a0a1a"
+        metalness={0.9}
+      />
     </mesh>
   );
 }
@@ -196,12 +223,16 @@ function CenterHologram() {
   const ringRef1 = useRef<THREE.Mesh>(null);
   const ringRef2 = useRef<THREE.Mesh>(null);
   const ringRef3 = useRef<THREE.Mesh>(null);
+  const sparkleRef = useRef<THREE.Group>(null);
 
   useFrame((state) => {
     const t = state.clock.elapsedTime;
     if (ringRef1.current) ringRef1.current.rotation.x = t * 0.3;
     if (ringRef2.current) ringRef2.current.rotation.y = t * 0.5;
     if (ringRef3.current) ringRef3.current.rotation.z = t * 0.7;
+    if (sparkleRef.current) {
+      sparkleRef.current.rotation.y = t * 0.2;
+    }
   });
 
   return (
@@ -227,6 +258,18 @@ function CenterHologram() {
         <torusGeometry args={[1.8, 0.02, 16, 64]} />
         <meshStandardMaterial color="#14b8a6" emissive="#14b8a6" emissiveIntensity={1} transparent opacity={0.3} />
       </mesh>
+
+      {/* 闪烁粒子环 */}
+      <group ref={sparkleRef}>
+        <Sparkles
+          count={50}
+          scale={[3, 0.5, 3]}
+          size={0.15}
+          speed={0.3}
+          color="#a5b4fc"
+          opacity={0.8}
+        />
+      </group>
 
       {/* 博物馆标题（3D 空间中的 HTML） */}
       <Html position={[0, 3.5, 0]} center distanceFactor={8}>
@@ -275,7 +318,7 @@ export default function MuseumScene({ onSelectCraft }: MuseumSceneProps) {
       {/* 星空 */}
       <StarField />
 
-      {/* 地面 */}
+      {/* 地面（带反射） */}
       <MuseumFloor />
 
       {/* 中央全息投影 */}
