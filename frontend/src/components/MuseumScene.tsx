@@ -120,6 +120,8 @@ function Exhibit({ position, color, label, emoji, mosaicStyle, onClick }: Exhibi
     if (groupRef.current) {
       // 让整个展台缓慢上下浮动
       groupRef.current.position.y = Math.sin(t * 0.5) * 0.05;
+      // 让整个展台缓慢旋转
+      groupRef.current.rotation.y = t * 0.1;
     }
   });
 
