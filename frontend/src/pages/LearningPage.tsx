@@ -65,11 +65,6 @@ export default function LearningPage() {
     startBackgroundMusic();
   }, []);
 
-  // 确保背景音乐已启动
-  useEffect(() => {
-    startBackgroundMusic();
-  }, []);
-
   const progressData = useMemo(() => {
     const allProgress = getAllProgress();
     return HERITAGE_CRAFTS.map((craft) => {

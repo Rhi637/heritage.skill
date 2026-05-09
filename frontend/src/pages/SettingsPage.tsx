@@ -23,8 +23,6 @@ export default function SettingsPage() {
   const [saved, setSaved] = useState(false);
   const [muted, setMutedState] = useState(isMuted());
   const [volume, setVolumeState] = useState(getVolume());
-  const [muted, setMutedState] = useState(isMuted());
-  const [volume, setVolumeState] = useState(getVolume());
 
   const handleSave = () => {
     if (key.trim()) {
@@ -133,61 +131,6 @@ export default function SettingsPage() {
               {key.trim() ? 'API Key 已配置' : '未配置 API Key（无法使用对话功能）'}
             </span>
           </div>
-        </div>
-
-        {/* 背景音乐设置 */}
-        <div style={{
-          ...styles.section,
-          padding: isMobile ? 16 : 24,
-        }}>
-          <div style={{ ...styles.sectionTitle, fontSize: isMobile ? 15 : 16 }}>背景音乐</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-            <button
-              onClick={() => {
-                const newMuted = toggleMute();
-                setMutedState(newMuted);
-                if (newMuted) {
-                  stopBackgroundMusic();
-                } else {
-                  startBackgroundMusic();
-                }
-                playSound('click');
-              }}
-              style={{
-                padding: '8px 16px',
-                backgroundColor: muted ? 'rgba(239,68,68,0.15)' : 'rgba(34,197,94,0.15)',
-                border: `1px solid ${muted ? 'rgba(239,68,68,0.3)' : 'rgba(34,197,94,0.3)'}`,
-                borderRadius: 10,
-                color: muted ? '#f87171' : '#4ade80',
-                fontSize: 14,
-                cursor: 'pointer',
-              }}
-            >
-              {muted ? '🔇 已静音' : '🔊 已开启'}
-            </button>
-          </div>
-          {!muted && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <span style={{ fontSize: 13, color: '#9ca3af' }}>音量</span>
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.05"
-                value={volume}
-                onChange={(e) => {
-                  const v = parseFloat(e.target.value);
-                  setVolumeState(v);
-                  setVolume(v);
-                  updateBackgroundMusicVolume();
-                }}
-                style={{ flex: 1, accentColor: '#6366f1', cursor: 'pointer' }}
-              />
-              <span style={{ fontSize: 12, color: '#6b7280', minWidth: 30, textAlign: 'right' }}>
-                {Math.round(volume * 100)}%
-              </span>
-            </div>
-          )}
         </div>
 
         {/* 背景音乐设置 */}
