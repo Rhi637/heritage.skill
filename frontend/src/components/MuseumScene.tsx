@@ -1,6 +1,7 @@
 import { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Stars, Float, Html, Sparkles, MeshReflectorMaterial } from '@react-three/drei';
+import { Stars, Float, Html, Sparkles, MeshReflectorMaterial, Environment, ContactShadows, SpotLight } from '@react-three/drei';
+import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import * as THREE from 'three';
 
 // ========== 马赛克纹理生成 ==========
@@ -485,6 +486,39 @@ export default function MuseumScene({ onSelectCraft }: MuseumSceneProps) {
           onClick={() => onSelectCraft(craft.id)}
         />
       ))}
+
+      {/* 环境贴图（HDR 光照） */}
+      <Environment preset="night" />
+
+      {/* 接触阴影 */}
+      <ContactShadows
+        position={[0, -0.2, 0]}
+        opacity={0.6}
+        scale={20}
+        blur={2}
+        far={4}
+      />
+
+      {/* 聚光灯（从上方照射） */}
+      <SpotLight
+        position={[0, 10, 0]}
+        angle={0.5}
+        penumbra={0.5}
+        decay={1}
+        intensity={2}
+        color="#6366f1"
+        castShadow
+      />
+
+      {/* 后期处理：Bloom 辉光效果 */}
+      <EffectComposer>
+        <Bloom
+          luminanceThreshold={0.2}
+          luminanceSmoothing={0.9}
+          height={300}
+          intensity={0.5}
+        />
+      </EffectComposer>
       </Canvas>
     </div>
   );
