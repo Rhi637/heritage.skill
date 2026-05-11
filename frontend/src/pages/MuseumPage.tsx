@@ -51,7 +51,7 @@ export default function MuseumPage() {
   return (
     <div style={styles.container}>
       {/* 3D 场景（含中文标签） */}
-      <MuseumScene onSelectCraft={handleSelectCraft} />
+      <MuseumScene onSelectCraft={handleSelectCraft} pixelSize={0.05} />
       {/* 注意：MuseumScene 内部已经根据 craft 数据定义了 mosaicStyle，无需额外传递 */}
 
       {/* 顶部 HUD */}
@@ -112,6 +112,8 @@ export default function MuseumPage() {
               ...styles.craftChip,
               padding: isMobile ? '6px 10px' : '8px 16px',
               fontSize: isMobile ? 11 : 13,
+              imageRendering: 'pixelated', // 像素风格
+              borderImage: 'repeating-linear-gradient(45deg, rgba(255,255,255,0.1) 0px, rgba(255,255,255,0.1) 2px, transparent 2px, transparent 4px) 1', // 像素边框
             }}
             onClick={() => handleSelectCraft(craft.id)}
           >
@@ -192,5 +194,7 @@ const styles: Record<string, React.CSSProperties> = {
     color: '#d1d5db',
     cursor: 'pointer',
     transition: 'all 0.2s ease',
+    imageRendering: 'pixelated', // 像素风格
+    borderImage: 'repeating-linear-gradient(45deg, rgba(255,255,255,0.1) 0px, rgba(255,255,255,0.1) 2px, transparent 2px, transparent 4px) 1', // 像素边框
   },
 };

@@ -216,52 +216,55 @@ export default function CraftPage() {
 
     return (
       <div style={{ width: '100vw', height: '100vh', background: bgColor, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', fontFamily: '"Microsoft YaHei", sans-serif', transition: 'background 1s ease', overflow: 'hidden' }}>
-        {/* 粒子效果 */}
+        {/* 粒子效果（像素风格） */}
         <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', overflow: 'hidden', pointerEvents: 'none' }}>
           {Array.from({ length: 30 }).map((_, i) => (
             <div key={i} style={{
               position: 'absolute',
               left: `${Math.random() * 100}%`,
               top: travelPhase >= 2 ? `${Math.random() * 100}%` : '100%',
-              width: 3,
-              height: 3,
-              borderRadius: '50%',
+              width: 4,
+              height: 4,
+              borderRadius: 0, // 方形粒子
               backgroundColor: accentColor,
               opacity: travelPhase >= 1 ? 0.6 : 0,
               transition: `top ${1 + Math.random()}s ease-out, opacity 0.5s ease`,
               animation: travelPhase >= 1 ? `float ${2 + Math.random() * 3}s ease-in-out infinite` : 'none',
+              imageRendering: 'pixelated',
             }} />
           ))}
         </div>
 
-        {/* 旋转光环 */}
+        {/* 旋转光环（像素风格） */}
         <div style={{ position: 'relative', width: ringSize, height: ringSize, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: isMobile ? 24 : 40 }}>
-          <div style={{ position: 'absolute', width: ringSize, height: ringSize, borderRadius: '50%', border: `2px solid ${accentColor}`, opacity: travelPhase >= 1 ? 0.8 : 0.3, transition: 'all 0.5s ease', animation: 'spin 2s linear infinite' }} />
-          <div style={{ position: 'absolute', width: ring2Size, height: ring2Size, borderRadius: '50%', border: `2px solid ${accentColor}`, opacity: travelPhase >= 1 ? 0.6 : 0.2, transition: 'all 0.5s ease', animation: 'spin 1.5s linear infinite reverse' }} />
-          <div style={{ position: 'absolute', width: ring3Size, height: ring3Size, borderRadius: '50%', border: `2px solid ${accentColor}`, opacity: travelPhase >= 2 ? 0.5 : 0.1, transition: 'all 0.5s ease', animation: 'spin 1s linear infinite' }} />
+          <div style={{ position: 'absolute', width: ringSize, height: ringSize, borderRadius: '50%', border: `2px solid ${accentColor}`, opacity: travelPhase >= 1 ? 0.8 : 0.3, transition: 'all 0.5s ease', animation: 'spin 2s linear infinite', imageRendering: 'pixelated', borderImage: `repeating-linear-gradient(45deg, ${accentColor} 0px, ${accentColor} 2px, transparent 2px, transparent 4px) 1` }} />
+          <div style={{ position: 'absolute', width: ring2Size, height: ring2Size, borderRadius: '50%', border: `2px solid ${accentColor}`, opacity: travelPhase >= 1 ? 0.6 : 0.2, transition: 'all 0.5s ease', animation: 'spin 1.5s linear infinite reverse', imageRendering: 'pixelated', borderImage: `repeating-linear-gradient(45deg, ${accentColor} 0px, ${accentColor} 2px, transparent 2px, transparent 4px) 1` }} />
+          <div style={{ position: 'absolute', width: ring3Size, height: ring3Size, borderRadius: '50%', border: `2px solid ${accentColor}`, opacity: travelPhase >= 2 ? 0.5 : 0.1, transition: 'all 0.5s ease', animation: 'spin 1s linear infinite', imageRendering: 'pixelated', borderImage: `repeating-linear-gradient(45deg, ${accentColor} 0px, ${accentColor} 2px, transparent 2px, transparent 4px) 1` }} />
 
-          {/* 传承人头像 */}
+          {/* 传承人头像（像素风格） */}
           <div style={{
             width: avatarSize, height: avatarSize, borderRadius: '50%', overflow: 'hidden',
             border: `3px solid ${accentColor}`,
             opacity: travelPhase >= 2 ? 1 : 0.3,
             transform: travelPhase >= 2 ? 'scale(1)' : 'scale(0.5)',
             transition: 'all 0.8s ease',
+            imageRendering: 'pixelated',
+            boxShadow: `0 0 0 2px ${accentColor}, 0 0 0 4px rgba(0,0,0,0.5)`, // 像素阴影
           }}>
             {travelingInheritor.avatarImage ? (
-              <img src={travelingInheritor.avatarImage} alt={travelingInheritor.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img src={travelingInheritor.avatarImage} alt={travelingInheritor.name} style={{ width: '100%', height: '100%', objectFit: 'cover', imageRendering: 'pixelated' }} />
             ) : (
-              <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: isMobile ? 28 : 36, backgroundColor: 'rgba(255,255,255,0.05)' }}>{travelingInheritor.avatarEmoji}</div>
+              <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: isMobile ? 28 : 36, backgroundColor: 'rgba(255,255,255,0.05)', imageRendering: 'pixelated' }}>{travelingInheritor.avatarEmoji}</div>
             )}
           </div>
         </div>
 
-        {/* 文字提示 */}
+        {/* 文字提示（像素风格） */}
         <div style={{ textAlign: 'center', zIndex: 1 }}>
-          <div style={{ fontSize: isMobile ? 18 : 24, fontWeight: 700, color: accentColor, marginBottom: 8, opacity: travelPhase >= 1 ? 1 : 0, transition: 'opacity 0.5s ease' }}>
+          <div style={{ fontSize: isMobile ? 18 : 24, fontWeight: 700, color: accentColor, marginBottom: 8, opacity: travelPhase >= 1 ? 1 : 0, transition: 'opacity 0.5s ease', imageRendering: 'pixelated', textShadow: `2px 2px 0 ${accentColor}40, -2px -2px 0 ${accentColor}40` }}>
             {isAncient ? `穿梭至${travelingInheritor.dynasty}` : `前往${travelingInheritor.region}`}
           </div>
-          <div style={{ fontSize: isMobile ? 12 : 14, color: '#9ca3af', opacity: travelPhase >= 2 ? 1 : 0, transition: 'opacity 0.5s ease' }}>
+          <div style={{ fontSize: isMobile ? 12 : 14, color: '#9ca3af', opacity: travelPhase >= 2 ? 1 : 0, transition: 'opacity 0.5s ease', imageRendering: 'pixelated' }}>
             {travelPhase < 2 ? '时空隧道启动中...' : `正在连接${travelingInheritor.name}...`}
           </div>
         </div>
