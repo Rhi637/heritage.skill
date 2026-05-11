@@ -39,6 +39,7 @@ const PixelationMaterial = shaderMaterial(
   PixelationShader.fragmentShader
 );
 
+// 使用 extend 注册自定义材质
 extend({ PixelationMaterial });
 
 // ========== 马赛克纹理生成（已弃用，改用像素着色器） ==========
@@ -52,6 +53,16 @@ function StarField() {
 // ========== 非遗项目3D形象 ==========
 
 function ShadowPuppetFigure({ color = '#f59e0b', pixelSize = 0.05 }: { color?: string; pixelSize?: number }) {
+  // 为每个像素块创建材质
+  const blockMat = useMemo(() => {
+    const mat = new PixelationMaterial();
+    mat.uniforms.uColor.value = new THREE.Color(color);
+    mat.uniforms.uPixelSize.value = pixelSize;
+    mat.transparent = true;
+    mat.opacity = 0.9;
+    return mat;
+  }, [color, pixelSize]);
+
   // 皮影人物（3D 像素块堆叠）
   const blocks = useMemo(() => {
     const result: { x: number; y: number; z: number; size: number }[] = [];
@@ -103,12 +114,7 @@ function ShadowPuppetFigure({ color = '#f59e0b', pixelSize = 0.05 }: { color?: s
       {blocks.map((block, i) => (
         <mesh key={i} position={[block.x, block.y, block.z]}>
           <boxGeometry args={[block.size, block.size, block.size]} />
-          <pixelationMaterial
-            uColor={new THREE.Color(color)}
-            uPixelSize={pixelSize}
-            transparent
-            opacity={0.9}
-          />
+          <primitive object={blockMat} attach="material" />
         </mesh>
       ))}
     </group>
@@ -116,6 +122,15 @@ function ShadowPuppetFigure({ color = '#f59e0b', pixelSize = 0.05 }: { color?: s
 }
 
 function PaperCuttingFigure({ color = '#ef4444', pixelSize = 0.05 }: { color?: string; pixelSize?: number }) {
+  const blockMat = useMemo(() => {
+    const mat = new PixelationMaterial();
+    mat.uniforms.uColor.value = new THREE.Color(color);
+    mat.uniforms.uPixelSize.value = pixelSize;
+    mat.transparent = true;
+    mat.opacity = 0.9;
+    return mat;
+  }, [color, pixelSize]);
+
   // 剪纸团花（3D 像素块堆叠）
   const blocks = useMemo(() => {
     const result: { x: number; y: number; z: number; size: number }[] = [];
@@ -146,12 +161,7 @@ function PaperCuttingFigure({ color = '#ef4444', pixelSize = 0.05 }: { color?: s
       {blocks.map((block, i) => (
         <mesh key={i} position={[block.x, block.y, block.z]}>
           <boxGeometry args={[block.size, block.size, block.size]} />
-          <pixelationMaterial
-            uColor={new THREE.Color(color)}
-            uPixelSize={pixelSize}
-            transparent
-            opacity={0.9}
-          />
+          <primitive object={blockMat} attach="material" />
         </mesh>
       ))}
     </group>
@@ -159,6 +169,24 @@ function PaperCuttingFigure({ color = '#ef4444', pixelSize = 0.05 }: { color?: s
 }
 
 function EmbroideryFigure({ color = '#ec4899', pixelSize = 0.05 }: { color?: string; pixelSize?: number }) {
+  const outerMat = useMemo(() => {
+    const mat = new PixelationMaterial();
+    mat.uniforms.uColor.value = new THREE.Color(color);
+    mat.uniforms.uPixelSize.value = pixelSize;
+    mat.transparent = true;
+    mat.opacity = 0.8;
+    return mat;
+  }, [color, pixelSize]);
+
+  const innerMat = useMemo(() => {
+    const mat = new PixelationMaterial();
+    mat.uniforms.uColor.value = new THREE.Color('#fdf2f8');
+    mat.uniforms.uPixelSize.value = pixelSize;
+    mat.transparent = true;
+    mat.opacity = 0.8;
+    return mat;
+  }, [pixelSize]);
+
   // 绣花绷子（3D 像素块堆叠）
   const blocks = useMemo(() => {
     const result: { x: number; y: number; z: number; size: number }[] = [];
@@ -188,12 +216,7 @@ function EmbroideryFigure({ color = '#ec4899', pixelSize = 0.05 }: { color?: str
       {blocks.map((block, i) => (
         <mesh key={i} position={[block.x, block.y, block.z]}>
           <boxGeometry args={[block.size, block.size, block.size]} />
-          <pixelationMaterial
-            uColor={new THREE.Color(i < 24 ? color : '#fdf2f8')}
-            uPixelSize={pixelSize}
-            transparent
-            opacity={0.8}
-          />
+          <primitive object={i < 24 ? outerMat : innerMat} attach="material" />
         </mesh>
       ))}
     </group>
@@ -201,6 +224,20 @@ function EmbroideryFigure({ color = '#ec4899', pixelSize = 0.05 }: { color?: str
 }
 
 function ClayFigurineFigure({ color = '#8B4513', pixelSize = 0.05 }: { color?: string; pixelSize?: number }) {
+  const bodyMat = useMemo(() => {
+    const mat = new PixelationMaterial();
+    mat.uniforms.uColor.value = new THREE.Color(color);
+    mat.uniforms.uPixelSize.value = pixelSize;
+    return mat;
+  }, [color, pixelSize]);
+
+  const headMat = useMemo(() => {
+    const mat = new PixelationMaterial();
+    mat.uniforms.uColor.value = new THREE.Color('#D2691E');
+    mat.uniforms.uPixelSize.value = pixelSize;
+    return mat;
+  }, [pixelSize]);
+
   // 泥人（3D 像素块堆叠）
   const blocks = useMemo(() => {
     const result: { x: number; y: number; z: number; size: number }[] = [];
@@ -235,10 +272,7 @@ function ClayFigurineFigure({ color = '#8B4513', pixelSize = 0.05 }: { color?: s
       {blocks.map((block, i) => (
         <mesh key={i} position={[block.x, block.y, block.z]}>
           <boxGeometry args={[block.size, block.size, block.size]} />
-          <pixelationMaterial
-            uColor={new THREE.Color(block.y > 0.2 ? '#D2691E' : color)}
-            uPixelSize={pixelSize}
-          />
+          <primitive object={block.y > 0.2 ? headMat : bodyMat} attach="material" />
         </mesh>
       ))}
     </group>
@@ -257,6 +291,13 @@ interface ExhibitProps {
 }
 
 function Exhibit({ position, color, label, emoji, mosaicStyle, onClick, pixelSize = 0.05 }: ExhibitProps & { pixelSize?: number }) {
+  // 使用 useMemo 创建像素材质实例，确保每次 color/pixelSize 变化时更新
+  const pixelMat = useMemo(() => {
+    const mat = new PixelationMaterial();
+    mat.uniforms.uColor.value = new THREE.Color(color);
+    mat.uniforms.uPixelSize.value = pixelSize;
+    return mat;
+  }, [color, pixelSize]);
   const ringRef = useRef<THREE.Mesh>(null);
   const groupRef = useRef<THREE.Group>(null);
 
@@ -290,34 +331,19 @@ function Exhibit({ position, color, label, emoji, mosaicStyle, onClick, pixelSiz
     }
   }, [mosaicStyle, color, pixelSize]);
 
-  // 像素材质引用
-  const pixelMatRef = useRef<typeof PixelationMaterial>(null);
-  useEffect(() => {
-    if (pixelMatRef.current) {
-      pixelMatRef.current.uniforms.uColor.value = new THREE.Color(color);
-      pixelMatRef.current.uniforms.uPixelSize.value = pixelSize;
-    }
-  }, [color, pixelSize]);
 
   return (
     <group ref={groupRef} position={position} onClick={onClick}>
       {/* 底座（使用像素风格着色器） */}
       <mesh>
         <cylinderGeometry args={[1.2, 1.4, 0.3, 32]} />
-        <pixelationMaterial
-          ref={pixelMatRef}
-          uColor={new THREE.Color(color)}
-          uPixelSize={pixelSize}
-        />
+        <primitive object={pixelMat} attach="material" />
       </mesh>
 
       {/* 发光光环（也使用像素风格） */}
       <mesh ref={ringRef} position={[0, 0.2, 0]} rotation={[Math.PI / 2, 0, 0]}>
         <torusGeometry args={[1.3, 0.03, 16, 64]} />
-        <pixelationMaterial
-          uColor={new THREE.Color(color)}
-          uPixelSize={pixelSize * 0.5} // 光环更精细
-        />
+        <primitive object={pixelMat} attach="material" />
       </mesh>
 
       {/* 非遗项目3D形象 */}
@@ -366,13 +392,17 @@ function Exhibit({ position, color, label, emoji, mosaicStyle, onClick, pixelSiz
 // ========== 博物馆地面（带反射） ==========
 
 function MuseumFloor({ pixelSize = 0.05 }: { pixelSize?: number }) {
+  const floorMat = useMemo(() => {
+    const mat = new PixelationMaterial();
+    mat.uniforms.uColor.value = new THREE.Color('#0a0a1a');
+    mat.uniforms.uPixelSize.value = pixelSize;
+    return mat;
+  }, [pixelSize]);
+
   return (
     <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.2, 0]}>
       <planeGeometry args={[60, 60]} />
-      <pixelationMaterial
-        uColor={new THREE.Color('#0a0a1a')}
-        uPixelSize={pixelSize}
-      />
+      <primitive object={floorMat} attach="material" />
     </mesh>
   );
 }
@@ -380,6 +410,59 @@ function MuseumFloor({ pixelSize = 0.05 }: { pixelSize?: number }) {
 // ========== 中央全息投影 ==========
 
 function CenterHologram({ pixelSize = 0.05 }: { pixelSize?: number }) {
+  // 为每个环创建独立的像素材质
+  const ringMat1 = useMemo(() => {
+    const mat = new PixelationMaterial();
+    mat.uniforms.uColor.value = new THREE.Color('#8b5cf6');
+    mat.uniforms.uPixelSize.value = pixelSize;
+    mat.transparent = true;
+    mat.opacity = 0.6;
+    return mat;
+  }, [pixelSize]);
+
+  const ringMat2 = useMemo(() => {
+    const mat = new PixelationMaterial();
+    mat.uniforms.uColor.value = new THREE.Color('#ec4899');
+    mat.uniforms.uPixelSize.value = pixelSize;
+    mat.transparent = true;
+    mat.opacity = 0.4;
+    return mat;
+  }, [pixelSize]);
+
+  const ringMat3 = useMemo(() => {
+    const mat = new PixelationMaterial();
+    mat.uniforms.uColor.value = new THREE.Color('#14b8a6');
+    mat.uniforms.uPixelSize.value = pixelSize;
+    mat.transparent = true;
+    mat.opacity = 0.3;
+    return mat;
+  }, [pixelSize]);
+
+  const ringMat4 = useMemo(() => {
+    const mat = new PixelationMaterial();
+    mat.uniforms.uColor.value = new THREE.Color('#f59e0b');
+    mat.uniforms.uPixelSize.value = pixelSize;
+    mat.transparent = true;
+    mat.opacity = 0.2;
+    return mat;
+  }, [pixelSize]);
+
+  const sphereMat = useMemo(() => {
+    const mat = new PixelationMaterial();
+    mat.uniforms.uColor.value = new THREE.Color('#6366f1');
+    mat.uniforms.uPixelSize.value = pixelSize;
+    mat.wireframe = true;
+    return mat;
+  }, [pixelSize]);
+
+  const innerSphereMat = useMemo(() => {
+    const mat = new PixelationMaterial();
+    mat.uniforms.uColor.value = new THREE.Color('#a5b4fc');
+    mat.uniforms.uPixelSize.value = pixelSize;
+    mat.transparent = true;
+    mat.opacity = 0.6;
+    return mat;
+  }, [pixelSize]);
   const ringRef1 = useRef<THREE.Mesh>(null);
   const ringRef2 = useRef<THREE.Mesh>(null);
   const ringRef3 = useRef<THREE.Mesh>(null);
@@ -409,60 +492,31 @@ function CenterHologram({ pixelSize = 0.05 }: { pixelSize?: number }) {
       <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
         <mesh ref={innerSphereRef}>
           <icosahedronGeometry args={[0.5, 1]} />
-          <pixelationMaterial
-            uColor={new THREE.Color('#6366f1')}
-            uPixelSize={pixelSize}
-            wireframe
-          />
+          <primitive object={sphereMat} attach="material" />
         </mesh>
         {/* 内部发光小球 */}
         <mesh>
           <sphereGeometry args={[0.2, 16, 16]} />
-          <pixelationMaterial
-            uColor={new THREE.Color('#a5b4fc')}
-            uPixelSize={pixelSize}
-            transparent
-            opacity={0.6}
-          />
+          <primitive object={innerSphereMat} attach="material" />
         </mesh>
       </Float>
 
       {/* 旋转光环（增加一个额外的环） */}
       <mesh ref={ringRef1}>
         <torusGeometry args={[1.2, 0.02, 16, 64]} />
-        <pixelationMaterial
-          uColor={new THREE.Color('#8b5cf6')}
-          uPixelSize={pixelSize}
-          transparent
-          opacity={0.6}
-        />
+        <primitive object={ringMat1} attach="material" />
       </mesh>
       <mesh ref={ringRef2}>
         <torusGeometry args={[1.5, 0.02, 16, 64]} />
-        <pixelationMaterial
-          uColor={new THREE.Color('#ec4899')}
-          uPixelSize={pixelSize}
-          transparent
-          opacity={0.4}
-        />
+        <primitive object={ringMat2} attach="material" />
       </mesh>
       <mesh ref={ringRef3}>
         <torusGeometry args={[1.8, 0.02, 16, 64]} />
-        <pixelationMaterial
-          uColor={new THREE.Color('#14b8a6')}
-          uPixelSize={pixelSize}
-          transparent
-          opacity={0.3}
-        />
+        <primitive object={ringMat3} attach="material" />
       </mesh>
       <mesh ref={ringRef4}>
         <torusGeometry args={[2.1, 0.015, 16, 64]} />
-        <pixelationMaterial
-          uColor={new THREE.Color('#f59e0b')}
-          uPixelSize={pixelSize}
-          transparent
-          opacity={0.2}
-        />
+        <primitive object={ringMat4} attach="material" />
       </mesh>
 
       {/* 闪烁粒子环 */}
