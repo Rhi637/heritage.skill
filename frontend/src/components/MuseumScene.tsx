@@ -1,8 +1,45 @@
 import { useRef, useMemo } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas, useFrame, shaderMaterial } from '@react-three/fiber';
 import { Stars, Float, Html, Sparkles, MeshReflectorMaterial, Environment, ContactShadows, SpotLight } from '@react-three/drei';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import * as THREE from 'three';
+import { extend } from '@react-three/fiber';
+
+// ========== 像素风格着色器 ==========
+
+const PixelationShader = {
+  uniforms: {
+    uColor: { value: new THREE.Color('#ffffff') },
+    uPixelSize: { value: 0.05 }, // 像素大小（0~1），越小越精细
+  },
+  vertexShader: `
+    varying vec2 vUv;
+    void main() {
+      vUv = uv;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `,
+  fragmentShader: `
+    uniform vec3 uColor;
+    uniform float uPixelSize;
+    varying vec2 vUv;
+
+    void main() {
+      // 量化 UV 坐标，产生像素块
+      vec2 pixelUv = floor(vUv / uPixelSize) * uPixelSize + uPixelSize * 0.5;
+      // 简单的颜色输出（可以添加随机偏移模拟像素噪点）
+      gl_FragColor = vec4(uColor, 1.0);
+    }
+  `,
+};
+
+const PixelationMaterial = shaderMaterial(
+  PixelationShader.uniforms,
+  PixelationShader.vertexShader,
+  PixelationShader.fragmentShader
+);
+
+extend({ PixelationMaterial });
 
 // ========== 马赛克纹理生成 ==========
 
@@ -228,7 +265,7 @@ interface ExhibitProps {
   onClick?: () => void;
 }
 
-function Exhibit({ position, color, label, emoji, mosaicStyle, onClick }: ExhibitProps) {
+function Exhibit({ position, color, label, emoji, mosaicStyle, onClick, pixelSize = 0.05 }: ExhibitProps & { pixelSize?: number }) {
   const ringRef = useRef<THREE.Mesh>(null);
   const groupRef = useRef<THREE.Group>(null);
 
@@ -264,29 +301,45 @@ function Exhibit({ position, color, label, emoji, mosaicStyle, onClick }: Exhibi
     }
   }, [mosaicStyle]);
 
+  // 像素材质引用
+  const pixelMatRef = useRef<typeof PixelationMaterial>(null);
+  useEffect(() => {
+    if (pixelMatRef.current) {
+      pixelMatRef.current.uniforms.uColor.value = new THREE.Color(color);
+      pixelMatRef.current.uniforms.uPixelSize.value = pixelSize;
+    }
+  }, [color, pixelSize]);
+
   return (
     <group ref={groupRef} position={position} onClick={onClick}>
-      {/* 底座（使用马赛克纹理） */}
+      {/* 底座（使用像素风格着色器） */}
       <mesh>
         <cylinderGeometry args={[1.2, 1.4, 0.3, 32]} />
-        <meshStandardMaterial
-          map={mosaicTexture}
-          emissive={color}
-          emissiveIntensity={0.3}
-          metalness={0.8}
-          roughness={0.2}
+        <pixelationMaterial
+          ref={pixelMatRef}
+          uColor={new THREE.Color(color)}
+          uPixelSize={pixelSize}
         />
       </mesh>
 
-      {/* 发光光环 */}
+      {/* 发光光环（也使用像素风格） */}
       <mesh ref={ringRef} position={[0, 0.2, 0]} rotation={[Math.PI / 2, 0, 0]}>
         <torusGeometry args={[1.3, 0.03, 16, 64]} />
-        <meshStandardMaterial color={color} emissive={color} emissiveIntensity={1} />
+        <pixelationMaterial
+          uColor={new THREE.Color(color)}
+          uPixelSize={pixelSize * 0.5} // 光环更精细
+        />
       </mesh>
 
-      {/* 非遗项目3D形象 */}
+      {/* 非遗项目3D形象（包裹在像素材质组中） */}
       <Float speed={2} rotationIntensity={0.2} floatIntensity={0.4}>
-        {FigureComponent}
+        <mesh>
+          <boxGeometry args={[0.5, 0.5, 0.5]} />
+          <pixelationMaterial
+            uColor={new THREE.Color(color)}
+            uPixelSize={pixelSize}
+          />
+        </mesh>
       </Float>
 
       {/* 闪烁粒子（增加数量和大小） */}
@@ -448,7 +501,7 @@ interface MuseumSceneProps {
   onSelectCraft: (craftId: string) => void;
 }
 
-export default function MuseumScene({ onSelectCraft }: MuseumSceneProps) {
+export default function MuseumScene({ onSelectCraft, pixelSize = 0.05 }: MuseumSceneProps & { pixelSize?: number }) {
   const crafts = [
     { id: 'craft_shadow_puppet', label: '皮影戏', emoji: '🎭', color: '#f59e0b', mosaicStyle: 'shadow_puppet' as const, position: [-4, 0, -3] as [number, number, number] },
     { id: 'craft_paper_cutting', label: '剪纸', emoji: '✂️', color: '#ef4444', mosaicStyle: 'paper_cutting' as const, position: [4, 0, -3] as [number, number, number] },
@@ -484,6 +537,7 @@ export default function MuseumScene({ onSelectCraft }: MuseumSceneProps) {
           emoji={craft.emoji}
           mosaicStyle={craft.mosaicStyle}
           onClick={() => onSelectCraft(craft.id)}
+          pixelSize={pixelSize}
         />
       ))}
 
