@@ -52,127 +52,195 @@ function StarField() {
 // ========== 非遗项目3D形象 ==========
 
 function ShadowPuppetFigure({ color = '#f59e0b', pixelSize = 0.05 }: { color?: string; pixelSize?: number }) {
-  // 皮影人物剪影（简单人形）
-  const shape = useMemo(() => {
-    const s = new THREE.Shape();
+  // 皮影人物（3D 像素块堆叠）
+  const blocks = useMemo(() => {
+    const result: { x: number; y: number; z: number; size: number }[] = [];
+    const blockSize = 0.08;
     // 头部
-    s.moveTo(0, 0.8);
-    s.absarc(0, 0.8, 0.2, 0, Math.PI * 2);
+    for (let i = -2; i <= 2; i++) {
+      for (let j = -2; j <= 2; j++) {
+        const dist = Math.sqrt(i * i + j * j);
+        if (dist <= 2.2) {
+          result.push({ x: i * blockSize, y: 0.7 + j * blockSize, z: 0, size: blockSize });
+        }
+      }
+    }
     // 身体
-    s.moveTo(-0.15, 0.6);
-    s.lineTo(-0.15, 0.1);
-    s.lineTo(-0.3, -0.2);
-    s.lineTo(-0.25, -0.25);
-    s.lineTo(-0.1, -0.1);
-    s.lineTo(-0.1, 0.1);
-    s.lineTo(0.1, 0.1);
-    s.lineTo(0.1, -0.1);
-    s.lineTo(0.25, -0.25);
-    s.lineTo(0.3, -0.2);
-    s.lineTo(0.15, 0.1);
-    s.lineTo(0.15, 0.6);
-    s.closePath();
-    return s;
+    for (let i = -1; i <= 1; i++) {
+      for (let j = 0; j <= 5; j++) {
+        result.push({ x: i * blockSize, y: 0.1 + j * blockSize, z: 0, size: blockSize });
+      }
+    }
+    // 左臂
+    for (let i = -3; i <= -1; i++) {
+      for (let j = 1; j <= 3; j++) {
+        result.push({ x: i * blockSize, y: 0.1 + j * blockSize, z: 0, size: blockSize });
+      }
+    }
+    // 右臂
+    for (let i = 1; i <= 3; i++) {
+      for (let j = 1; j <= 3; j++) {
+        result.push({ x: i * blockSize, y: 0.1 + j * blockSize, z: 0, size: blockSize });
+      }
+    }
+    // 左腿
+    for (let i = -1; i <= 0; i++) {
+      for (let j = -3; j <= -1; j++) {
+        result.push({ x: i * blockSize, y: j * blockSize, z: 0, size: blockSize });
+      }
+    }
+    // 右腿
+    for (let i = 0; i <= 1; i++) {
+      for (let j = -3; j <= -1; j++) {
+        result.push({ x: i * blockSize, y: j * blockSize, z: 0, size: blockSize });
+      }
+    }
+    return result;
   }, []);
 
   return (
-    <mesh position={[0, 1.2, 0]} rotation={[0, 0, 0]}>
-      <shapeGeometry args={[shape]} />
-      <pixelationMaterial
-        uColor={new THREE.Color(color)}
-        uPixelSize={pixelSize}
-        transparent
-        opacity={0.9}
-        side={THREE.DoubleSide}
-      />
-    </mesh>
+    <group position={[0, 1.2, 0]}>
+      {blocks.map((block, i) => (
+        <mesh key={i} position={[block.x, block.y, block.z]}>
+          <boxGeometry args={[block.size, block.size, block.size]} />
+          <pixelationMaterial
+            uColor={new THREE.Color(color)}
+            uPixelSize={pixelSize}
+            transparent
+            opacity={0.9}
+          />
+        </mesh>
+      ))}
+    </group>
   );
 }
 
 function PaperCuttingFigure({ color = '#ef4444', pixelSize = 0.05 }: { color?: string; pixelSize?: number }) {
-  // 剪纸团花（圆形对称图案）
-  const shape = useMemo(() => {
-    const s = new THREE.Shape();
-    const petals = 6;
-    const outerRadius = 0.4;
-    const innerRadius = 0.15;
-    for (let i = 0; i < petals; i++) {
-      const angle = (i / petals) * Math.PI * 2;
-      const nextAngle = ((i + 1) / petals) * Math.PI * 2;
-      const midAngle = (angle + nextAngle) / 2;
-      s.moveTo(0, 0);
-      s.lineTo(Math.cos(angle) * outerRadius, Math.sin(angle) * outerRadius);
-      s.quadraticCurveTo(
-        Math.cos(midAngle) * innerRadius,
-        Math.sin(midAngle) * innerRadius,
-        Math.cos(nextAngle) * outerRadius,
-        Math.sin(nextAngle) * outerRadius
-      );
-      s.closePath();
+  // 剪纸团花（3D 像素块堆叠）
+  const blocks = useMemo(() => {
+    const result: { x: number; y: number; z: number; size: number }[] = [];
+    const gridSize = 8;
+    const blockSize = 0.08;
+    const radius = 0.35;
+    for (let i = 0; i < gridSize; i++) {
+      for (let j = 0; j < gridSize; j++) {
+        const x = (i / gridSize - 0.5) * radius * 2;
+        const z = (j / gridSize - 0.5) * radius * 2;
+        const dist = Math.sqrt(x * x + z * z);
+        // 花瓣形状：只在特定角度范围内有块
+        const angle = Math.atan2(z, x);
+        const petalAngle = Math.floor(angle / (Math.PI / 3)) * (Math.PI / 3);
+        const petalDist = Math.abs(dist - 0.25) < 0.1 ? 1 : 0;
+        const centerDist = dist < 0.08 ? 1 : 0;
+        if (petalDist > 0 || centerDist > 0) {
+          const yOffset = Math.sin(dist * 10) * 0.02;
+          result.push({ x, y: yOffset, z, size: blockSize });
+        }
+      }
     }
-    return s;
+    return result;
   }, []);
 
   return (
-    <mesh position={[0, 1.2, 0]} rotation={[0, 0, 0]}>
-      <shapeGeometry args={[shape]} />
-      <pixelationMaterial
-        uColor={new THREE.Color(color)}
-        uPixelSize={pixelSize}
-        transparent
-        opacity={0.9}
-        side={THREE.DoubleSide}
-      />
-    </mesh>
+    <group position={[0, 1.2, 0]}>
+      {blocks.map((block, i) => (
+        <mesh key={i} position={[block.x, block.y, block.z]}>
+          <boxGeometry args={[block.size, block.size, block.size]} />
+          <pixelationMaterial
+            uColor={new THREE.Color(color)}
+            uPixelSize={pixelSize}
+            transparent
+            opacity={0.9}
+          />
+        </mesh>
+      ))}
+    </group>
   );
 }
 
 function EmbroideryFigure({ color = '#ec4899', pixelSize = 0.05 }: { color?: string; pixelSize?: number }) {
-  // 绣花绷子（环形 + 绣品平面）
+  // 绣花绷子（3D 像素块堆叠）
+  const blocks = useMemo(() => {
+    const result: { x: number; y: number; z: number; size: number }[] = [];
+    const blockSize = 0.06;
+    const outerRadius = 0.35;
+    const innerRadius = 0.25;
+    const segments = 24;
+    for (let i = 0; i < segments; i++) {
+      const angle = (i / segments) * Math.PI * 2;
+      const x = Math.cos(angle) * outerRadius;
+      const z = Math.sin(angle) * outerRadius;
+      result.push({ x, y: 0, z, size: blockSize });
+    }
+    // 内部绣品（随机像素块）
+    for (let i = 0; i < 40; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const radius = innerRadius * Math.sqrt(Math.random());
+      const x = Math.cos(angle) * radius;
+      const z = Math.sin(angle) * radius;
+      result.push({ x, y: 0, z, size: blockSize * 0.8 });
+    }
+    return result;
+  }, []);
+
   return (
     <group position={[0, 1.2, 0]}>
-      {/* 绣花绷子外环 */}
-      <mesh rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[0.35, 0.04, 16, 32]} />
-        <pixelationMaterial
-          uColor={new THREE.Color(color)}
-          uPixelSize={pixelSize}
-        />
-      </mesh>
-      {/* 绣品平面 */}
-      <mesh rotation={[Math.PI / 2, 0, 0]}>
-        <circleGeometry args={[0.3, 32]} />
-        <pixelationMaterial
-          uColor={new THREE.Color('#fdf2f8')}
-          uPixelSize={pixelSize}
-          transparent
-          opacity={0.8}
-        />
-      </mesh>
+      {blocks.map((block, i) => (
+        <mesh key={i} position={[block.x, block.y, block.z]}>
+          <boxGeometry args={[block.size, block.size, block.size]} />
+          <pixelationMaterial
+            uColor={new THREE.Color(i < 24 ? color : '#fdf2f8')}
+            uPixelSize={pixelSize}
+            transparent
+            opacity={0.8}
+          />
+        </mesh>
+      ))}
     </group>
   );
 }
 
 function ClayFigurineFigure({ color = '#8B4513', pixelSize = 0.05 }: { color?: string; pixelSize?: number }) {
-  // 泥人（头部 + 身体）
+  // 泥人（3D 像素块堆叠）
+  const blocks = useMemo(() => {
+    const result: { x: number; y: number; z: number; size: number }[] = [];
+    const blockSize = 0.07;
+    // 身体（圆柱形）
+    for (let i = -2; i <= 2; i++) {
+      for (let j = -2; j <= 2; j++) {
+        const dist = Math.sqrt(i * i + j * j);
+        if (dist <= 2.5) {
+          for (let k = 0; k <= 4; k++) {
+            result.push({ x: i * blockSize, y: -0.2 + k * blockSize, z: j * blockSize, size: blockSize });
+          }
+        }
+      }
+    }
+    // 头部（球形）
+    for (let i = -2; i <= 2; i++) {
+      for (let j = -2; j <= 2; j++) {
+        for (let k = -2; k <= 2; k++) {
+          const dist = Math.sqrt(i * i + j * j + k * k);
+          if (dist <= 2.2) {
+            result.push({ x: i * blockSize, y: 0.3 + k * blockSize, z: j * blockSize, size: blockSize });
+          }
+        }
+      }
+    }
+    return result;
+  }, []);
+
   return (
     <group position={[0, 1.2, 0]}>
-      {/* 身体 */}
-      <mesh position={[0, -0.1, 0]}>
-        <cylinderGeometry args={[0.2, 0.3, 0.4, 16]} />
-        <pixelationMaterial
-          uColor={new THREE.Color(color)}
-          uPixelSize={pixelSize}
-        />
-      </mesh>
-      {/* 头部 */}
-      <mesh position={[0, 0.2, 0]}>
-        <sphereGeometry args={[0.15, 16, 16]} />
-        <pixelationMaterial
-          uColor={new THREE.Color('#D2691E')}
-          uPixelSize={pixelSize}
-        />
-      </mesh>
+      {blocks.map((block, i) => (
+        <mesh key={i} position={[block.x, block.y, block.z]}>
+          <boxGeometry args={[block.size, block.size, block.size]} />
+          <pixelationMaterial
+            uColor={new THREE.Color(block.y > 0.2 ? '#D2691E' : color)}
+            uPixelSize={pixelSize}
+          />
+        </mesh>
+      ))}
     </group>
   );
 }
