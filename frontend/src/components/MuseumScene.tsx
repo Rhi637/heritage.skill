@@ -1,4 +1,4 @@
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, useEffect } from 'react';
 import { Canvas, useFrame, shaderMaterial } from '@react-three/fiber';
 import { Stars, Float, Html, Sparkles, MeshReflectorMaterial, Environment, ContactShadows, SpotLight } from '@react-three/drei';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
@@ -41,90 +41,7 @@ const PixelationMaterial = shaderMaterial(
 
 extend({ PixelationMaterial });
 
-// ========== 马赛克纹理生成 ==========
-
-function createMosaicTexture(
-  style: 'paper_cutting' | 'shadow_puppet' | 'embroidery' | 'clay_figurine',
-  color: string
-): THREE.CanvasTexture {
-  const canvas = document.createElement('canvas');
-  canvas.width = 256;
-  canvas.height = 256;
-  const ctx = canvas.getContext('2d')!;
-
-  // 背景色
-  ctx.fillStyle = '#000000';
-  ctx.fillRect(0, 0, 256, 256);
-
-  // 根据样式生成不同的马赛克图案
-  const cellSize = 16; // 每个马赛克块的大小
-  const cols = canvas.width / cellSize;
-  const rows = canvas.height / cellSize;
-
-  // 解析颜色为 RGB
-  const tempDiv = document.createElement('div');
-  tempDiv.style.color = color;
-  document.body.appendChild(tempDiv);
-  const computedColor = getComputedStyle(tempDiv).color;
-  document.body.removeChild(tempDiv);
-  const rgbMatch = computedColor.match(/\d+/g);
-  const baseR = rgbMatch ? parseInt(rgbMatch[0]) : 100;
-  const baseG = rgbMatch ? parseInt(rgbMatch[1]) : 100;
-  const baseB = rgbMatch ? parseInt(rgbMatch[2]) : 100;
-
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      // 随机偏移颜色
-      const offsetR = (Math.random() - 0.5) * 60;
-      const offsetG = (Math.random() - 0.5) * 60;
-      const offsetB = (Math.random() - 0.5) * 60;
-      const rr = Math.min(255, Math.max(0, baseR + offsetR));
-      const gg = Math.min(255, Math.max(0, baseG + offsetG));
-      const bb = Math.min(255, Math.max(0, baseB + offsetB));
-
-      // 根据样式决定是否绘制该块
-      let draw = true;
-      if (style === 'paper_cutting') {
-        // 剪纸风格：随机留白，形成镂空效果
-        draw = Math.random() > 0.3;
-      } else if (style === 'shadow_puppet') {
-        // 皮影风格：半透明效果，随机透明度
-        draw = Math.random() > 0.2;
-      } else if (style === 'embroidery') {
-        // 苏绣风格：细密纹理，几乎全部填充
-        draw = Math.random() > 0.1;
-      } else if (style === 'clay_figurine') {
-        // 泥塑风格：粗糙质感，随机缺失
-        draw = Math.random() > 0.25;
-      }
-
-      if (draw) {
-        ctx.fillStyle = `rgb(${rr},${gg},${bb})`;
-        ctx.fillRect(c * cellSize, r * cellSize, cellSize, cellSize);
-      }
-    }
-  }
-
-  // 添加一些随机线条模拟剪纸/皮影的轮廓
-  ctx.strokeStyle = `rgba(255,255,255,0.2)`;
-  ctx.lineWidth = 1;
-  for (let i = 0; i < 20; i++) {
-    const x1 = Math.random() * 256;
-    const y1 = Math.random() * 256;
-    const x2 = Math.random() * 256;
-    const y2 = Math.random() * 256;
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.stroke();
-  }
-
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.wrapS = THREE.RepeatWrapping;
-  texture.wrapT = THREE.RepeatWrapping;
-  texture.repeat.set(2, 2); // 重复纹理以覆盖更大面积
-  return texture;
-}
+// ========== 马赛克纹理生成（已弃用，改用像素着色器） ==========
 
 // ========== 星空背景 ==========
 
@@ -134,7 +51,7 @@ function StarField() {
 
 // ========== 非遗项目3D形象 ==========
 
-function ShadowPuppetFigure() {
+function ShadowPuppetFigure({ color = '#f59e0b', pixelSize = 0.05 }: { color?: string; pixelSize?: number }) {
   // 皮影人物剪影（简单人形）
   const shape = useMemo(() => {
     const s = new THREE.Shape();
@@ -161,10 +78,9 @@ function ShadowPuppetFigure() {
   return (
     <mesh position={[0, 1.2, 0]} rotation={[0, 0, 0]}>
       <shapeGeometry args={[shape]} />
-      <meshStandardMaterial
-        color="#f59e0b"
-        emissive="#f59e0b"
-        emissiveIntensity={0.5}
+      <pixelationMaterial
+        uColor={new THREE.Color(color)}
+        uPixelSize={pixelSize}
         transparent
         opacity={0.9}
         side={THREE.DoubleSide}
@@ -173,7 +89,7 @@ function ShadowPuppetFigure() {
   );
 }
 
-function PaperCuttingFigure() {
+function PaperCuttingFigure({ color = '#ef4444', pixelSize = 0.05 }: { color?: string; pixelSize?: number }) {
   // 剪纸团花（圆形对称图案）
   const shape = useMemo(() => {
     const s = new THREE.Shape();
@@ -200,10 +116,9 @@ function PaperCuttingFigure() {
   return (
     <mesh position={[0, 1.2, 0]} rotation={[0, 0, 0]}>
       <shapeGeometry args={[shape]} />
-      <meshStandardMaterial
-        color="#ef4444"
-        emissive="#ef4444"
-        emissiveIntensity={0.4}
+      <pixelationMaterial
+        uColor={new THREE.Color(color)}
+        uPixelSize={pixelSize}
         transparent
         opacity={0.9}
         side={THREE.DoubleSide}
@@ -212,22 +127,24 @@ function PaperCuttingFigure() {
   );
 }
 
-function EmbroideryFigure() {
+function EmbroideryFigure({ color = '#ec4899', pixelSize = 0.05 }: { color?: string; pixelSize?: number }) {
   // 绣花绷子（环形 + 绣品平面）
   return (
     <group position={[0, 1.2, 0]}>
       {/* 绣花绷子外环 */}
       <mesh rotation={[Math.PI / 2, 0, 0]}>
         <torusGeometry args={[0.35, 0.04, 16, 32]} />
-        <meshStandardMaterial color="#ec4899" emissive="#ec4899" emissiveIntensity={0.3} />
+        <pixelationMaterial
+          uColor={new THREE.Color(color)}
+          uPixelSize={pixelSize}
+        />
       </mesh>
       {/* 绣品平面 */}
       <mesh rotation={[Math.PI / 2, 0, 0]}>
         <circleGeometry args={[0.3, 32]} />
-        <meshStandardMaterial
-          color="#fdf2f8"
-          emissive="#ec4899"
-          emissiveIntensity={0.1}
+        <pixelationMaterial
+          uColor={new THREE.Color('#fdf2f8')}
+          uPixelSize={pixelSize}
           transparent
           opacity={0.8}
         />
@@ -236,19 +153,25 @@ function EmbroideryFigure() {
   );
 }
 
-function ClayFigurineFigure() {
+function ClayFigurineFigure({ color = '#8B4513', pixelSize = 0.05 }: { color?: string; pixelSize?: number }) {
   // 泥人（头部 + 身体）
   return (
     <group position={[0, 1.2, 0]}>
       {/* 身体 */}
       <mesh position={[0, -0.1, 0]}>
         <cylinderGeometry args={[0.2, 0.3, 0.4, 16]} />
-        <meshStandardMaterial color="#8B4513" emissive="#8B4513" emissiveIntensity={0.2} roughness={0.8} />
+        <pixelationMaterial
+          uColor={new THREE.Color(color)}
+          uPixelSize={pixelSize}
+        />
       </mesh>
       {/* 头部 */}
       <mesh position={[0, 0.2, 0]}>
         <sphereGeometry args={[0.15, 16, 16]} />
-        <meshStandardMaterial color="#D2691E" emissive="#D2691E" emissiveIntensity={0.2} roughness={0.7} />
+        <pixelationMaterial
+          uColor={new THREE.Color('#D2691E')}
+          uPixelSize={pixelSize}
+        />
       </mesh>
     </group>
   );
@@ -269,8 +192,6 @@ function Exhibit({ position, color, label, emoji, mosaicStyle, onClick, pixelSiz
   const ringRef = useRef<THREE.Mesh>(null);
   const groupRef = useRef<THREE.Group>(null);
 
-  // 生成马赛克纹理（缓存）
-  const mosaicTexture = useMemo(() => createMosaicTexture(mosaicStyle, color), [mosaicStyle, color]);
 
   useFrame((state) => {
     const t = state.clock.elapsedTime;
@@ -289,17 +210,17 @@ function Exhibit({ position, color, label, emoji, mosaicStyle, onClick, pixelSiz
   const FigureComponent = useMemo(() => {
     switch (mosaicStyle) {
       case 'shadow_puppet':
-        return <ShadowPuppetFigure />;
+        return <ShadowPuppetFigure color={color} pixelSize={pixelSize} />;
       case 'paper_cutting':
-        return <PaperCuttingFigure />;
+        return <PaperCuttingFigure color={color} pixelSize={pixelSize} />;
       case 'embroidery':
-        return <EmbroideryFigure />;
+        return <EmbroideryFigure color={color} pixelSize={pixelSize} />;
       case 'clay_figurine':
-        return <ClayFigurineFigure />;
+        return <ClayFigurineFigure color={color} pixelSize={pixelSize} />;
       default:
         return null;
     }
-  }, [mosaicStyle]);
+  }, [mosaicStyle, color, pixelSize]);
 
   // 像素材质引用
   const pixelMatRef = useRef<typeof PixelationMaterial>(null);
@@ -331,15 +252,9 @@ function Exhibit({ position, color, label, emoji, mosaicStyle, onClick, pixelSiz
         />
       </mesh>
 
-      {/* 非遗项目3D形象（包裹在像素材质组中） */}
+      {/* 非遗项目3D形象 */}
       <Float speed={2} rotationIntensity={0.2} floatIntensity={0.4}>
-        <mesh>
-          <boxGeometry args={[0.5, 0.5, 0.5]} />
-          <pixelationMaterial
-            uColor={new THREE.Color(color)}
-            uPixelSize={pixelSize}
-          />
-        </mesh>
+        {FigureComponent}
       </Float>
 
       {/* 闪烁粒子（增加数量和大小） */}
@@ -382,22 +297,13 @@ function Exhibit({ position, color, label, emoji, mosaicStyle, onClick, pixelSiz
 
 // ========== 博物馆地面（带反射） ==========
 
-function MuseumFloor() {
+function MuseumFloor({ pixelSize = 0.05 }: { pixelSize?: number }) {
   return (
     <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.2, 0]}>
       <planeGeometry args={[60, 60]} />
-      <MeshReflectorMaterial
-        mirror={0 as number}
-        blur={[300, 100]}
-        resolution={1024}
-        mixBlur={1}
-        mixStrength={0.3}
-        roughness={0.2}
-        depthScale={1}
-        minDepthThreshold={0.4}
-        maxDepthThreshold={1.4}
-        color="#0a0a1a"
-        metalness={0.9}
+      <pixelationMaterial
+        uColor={new THREE.Color('#0a0a1a')}
+        uPixelSize={pixelSize}
       />
     </mesh>
   );
@@ -405,7 +311,7 @@ function MuseumFloor() {
 
 // ========== 中央全息投影 ==========
 
-function CenterHologram() {
+function CenterHologram({ pixelSize = 0.05 }: { pixelSize?: number }) {
   const ringRef1 = useRef<THREE.Mesh>(null);
   const ringRef2 = useRef<THREE.Mesh>(null);
   const ringRef3 = useRef<THREE.Mesh>(null);
@@ -435,31 +341,60 @@ function CenterHologram() {
       <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
         <mesh ref={innerSphereRef}>
           <icosahedronGeometry args={[0.5, 1]} />
-          <meshStandardMaterial color="#6366f1" emissive="#6366f1" emissiveIntensity={0.8} wireframe />
+          <pixelationMaterial
+            uColor={new THREE.Color('#6366f1')}
+            uPixelSize={pixelSize}
+            wireframe
+          />
         </mesh>
         {/* 内部发光小球 */}
         <mesh>
           <sphereGeometry args={[0.2, 16, 16]} />
-          <meshStandardMaterial color="#a5b4fc" emissive="#a5b4fc" emissiveIntensity={1} transparent opacity={0.6} />
+          <pixelationMaterial
+            uColor={new THREE.Color('#a5b4fc')}
+            uPixelSize={pixelSize}
+            transparent
+            opacity={0.6}
+          />
         </mesh>
       </Float>
 
       {/* 旋转光环（增加一个额外的环） */}
       <mesh ref={ringRef1}>
         <torusGeometry args={[1.2, 0.02, 16, 64]} />
-        <meshStandardMaterial color="#8b5cf6" emissive="#8b5cf6" emissiveIntensity={1} transparent opacity={0.6} />
+        <pixelationMaterial
+          uColor={new THREE.Color('#8b5cf6')}
+          uPixelSize={pixelSize}
+          transparent
+          opacity={0.6}
+        />
       </mesh>
       <mesh ref={ringRef2}>
         <torusGeometry args={[1.5, 0.02, 16, 64]} />
-        <meshStandardMaterial color="#ec4899" emissive="#ec4899" emissiveIntensity={1} transparent opacity={0.4} />
+        <pixelationMaterial
+          uColor={new THREE.Color('#ec4899')}
+          uPixelSize={pixelSize}
+          transparent
+          opacity={0.4}
+        />
       </mesh>
       <mesh ref={ringRef3}>
         <torusGeometry args={[1.8, 0.02, 16, 64]} />
-        <meshStandardMaterial color="#14b8a6" emissive="#14b8a6" emissiveIntensity={1} transparent opacity={0.3} />
+        <pixelationMaterial
+          uColor={new THREE.Color('#14b8a6')}
+          uPixelSize={pixelSize}
+          transparent
+          opacity={0.3}
+        />
       </mesh>
       <mesh ref={ringRef4}>
         <torusGeometry args={[2.1, 0.015, 16, 64]} />
-        <meshStandardMaterial color="#f59e0b" emissive="#f59e0b" emissiveIntensity={0.8} transparent opacity={0.2} />
+        <pixelationMaterial
+          uColor={new THREE.Color('#f59e0b')}
+          uPixelSize={pixelSize}
+          transparent
+          opacity={0.2}
+        />
       </mesh>
 
       {/* 闪烁粒子环 */}
@@ -522,10 +457,10 @@ export default function MuseumScene({ onSelectCraft, pixelSize = 0.05 }: MuseumS
       <StarField />
 
       {/* 地面（带反射） */}
-      <MuseumFloor />
+      <MuseumFloor pixelSize={pixelSize} />
 
       {/* 中央全息投影 */}
-      <CenterHologram />
+      <CenterHologram pixelSize={pixelSize} />
 
       {/* 展台（含 3D 空间中的中文标签） */}
       {crafts.map((craft) => (
