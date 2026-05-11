@@ -51,24 +51,27 @@ export default function WelcomePage() {
         </Canvas>
       </div>
 
-      {/* HTML 文字覆盖层（支持中文） */}
+      {/* HTML 文字覆盖层（像素风格） */}
       <div style={styles.textOverlay}>
         <h1 style={{
           ...styles.title,
           fontSize: isMobile ? 28 : 42,
           letterSpacing: isMobile ? 2 : 4,
+          imageRendering: 'pixelated',
+          textShadow: '2px 2px 0 rgba(99,102,241,0.5), -2px -2px 0 rgba(99,102,241,0.5)',
         }}>
           非遗传承人蒸馏数字智能体
         </h1>
         <p style={{
           ...styles.subtitle,
           fontSize: isMobile ? 14 : 18,
+          imageRendering: 'pixelated',
         }}>
           穿越时空，与千年匠人对话
         </p>
       </div>
 
-      {/* 按钮 */}
+      {/* 按钮（像素风格） */}
       <div style={{
         ...styles.buttonOverlay,
         bottom: isMobile ? 60 : 80,
@@ -78,14 +81,18 @@ export default function WelcomePage() {
             ...styles.button,
             padding: isMobile ? '12px 28px' : '16px 40px',
             fontSize: isMobile ? 16 : 18,
+            imageRendering: 'pixelated',
+            borderImage: 'repeating-linear-gradient(45deg, rgba(99,102,241,0.5) 0px, rgba(99,102,241,0.5) 2px, transparent 2px, transparent 4px) 1',
+            boxShadow: '4px 4px 0 rgba(99,102,241,0.3), -2px -2px 0 rgba(99,102,241,0.1)',
           }}
           onClick={handleStart}
         >
           <span style={{
             ...styles.buttonIcon,
             fontSize: isMobile ? 20 : 24,
+            imageRendering: 'pixelated',
           }}>🚀</span>
-          <span style={styles.buttonText}>开始探索</span>
+          <span style={{ ...styles.buttonText, imageRendering: 'pixelated' }}>开始探索</span>
         </button>
       </div>
     </div>
