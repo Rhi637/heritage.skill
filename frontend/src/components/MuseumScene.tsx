@@ -53,8 +53,9 @@ function StarField() {
 // ========== 非遗项目3D形象 ==========
 
 function ShadowPuppetFigure({ color = '#f59e0b', pixelSize = 0.05 }: { color?: string; pixelSize?: number }) {
-  // 为每个像素块创建材质
-  const blockMat = useMemo(() => {
+  const bs = 0.06;
+
+  const mainMat = useMemo(() => {
     const mat = new PixelationMaterial();
     mat.uniforms.uColor.value = new THREE.Color(color);
     mat.uniforms.uPixelSize.value = pixelSize;
@@ -63,58 +64,170 @@ function ShadowPuppetFigure({ color = '#f59e0b', pixelSize = 0.05 }: { color?: s
     return mat;
   }, [color, pixelSize]);
 
-  // 皮影人物（3D 像素块堆叠）
+  const accentMat = useMemo(() => {
+    const mat = new PixelationMaterial();
+    mat.uniforms.uColor.value = new THREE.Color('#d97706');
+    mat.uniforms.uPixelSize.value = pixelSize;
+    mat.transparent = true;
+    mat.opacity = 0.9;
+    return mat;
+  }, [pixelSize]);
+
+  const detailMat = useMemo(() => {
+    const mat = new PixelationMaterial();
+    mat.uniforms.uColor.value = new THREE.Color('#fbbf24');
+    mat.uniforms.uPixelSize.value = pixelSize;
+    mat.transparent = true;
+    mat.opacity = 0.9;
+    return mat;
+  }, [pixelSize]);
+
   const blocks = useMemo(() => {
-    const result: { x: number; y: number; z: number; size: number }[] = [];
-    const blockSize = 0.08;
-    // 头部
-    for (let i = -2; i <= 2; i++) {
-      for (let j = -2; j <= 2; j++) {
-        const dist = Math.sqrt(i * i + j * j);
-        if (dist <= 2.2) {
-          result.push({ x: i * blockSize, y: 0.7 + j * blockSize, z: 0, size: blockSize });
+    const b: { x: number; y: number; z: number; size: number; mat: number }[] = [];
+    const pushBox = (ix: number, iy: number, iz: number, mat: number) => {
+      b.push({ x: ix * bs, y: iy * bs, z: iz * bs, size: bs, mat });
+    };
+    // 0=main, 1=accent, 2=detail
+
+    // 裙摆 (wide trapezoid at bottom, y:-5 to -1)
+    for (let iy = -5; iy <= -1; iy++) {
+      const halfW = 4 + Math.abs(iy + 2); // wider at bottom
+      for (let ix = -halfW; ix <= halfW; ix++) {
+        for (let iz = -1; iz <= 1; iz++) {
+          if (Math.abs(ix) + Math.abs(iz) <= halfW + 1) pushBox(ix, iy, iz, 0);
         }
       }
     }
-    // 身体
-    for (let i = -1; i <= 1; i++) {
-      for (let j = 0; j <= 5; j++) {
-        result.push({ x: i * blockSize, y: 0.1 + j * blockSize, z: 0, size: blockSize });
+
+    // 裙摆底部装饰边
+    for (let ix = -6; ix <= 6; ix++) {
+      for (let iz = -1; iz <= 1; iz++) {
+        if (Math.abs(ix) + Math.abs(iz) <= 7) pushBox(ix, -6, iz, 1);
       }
     }
-    // 左臂
-    for (let i = -3; i <= -1; i++) {
-      for (let j = 1; j <= 3; j++) {
-        result.push({ x: i * blockSize, y: 0.1 + j * blockSize, z: 0, size: blockSize });
+
+    // 身体/袍子 (y:0 to 4)
+    for (let iy = 0; iy <= 4; iy++) {
+      for (let ix = -3; ix <= 3; ix++) {
+        for (let iz = -1; iz <= 1; iz++) {
+          if (Math.abs(ix) + Math.abs(iz) <= 4) pushBox(ix, iy, iz, 0);
+        }
       }
     }
-    // 右臂
-    for (let i = 1; i <= 3; i++) {
-      for (let j = 1; j <= 3; j++) {
-        result.push({ x: i * blockSize, y: 0.1 + j * blockSize, z: 0, size: blockSize });
+
+    // 腰带 (accent color)
+    for (let ix = -3; ix <= 3; ix++) {
+      for (let iz = -1; iz <= 1; iz++) {
+        if (Math.abs(ix) + Math.abs(iz) <= 4) pushBox(ix, 1, iz, 1);
       }
     }
-    // 左腿
-    for (let i = -1; i <= 0; i++) {
-      for (let j = -3; j <= -1; j++) {
-        result.push({ x: i * blockSize, y: j * blockSize, z: 0, size: blockSize });
+
+    // 左袖 (wide, extending left)
+    for (let ix = -7; ix <= -4; ix++) {
+      for (let iy = 1; iy <= 4; iy++) {
+        for (let iz = -1; iz <= 1; iz++) {
+          pushBox(ix, iy, iz, 0);
+        }
       }
     }
-    // 右腿
-    for (let i = 0; i <= 1; i++) {
-      for (let j = -3; j <= -1; j++) {
-        result.push({ x: i * blockSize, y: j * blockSize, z: 0, size: blockSize });
+    // 左袖口
+    for (let ix = -8; ix <= -8; ix++) {
+      for (let iy = 1; iy <= 4; iy++) {
+        for (let iz = -1; iz <= 1; iz++) {
+          pushBox(ix, iy, iz, 1);
+        }
       }
     }
-    return result;
+
+    // 右袖 (wide, extending right)
+    for (let ix = 4; ix <= 7; ix++) {
+      for (let iy = 1; iy <= 4; iy++) {
+        for (let iz = -1; iz <= 1; iz++) {
+          pushBox(ix, iy, iz, 0);
+        }
+      }
+    }
+    // 右袖口
+    for (let ix = 8; ix <= 8; ix++) {
+      for (let iy = 1; iy <= 4; iy++) {
+        for (let iz = -1; iz <= 1; iz++) {
+          pushBox(ix, iy, iz, 1);
+        }
+      }
+    }
+
+    // 脖子 (y:5)
+    for (let ix = -1; ix <= 1; ix++) {
+      for (let iz = -1; iz <= 1; iz++) {
+        pushBox(ix, 5, iz, 0);
+      }
+    }
+
+    // 头部 (sphere, centered at y≈7.5, radius≈2.5 grid units)
+    for (let ix = -3; ix <= 3; ix++) {
+      for (let iy = 5; iy <= 10; iy++) {
+        for (let iz = -2; iz <= 2; iz++) {
+          const dist = Math.sqrt(ix * ix + (iy - 7.5) * (iy - 7.5) + iz * iz * 1.5);
+          if (dist <= 2.8) pushBox(ix, iy, iz, 0);
+        }
+      }
+    }
+
+    // 眼睛 (detail)
+    pushBox(-1, 8, 2, 2);
+    pushBox(1, 8, 2, 2);
+
+    // 盔头底座 (y:10 to 12)
+    for (let iy = 10; iy <= 12; iy++) {
+      const halfW = iy === 12 ? 3 : 4;
+      for (let ix = -halfW; ix <= halfW; ix++) {
+        for (let iz = -1; iz <= 1; iz++) {
+          pushBox(ix, iy, iz, 1);
+        }
+      }
+    }
+
+    // 盔头顶部装饰 (y:12 to 14)
+    for (let ix = -2; ix <= 2; ix++) {
+      for (let iy = 12; iy <= 14; iy++) {
+        for (let iz = -1; iz <= 1; iz++) {
+          if (Math.abs(ix) + Math.abs(iz) <= 3) pushBox(ix, iy, iz, 0);
+        }
+      }
+    }
+
+    // 盔头绒球 (top)
+    for (let ix = -1; ix <= 1; ix++) {
+      for (let iy = 14; iy <= 15; iy++) {
+        for (let iz = -1; iz <= 1; iz++) {
+          pushBox(ix, iy, iz, 2);
+        }
+      }
+    }
+
+    // 雉鸡翎 - 左 (tall thin spikes)
+    for (let iy = 12; iy <= 19; iy++) {
+      const offset = Math.floor((iy - 12) / 2);
+      pushBox(-3 - offset, iy, 0, 2);
+    }
+
+    // 雉鸡翎 - 右
+    for (let iy = 12; iy <= 19; iy++) {
+      const offset = Math.floor((iy - 12) / 2);
+      pushBox(3 + offset, iy, 0, 2);
+    }
+
+    return b;
   }, []);
+
+  const mats = [mainMat, accentMat, detailMat];
 
   return (
     <group position={[0, 1.2, 0]}>
       {blocks.map((block, i) => (
         <mesh key={i} position={[block.x, block.y, block.z]}>
           <boxGeometry args={[block.size, block.size, block.size]} />
-          <primitive object={blockMat} attach="material" />
+          <primitive object={mats[block.mat]} attach="material" />
         </mesh>
       ))}
     </group>
@@ -122,7 +235,9 @@ function ShadowPuppetFigure({ color = '#f59e0b', pixelSize = 0.05 }: { color?: s
 }
 
 function PaperCuttingFigure({ color = '#ef4444', pixelSize = 0.05 }: { color?: string; pixelSize?: number }) {
-  const blockMat = useMemo(() => {
+  const bs = 0.055;
+
+  const mainMat = useMemo(() => {
     const mat = new PixelationMaterial();
     mat.uniforms.uColor.value = new THREE.Color(color);
     mat.uniforms.uPixelSize.value = pixelSize;
@@ -131,37 +246,145 @@ function PaperCuttingFigure({ color = '#ef4444', pixelSize = 0.05 }: { color?: s
     return mat;
   }, [color, pixelSize]);
 
-  // 剪纸团花（3D 像素块堆叠）
+  const accentMat = useMemo(() => {
+    const mat = new PixelationMaterial();
+    mat.uniforms.uColor.value = new THREE.Color('#dc2626');
+    mat.uniforms.uPixelSize.value = pixelSize;
+    mat.transparent = true;
+    mat.opacity = 0.9;
+    return mat;
+  }, [pixelSize]);
+
+  const eyeMat = useMemo(() => {
+    const mat = new PixelationMaterial();
+    mat.uniforms.uColor.value = new THREE.Color('#000000');
+    mat.uniforms.uPixelSize.value = pixelSize;
+    return mat;
+  }, [pixelSize]);
+
   const blocks = useMemo(() => {
-    const result: { x: number; y: number; z: number; size: number }[] = [];
-    const gridSize = 8;
-    const blockSize = 0.08;
-    const radius = 0.35;
-    for (let i = 0; i < gridSize; i++) {
-      for (let j = 0; j < gridSize; j++) {
-        const x = (i / gridSize - 0.5) * radius * 2;
-        const z = (j / gridSize - 0.5) * radius * 2;
-        const dist = Math.sqrt(x * x + z * z);
-        // 花瓣形状：只在特定角度范围内有块
-        const angle = Math.atan2(z, x);
-        const petalAngle = Math.floor(angle / (Math.PI / 3)) * (Math.PI / 3);
-        const petalDist = Math.abs(dist - 0.25) < 0.1 ? 1 : 0;
-        const centerDist = dist < 0.08 ? 1 : 0;
-        if (petalDist > 0 || centerDist > 0) {
-          const yOffset = Math.sin(dist * 10) * 0.02;
-          result.push({ x, y: yOffset, z, size: blockSize });
+    const b: { x: number; y: number; z: number; size: number; mat: number }[] = [];
+    const pushBox = (ix: number, iy: number, iz: number, mat: number) => {
+      b.push({ x: ix * bs, y: iy * bs, z: iz * bs, size: bs, mat });
+    };
+
+    // 鸡身 (oval body, facing left)
+    for (let ix = -3; ix <= 3; ix++) {
+      for (let iy = -2; iy <= 4; iy++) {
+        for (let iz = -1; iz <= 1; iz++) {
+          const dx = ix / 3.5;
+          const dy = (iy - 1) / 3.0;
+          if (dx * dx + dy * dy <= 1.0) pushBox(ix, iy, iz, 0);
         }
       }
     }
-    return result;
+
+    // 鸡胸 (rounder front, accent)
+    for (let ix = -4; ix <= -3; ix++) {
+      for (let iy = -1; iy <= 2; iy++) {
+        for (let iz = -1; iz <= 1; iz++) {
+          pushBox(ix, iy, iz, 1);
+        }
+      }
+    }
+
+    // 鸡头 (smaller sphere, left side of body)
+    for (let ix = -6; ix <= -3; ix++) {
+      for (let iy = 2; iy <= 6; iy++) {
+        for (let iz = -1; iz <= 1; iz++) {
+          const dx = (ix + 4.5) / 2.2;
+          const dy = (iy - 4) / 2.2;
+          if (dx * dx + dy * dy <= 1.0) pushBox(ix, iy, iz, 0);
+        }
+      }
+    }
+
+    // 鸡冠 (comb on top of head, jagged)
+    for (let iy = 6; iy <= 9; iy++) {
+      const halfW = iy >= 8 ? 1 : iy >= 7 ? 2 : 3;
+      for (let ix = -6 + (9 - iy); ix <= -3 + (iy - 6); ix++) {
+        for (let iz = -1; iz <= 1; iz++) {
+          if (Math.abs(ix + 4.5) <= halfW) pushBox(ix, iy, iz, 1);
+        }
+      }
+    }
+    // 冠尖
+    pushBox(-5, 10, 0, 1);
+    pushBox(-4, 10, 0, 1);
+    pushBox(-5, 11, 0, 1);
+
+    // 鸡喙 (beak, pointing left)
+    for (let ix = -8; ix <= -6; ix++) {
+      for (let iy = 3; iy <= 4; iy++) {
+        pushBox(ix, iy, 0, 1);
+      }
+    }
+    pushBox(-9, 3, 0, 1);
+    pushBox(-9, 4, 0, 1);
+
+    // 眼睛
+    pushBox(-5, 4, 2, 2);
+
+    // 鸡嗉 (wattle under beak)
+    for (let iy = 2; iy <= 3; iy++) {
+      pushBox(-7, iy, 1, 1);
+    }
+
+    // 尾羽 (sweeping back and up, to the right)
+    for (let iy = -1; iy <= 10; iy++) {
+      const offset = Math.floor((iy + 1) / 2);
+      for (let iz = -1; iz <= 1; iz++) {
+        for (let ix = 3 + offset; ix <= 4 + offset; ix++) {
+          pushBox(ix, iy, iz, 0);
+        }
+      }
+    }
+    // 尾羽尖端 (flare out)
+    for (let iy = 8; iy <= 12; iy++) {
+      const offset = Math.floor((iy - 6) / 2);
+      for (let iz = -1; iz <= 1; iz++) {
+        for (let ix = 3 + offset; ix <= 5 + offset; ix++) {
+          pushBox(ix, iy, iz, 1);
+        }
+      }
+    }
+    // 尾部羽毛装饰块
+    for (let iy = 5; iy <= 8; iy++) {
+      pushBox(5, iy, 1, 1);
+      pushBox(5, iy, -1, 1);
+    }
+
+    // 鸡腿 (thin legs)
+    for (let iy = -4; iy <= -3; iy++) {
+      pushBox(-1, iy, 2, 1);
+      pushBox(1, iy, 2, 1);
+    }
+    // 鸡脚 (claws)
+    for (let ix = -2; ix <= 0; ix++) {
+      pushBox(ix, -5, 2, 1);
+    }
+    for (let ix = 0; ix <= 2; ix++) {
+      pushBox(ix, -5, 2, 1);
+    }
+
+    // 翅膀 (on side of body)
+    for (let ix = -2; ix <= 2; ix++) {
+      for (let iy = 0; iy <= 3; iy++) {
+        pushBox(ix, iy, 2, 0);
+      }
+    }
+
+    return b;
   }, []);
+
+  const mats = [mainMat, accentMat, eyeMat];
 
   return (
     <group position={[0, 1.2, 0]}>
       {blocks.map((block, i) => (
         <mesh key={i} position={[block.x, block.y, block.z]}>
           <boxGeometry args={[block.size, block.size, block.size]} />
-          <primitive object={blockMat} attach="material" />
+          <primitive object={mats[block.mat]} attach="material" />
         </mesh>
       ))}
     </group>
@@ -169,110 +392,386 @@ function PaperCuttingFigure({ color = '#ef4444', pixelSize = 0.05 }: { color?: s
 }
 
 function EmbroideryFigure({ color = '#ec4899', pixelSize = 0.05 }: { color?: string; pixelSize?: number }) {
-  const outerMat = useMemo(() => {
-    const mat = new PixelationMaterial();
-    mat.uniforms.uColor.value = new THREE.Color(color);
-    mat.uniforms.uPixelSize.value = pixelSize;
-    mat.transparent = true;
-    mat.opacity = 0.8;
-    return mat;
-  }, [color, pixelSize]);
+  const bs = 0.05;
 
-  const innerMat = useMemo(() => {
+  const frameMat = useMemo(() => {
     const mat = new PixelationMaterial();
-    mat.uniforms.uColor.value = new THREE.Color('#fdf2f8');
+    mat.uniforms.uColor.value = new THREE.Color('#8B4513');
     mat.uniforms.uPixelSize.value = pixelSize;
-    mat.transparent = true;
-    mat.opacity = 0.8;
     return mat;
   }, [pixelSize]);
 
-  // 绣花绷子（3D 像素块堆叠）
+  const fabricMat = useMemo(() => {
+    const mat = new PixelationMaterial();
+    mat.uniforms.uColor.value = new THREE.Color('#fdf2f8');
+    mat.uniforms.uPixelSize.value = pixelSize;
+    return mat;
+  }, [pixelSize]);
+
+  const flowerMat = useMemo(() => {
+    const mat = new PixelationMaterial();
+    mat.uniforms.uColor.value = new THREE.Color(color);
+    mat.uniforms.uPixelSize.value = pixelSize;
+    return mat;
+  }, [color, pixelSize]);
+
+  const leafMat = useMemo(() => {
+    const mat = new PixelationMaterial();
+    mat.uniforms.uColor.value = new THREE.Color('#22c55e');
+    mat.uniforms.uPixelSize.value = pixelSize;
+    return mat;
+  }, [pixelSize]);
+
+  const needleMat = useMemo(() => {
+    const mat = new PixelationMaterial();
+    mat.uniforms.uColor.value = new THREE.Color('#c0c0c0');
+    mat.uniforms.uPixelSize.value = pixelSize;
+    return mat;
+  }, [pixelSize]);
+
   const blocks = useMemo(() => {
-    const result: { x: number; y: number; z: number; size: number }[] = [];
-    const blockSize = 0.06;
-    const outerRadius = 0.35;
-    const innerRadius = 0.25;
-    const segments = 24;
-    for (let i = 0; i < segments; i++) {
-      const angle = (i / segments) * Math.PI * 2;
-      const x = Math.cos(angle) * outerRadius;
-      const z = Math.sin(angle) * outerRadius;
-      result.push({ x, y: 0, z, size: blockSize });
+    const b: { x: number; y: number; z: number; size: number; mat: number }[] = [];
+    const pushBox = (ix: number, iy: number, iz: number, mat: number) => {
+      b.push({ x: ix * bs, y: iy * bs, z: iz * bs, size: bs, mat });
+    };
+    // 0=frame, 1=fabric, 2=flower, 3=leaf, 4=needle
+
+    const frameR = 7;    // outer ring radius in grid units
+    const innerR = 6;    // inner ring radius
+    const thickness = 2; // ring thickness in Z
+
+    // 外环 (outer ring)
+    for (let ix = -frameR; ix <= frameR; ix++) {
+      for (let iy = -frameR; iy <= frameR; iy++) {
+        const dist = Math.sqrt(ix * ix + iy * iy);
+        if (dist >= frameR - 1 && dist <= frameR + 0.5) {
+          for (let iz = -thickness; iz <= thickness; iz++) {
+            pushBox(ix, iy, iz, 0);
+          }
+        }
+        // 内环
+        if (dist >= innerR - 0.5 && dist <= innerR + 1) {
+          for (let iz = -thickness; iz <= thickness; iz++) {
+            pushBox(ix, iy, iz, 0);
+          }
+        }
+      }
     }
-    // 内部绣品（随机像素块）
-    for (let i = 0; i < 40; i++) {
-      const angle = Math.random() * Math.PI * 2;
-      const radius = innerRadius * Math.sqrt(Math.random());
-      const x = Math.cos(angle) * radius;
-      const z = Math.sin(angle) * radius;
-      result.push({ x, y: 0, z, size: blockSize * 0.8 });
+
+    // 绣布 (fabric inside inner ring, thin)
+    for (let ix = -innerR + 1; ix <= innerR - 1; ix++) {
+      for (let iy = -innerR + 1; iy <= innerR - 1; iy++) {
+        const dist = Math.sqrt(ix * ix + iy * iy);
+        if (dist <= innerR - 0.5) {
+          for (let iz = -1; iz <= 1; iz++) {
+            pushBox(ix, iy, iz, 1);
+          }
+        }
+      }
     }
-    return result;
+
+    // 刺绣花朵 (梅花图案 - 5 petals)
+    const flowerCX = 0;
+    const flowerCY = 1;
+    // 花心
+    for (let ix = -1; ix <= 1; ix++) {
+      for (let iy = -1; iy <= 1; iy++) {
+        pushBox(flowerCX + ix, flowerCY + iy, 3, 3);
+      }
+    }
+    // 5片花瓣
+    for (let p = 0; p < 5; p++) {
+      const angle = (p / 5) * Math.PI * 2 - Math.PI / 2;
+      const px = Math.round(Math.cos(angle) * 3);
+      const py = Math.round(Math.sin(angle) * 3);
+      for (let ix = -2; ix <= 2; ix++) {
+        for (let iy = -2; iy <= 2; iy++) {
+          const dist = Math.sqrt(ix * ix + iy * iy);
+          if (dist <= 2.0) {
+            pushBox(flowerCX + px + ix, flowerCY + py + iy, 3, 2);
+          }
+        }
+      }
+    }
+
+    // 叶子
+    for (let iy = -3; iy <= -1; iy++) {
+      for (let ix = -5 + Math.abs(iy + 2); ix <= -3 + Math.abs(iy + 2); ix++) {
+        pushBox(ix, iy, 3, 3);
+      }
+    }
+    for (let iy = -3; iy <= -1; iy++) {
+      for (let ix = 3 + Math.abs(iy + 2); ix <= 5 + Math.abs(iy + 2); ix++) {
+        pushBox(ix, iy, 3, 3);
+      }
+    }
+
+    // 支架 (十字交叉底座)
+    for (let ix = -3; ix <= 3; ix++) {
+      for (let iz = -4; iz <= -3; iz++) {
+        pushBox(ix, -frameR - 2, iz, 0);
+      }
+    }
+    for (let iy = -frameR - 1; iy <= -frameR; iy++) {
+      for (let iz = -4; iz <= -3; iz++) {
+        pushBox(0, iy, iz, 0);
+      }
+    }
+    // 底座横杆
+    for (let ix = -6; ix <= 6; ix++) {
+      for (let iy = -frameR - 5; iy <= -frameR - 3; iy++) {
+        for (let iz = -4; iz <= -3; iz++) {
+          if (Math.abs(ix) <= 7) pushBox(ix, iy, iz, 0);
+        }
+      }
+    }
+
+    // 绣花针 (diagonal needle)
+    for (let t = 0; t <= 10; t++) {
+      const nx = 4 + Math.round(t * 0.3);
+      const ny = -3 + t;
+      const nz = 3;
+      pushBox(nx, ny, nz, 4);
+    }
+    // 针尖
+    pushBox(7, 0, 3, 4);
+    pushBox(8, 1, 3, 4);
+
+    return b;
   }, []);
+
+  const mats = [frameMat, fabricMat, flowerMat, leafMat, needleMat];
 
   return (
     <group position={[0, 1.2, 0]}>
       {blocks.map((block, i) => (
         <mesh key={i} position={[block.x, block.y, block.z]}>
           <boxGeometry args={[block.size, block.size, block.size]} />
-          <primitive object={i < 24 ? outerMat : innerMat} attach="material" />
+          <primitive object={mats[block.mat]} attach="material" />
         </mesh>
       ))}
     </group>
   );
 }
 
-function ClayFigurineFigure({ color = '#8B4513', pixelSize = 0.05 }: { color?: string; pixelSize?: number }) {
-  const bodyMat = useMemo(() => {
+function ClayFigurineFigure({ color = '#14b8a6', pixelSize = 0.05 }: { color?: string; pixelSize?: number }) {
+  const bs = 0.06;
+
+  const clayMat = useMemo(() => {
+    const mat = new PixelationMaterial();
+    mat.uniforms.uColor.value = new THREE.Color('#D2B48C');
+    mat.uniforms.uPixelSize.value = pixelSize;
+    return mat;
+  }, [pixelSize]);
+
+  const hairMat = useMemo(() => {
+    const mat = new PixelationMaterial();
+    mat.uniforms.uColor.value = new THREE.Color('#1a1a1a');
+    mat.uniforms.uPixelSize.value = pixelSize;
+    return mat;
+  }, [pixelSize]);
+
+  const dudouMat = useMemo(() => {
     const mat = new PixelationMaterial();
     mat.uniforms.uColor.value = new THREE.Color(color);
     mat.uniforms.uPixelSize.value = pixelSize;
     return mat;
   }, [color, pixelSize]);
 
-  const headMat = useMemo(() => {
+  const cheekMat = useMemo(() => {
     const mat = new PixelationMaterial();
-    mat.uniforms.uColor.value = new THREE.Color('#D2691E');
+    mat.uniforms.uColor.value = new THREE.Color('#fca5a5');
     mat.uniforms.uPixelSize.value = pixelSize;
     return mat;
   }, [pixelSize]);
 
-  // 泥人（3D 像素块堆叠）
+  const eyeMat = useMemo(() => {
+    const mat = new PixelationMaterial();
+    mat.uniforms.uColor.value = new THREE.Color('#000000');
+    mat.uniforms.uPixelSize.value = pixelSize;
+    return mat;
+  }, [pixelSize]);
+
   const blocks = useMemo(() => {
-    const result: { x: number; y: number; z: number; size: number }[] = [];
-    const blockSize = 0.07;
-    // 身体（圆柱形）
-    for (let i = -2; i <= 2; i++) {
-      for (let j = -2; j <= 2; j++) {
-        const dist = Math.sqrt(i * i + j * j);
-        if (dist <= 2.5) {
-          for (let k = 0; k <= 4; k++) {
-            result.push({ x: i * blockSize, y: -0.2 + k * blockSize, z: j * blockSize, size: blockSize });
-          }
+    const b: { x: number; y: number; z: number; size: number; mat: number }[] = [];
+    const pushBox = (ix: number, iy: number, iz: number, mat: number) => {
+      b.push({ x: ix * bs, y: iy * bs, z: iz * bs, size: bs, mat });
+    };
+    // 0=clay, 1=hair, 2=dudou, 3=cheek, 4=eye
+
+    // 头部 (large sphere, 泥人特征:大头)
+    for (let ix = -5; ix <= 5; ix++) {
+      for (let iy = -1; iy <= 9; iy++) {
+        for (let iz = -4; iz <= 4; iz++) {
+          const dx = ix / 5.5;
+          const dy = (iy - 4) / 5;
+          const dz = iz / 4.5;
+          if (dx * dx + dy * dy + dz * dz <= 1.0) pushBox(ix, iy, iz, 0);
         }
       }
     }
-    // 头部（球形）
-    for (let i = -2; i <= 2; i++) {
-      for (let j = -2; j <= 2; j++) {
-        for (let k = -2; k <= 2; k++) {
-          const dist = Math.sqrt(i * i + j * j + k * k);
-          if (dist <= 2.2) {
-            result.push({ x: i * blockSize, y: 0.3 + k * blockSize, z: j * blockSize, size: blockSize });
-          }
+
+    // 左发髻 (hair bun)
+    for (let ix = -7; ix <= -4; ix++) {
+      for (let iy = 8; iy <= 11; iy++) {
+        for (let iz = -2; iz <= 2; iz++) {
+          const dx = (ix + 5.5) / 2.5;
+          const dy = (iy - 9.5) / 2;
+          const dz = iz / 2.5;
+          if (dx * dx + dy * dy + dz * dz <= 1.0) pushBox(ix, iy, iz, 1);
         }
       }
     }
-    return result;
+
+    // 右发髻
+    for (let ix = 4; ix <= 7; ix++) {
+      for (let iy = 8; iy <= 11; iy++) {
+        for (let iz = -2; iz <= 2; iz++) {
+          const dx = (ix - 5.5) / 2.5;
+          const dy = (iy - 9.5) / 2;
+          const dz = iz / 2.5;
+          if (dx * dx + dy * dy + dz * dz <= 1.0) pushBox(ix, iy, iz, 1);
+        }
+      }
+    }
+
+    // 刘海 (bangs)
+    for (let ix = -3; ix <= 3; ix++) {
+      for (let iy = 8; iy <= 9; iy++) {
+        for (let iz = -3; iz <= -1; iz++) {
+          pushBox(ix, iy, iz, 1);
+        }
+      }
+    }
+
+    // 眼睛
+    pushBox(-2, 5, 5, 4);
+    pushBox(2, 5, 5, 4);
+    // 瞳孔高光
+    pushBox(-2, 5, 6, 0);
+    pushBox(2, 5, 6, 0);
+
+    // 红脸颊
+    for (let ix = -2; ix <= -1; ix++) {
+      for (let iy = 3; iy <= 4; iy++) {
+        pushBox(ix, iy, 5, 3);
+      }
+    }
+    for (let ix = 1; ix <= 2; ix++) {
+      for (let iy = 3; iy <= 4; iy++) {
+        pushBox(ix, iy, 5, 3);
+      }
+    }
+
+    // 小嘴
+    pushBox(0, 2, 5, 4);
+
+    // 身体 (round, chubby, smaller than head)
+    for (let ix = -4; ix <= 4; ix++) {
+      for (let iy = -8; iy <= -1; iy++) {
+        for (let iz = -3; iz <= 3; iz++) {
+          const dx = ix / 4.5;
+          const dy = (iy + 4.5) / 4;
+          const dz = iz / 3.5;
+          if (dx * dx + dy * dy + dz * dz <= 1.0) pushBox(ix, iy, iz, 0);
+        }
+      }
+    }
+
+    // 肚兜 (red dudou on front of body)
+    for (let ix = -2; ix <= 2; ix++) {
+      for (let iy = -6; iy <= -2; iy++) {
+        for (let iz = -4; iz <= -2; iz++) {
+          pushBox(ix, iy, iz, 2);
+        }
+      }
+    }
+    // 肚兜菱形装饰
+    for (let ix = -1; ix <= 1; ix++) {
+      for (let iy = -5; iy <= -4; iy++) {
+        pushBox(ix, iy, -5, 0);
+      }
+    }
+
+    // 左臂 (short, stubby)
+    for (let ix = -7; ix <= -5; ix++) {
+      for (let iy = -6; iy <= -4; iy++) {
+        for (let iz = -2; iz <= 2; iz++) {
+          pushBox(ix, iy, iz, 0);
+        }
+      }
+    }
+    // 左手
+    for (let ix = -8; ix <= -7; ix++) {
+      for (let iy = -6; iy <= -5; iy++) {
+        for (let iz = -1; iz <= 1; iz++) {
+          pushBox(ix, iy, iz, 0);
+        }
+      }
+    }
+
+    // 右臂
+    for (let ix = 5; ix <= 7; ix++) {
+      for (let iy = -6; iy <= -4; iy++) {
+        for (let iz = -2; iz <= 2; iz++) {
+          pushBox(ix, iy, iz, 0);
+        }
+      }
+    }
+    // 右手
+    for (let ix = 7; ix <= 8; ix++) {
+      for (let iy = -6; iy <= -5; iy++) {
+        for (let iz = -1; iz <= 1; iz++) {
+          pushBox(ix, iy, iz, 0);
+        }
+      }
+    }
+
+    // 左腿
+    for (let ix = -2; ix <= -1; ix++) {
+      for (let iy = -11; iy <= -9; iy++) {
+        for (let iz = -2; iz <= 2; iz++) {
+          pushBox(ix, iy, iz, 0);
+        }
+      }
+    }
+    // 左脚
+    for (let ix = -3; ix <= 0; ix++) {
+      for (let iy = -12; iy <= -11; iy++) {
+        for (let iz = -1; iz <= 2; iz++) {
+          pushBox(ix, iy, iz, 0);
+        }
+      }
+    }
+
+    // 右腿
+    for (let ix = 1; ix <= 2; ix++) {
+      for (let iy = -11; iy <= -9; iy++) {
+        for (let iz = -2; iz <= 2; iz++) {
+          pushBox(ix, iy, iz, 0);
+        }
+      }
+    }
+    // 右脚
+    for (let ix = 0; ix <= 3; ix++) {
+      for (let iy = -12; iy <= -11; iy++) {
+        for (let iz = -1; iz <= 2; iz++) {
+          pushBox(ix, iy, iz, 0);
+        }
+      }
+    }
+
+    return b;
   }, []);
+
+  const mats = [clayMat, hairMat, dudouMat, cheekMat, eyeMat];
 
   return (
     <group position={[0, 1.2, 0]}>
       {blocks.map((block, i) => (
         <mesh key={i} position={[block.x, block.y, block.z]}>
           <boxGeometry args={[block.size, block.size, block.size]} />
-          <primitive object={block.y > 0.2 ? headMat : bodyMat} attach="material" />
+          <primitive object={mats[block.mat]} attach="material" />
         </mesh>
       ))}
     </group>
