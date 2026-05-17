@@ -13,7 +13,7 @@
 
 > 通过对话，与千年技艺的传承人"面对面"学习。
 
-一个知识学习平台：每个非物质文化遗产（剪纸、皮影戏、刺绣……）对应一位真实传承人的 **数字智能体**。用户通过与智能体对话来学习非遗技艺，就像在和真正的传承人聊天一样。
+一个沉浸式非遗学习平台：在 **3D 像素风博物馆** 中探索皮影戏、剪纸、苏绣、泥塑等非遗项目，每个项目对应一位真实传承人的 **数字智能体**。用户通过与智能体对话来学习非遗技艺，就像在和真正的传承人聊天一样。
 
 ---
 
@@ -45,10 +45,11 @@
 
 | 功能 | 说明 |
 |------|------|
+| 🏛️ 3D 像素博物馆 | Three.js 打造的虚拟博物馆，像素风体素非遗形象（皮影戏人物、剪纸公鸡、苏绣绣绷、泥人娃娃） |
 | 🗣️ 对话式学习 | 与传承人智能体自然对话，学习非遗技艺 |
 | 📚 知识点追踪 | 自动识别对话中涉及的知识点，追踪掌握进度（未学 → 已了解 → 可复述） |
 | 📝 蒸馏笔记 | 查看本次对话中智能体透露的所有核心知识卡片 |
-| 🎨 多非遗支持 | 剪纸、皮影戏、刺绣等，每个技艺对应独立智能体 |
+| 🎨 多非遗支持 | 皮影戏、剪纸、苏绣、泥塑，每个技艺对应独立智能体 |
 
 ---
 
@@ -56,7 +57,8 @@
 
 | 层级 | 技术 |
 |------|------|
-| 前端 | React + TypeScript + Vite |
+| 前端 | React + TypeScript + Vite + Three.js (React Three Fiber) |
+| 3D 渲染 | @react-three/fiber + @react-three/drei + @react-three/postprocessing |
 | 后端 | FastAPI (Python) |
 | AI 对话 | RAG + 定制 System Prompt（计划接入 DeepSeek API） |
 | 数据库 | Supabase pgvector（计划） |
@@ -82,12 +84,12 @@ pip install -r requirements.txt
 # 启动后端（端口 8000）
 uvicorn main:app --reload
 
-# 启动前端（端口 3000）
+# 启动前端（端口 5173）
 cd ../frontend
 npm run dev
 ```
 
-打开浏览器访问 `http://localhost:3000` 即可体验。
+打开浏览器访问 `http://localhost:5173` 即可体验。
 
 ---
 
@@ -95,16 +97,35 @@ npm run dev
 
 ```
 heritage.skill/
-├── frontend/                # React 前端
+├── frontend/                        # React 前端
 │   ├── src/
-│   │   ├── App.tsx         # 聊天主组件
-│   │   ├── main.tsx        # 入口
-│   │   └── index.css       # 样式
+│   │   ├── components/
+│   │   │   └── MuseumScene.tsx      # 3D 博物馆场景（Three.js）
+│   │   ├── pages/
+│   │   │   ├── MuseumPage.tsx       # 博物馆主页
+│   │   │   ├── CraftPage.tsx        # 非遗技艺学习页
+│   │   │   ├── LearningPage.tsx     # 学习进度页
+│   │   │   ├── AvatarSelectPage.tsx # 数字人选择页
+│   │   │   ├── WelcomePage.tsx      # 欢迎页
+│   │   │   └── SettingsPage.tsx     # 设置页
+│   │   ├── utils/
+│   │   │   ├── api.ts              # API 调用
+│   │   │   ├── audio.ts            # 音频管理
+│   │   │   └── storage.ts          # 本地存储
+│   │   ├── data.ts                 # 非遗数据与知识点
+│   │   ├── types.ts                # TypeScript 类型定义
+│   │   ├── App.tsx                 # 路由与主组件
+│   │   ├── main.tsx                # 入口
+│   │   └── index.css               # 全局样式
+│   ├── public/avatars/             # 传承人头像
 │   ├── package.json
 │   └── vite.config.ts
-├── backend/                 # FastAPI 后端
-│   ├── main.py             # API 端点
+├── backend/                         # FastAPI 后端
+│   ├── main.py                     # API 端点
 │   └── requirements.txt
+├── .github/
+│   ├── workflows/deploy.yml        # 部署工作流
+│   └── ISSUE_TEMPLATE/             # Issue 模板
 ├── knowledge_base_shadow_puppet.json  # 皮影戏蒸馏知识库
 ├── system_prompt_template.txt         # 系统提示词模板
 └── .gitignore
@@ -126,6 +147,7 @@ heritage.skill/
 
 ## 🔮 未来计划
 
+- [x] 3D 像素风虚拟博物馆（Three.js）✅
 - [ ] 接入真实 LLM（DeepSeek API）替换 Mock 后端
 - [ ] 搭建 RAG 检索管道（Supabase pgvector）
 - [ ] 新增更多非遗项目智能体（变脸，京剧……）
