@@ -14,6 +14,94 @@ function StarField() {
   return <Stars radius={100} depth={50} count={3000} factor={4} saturation={0} fade speed={1} />;
 }
 
+// ========== 像素祥云 ==========
+
+function AuspiciousClouds() {
+  const g = 0.15;
+  const mats = useMemo(() => [
+    new THREE.MeshStandardMaterial({ color: '#fff8e7', roughness: 1, metalness: 0, transparent: true, opacity: 0.5 }),
+    new THREE.MeshStandardMaterial({ color: '#ffe4c4', roughness: 1, metalness: 0, transparent: true, opacity: 0.35 }),
+  ], []);
+  const clouds = useMemo(() => {
+    const result: { blocks: VoxelBlock[]; pos: [number, number, number]; speed: number }[] = [];
+    // 生成 8 朵云，分布在博物馆上空
+    for (let c = 0; c < 8; c++) {
+      const blocks: VoxelBlock[] = [];
+      const p = (ix: number, iy: number, iz: number, mat: number) => blocks.push({ x: ix * g, y: iy * g, z: iz * g, size: g, mat });
+      const w = 3 + Math.floor(Math.random() * 4);
+      const h = 2 + Math.floor(Math.random() * 2);
+      // 云朵主体（扁椭圆）
+      for (let ix = -w; ix <= w; ix++) for (let iy = -1; iy <= h; iy++)
+        if ((ix / (w + 0.5)) ** 2 + ((iy - h / 2) / (h / 2 + 1)) ** 2 <= 1)
+          for (let iz = -1; iz <= 1; iz++) p(ix, iy, iz, (ix + iy) % 3 === 0 ? 1 : 0);
+      result.push({
+        blocks,
+        pos: [-10 + c * 3 + Math.random() * 2, 3.5 + Math.random() * 3, -5 + Math.random() * 3],
+        speed: 0.3 + Math.random() * 0.5,
+      });
+    }
+    return result;
+  }, []);
+
+  const cloudRefs = useRef<THREE.Group[]>([]);
+  useFrame(() => {
+    cloudRefs.current.forEach((ref, i) => {
+      if (ref && clouds[i]) {
+        ref.position.x += clouds[i].speed * 0.003;
+        if (ref.position.x > 12) ref.position.x = -12;
+      }
+    });
+  });
+
+  return (
+    <>
+      {clouds.map((cloud, i) => (
+        <group key={i} ref={(el) => { if (el) cloudRefs.current[i] = el; }} position={cloud.pos}>
+          {cloud.blocks.map((blk, j) => (
+            <mesh key={j} position={[blk.x, blk.y, blk.z]}>
+              <boxGeometry args={[blk.size, blk.size, blk.size]} />
+              <primitive object={mats[blk.mat]} attach="material" />
+            </mesh>
+          ))}
+        </group>
+      ))}
+    </>
+  );
+}
+
+// ========== 像素灯笼 ==========
+
+function Lanterns() {
+  const redMat = useMemo(() => new THREE.MeshStandardMaterial({ color: '#dc2626', roughness: 0.5, metalness: 0, emissive: '#dc2626', emissiveIntensity: 0.4 }), []);
+  const goldMat = useMemo(() => new THREE.MeshStandardMaterial({ color: '#f59e0b', roughness: 0.3, metalness: 0.5, emissive: '#f59e0b', emissiveIntensity: 0.3 }), []);
+  const stringMat = useMemo(() => new THREE.MeshStandardMaterial({ color: '#8b4513', roughness: 1, metalness: 0 }), []);
+
+  const lanternPositions = useMemo(() => [
+    [-7, 4, -3], [-3.5, 4.2, -3], [0, 4.1, -3], [3.5, 4.3, -3], [7, 4, -3],
+  ], []);
+
+  return (
+    <>
+      {lanternPositions.map(([lx, ly, lz], i) => (
+        <group key={i} position={[lx, ly, lz]}>
+          {/* 吊线 */}
+          <mesh position={[0, 1.5, 0]}><boxGeometry args={[0.03, 3, 0.03]} /><primitive object={stringMat} attach="material" /></mesh>
+          {/* 灯笼顶盖 */}
+          <mesh position={[0, 0.6, 0]}><boxGeometry args={[0.8, 0.1, 0.8]} /><primitive object={goldMat} attach="material" /></mesh>
+          {/* 灯笼主体 */}
+          <mesh position={[0, 0, 0]}><boxGeometry args={[0.9, 1.1, 0.9]} /><primitive object={redMat} attach="material" /></mesh>
+          {/* 灯笼底部 */}
+          <mesh position={[0, -0.6, 0]}><boxGeometry args={[0.6, 0.08, 0.6]} /><primitive object={goldMat} attach="material" /></mesh>
+          {/* 流苏 */}
+          <mesh position={[0, -0.8, 0]}><boxGeometry args={[0.2, 0.3, 0.2]} /><primitive object={goldMat} attach="material" /></mesh>
+          {/* 光芒 */}
+          <pointLight position={[0, 0, 0]} color="#f59e0b" intensity={0.8} distance={4} />
+        </group>
+      ))}
+    </>
+  );
+}
+
 // ========== NPC 导览员 (像素小人) ==========
 
 function NPCGuide({ showBubble }: { showBubble: boolean }) {
@@ -818,11 +906,12 @@ function Exhibit({ position, color, label, emoji, mosaicStyle, onClick, progress
 // ========== 卷轴地面 ==========
 
 function MuseumFloor() {
-  // 卷轴主体（横向长矩形，类似古画长卷）
   const scrollW = 18, scrollD = 5;
   const scrollMat = useMemo(() => new THREE.MeshStandardMaterial({ color: '#f5e6c8', roughness: 0.9, metalness: 0 }), []);
-  const edgeMat = useMemo(() => new THREE.MeshStandardMaterial({ color: '#c9a84c', roughness: 0.5, metalness: 0.2 }), []);
-  const rodMat = useMemo(() => new THREE.MeshStandardMaterial({ color: '#8b4513', roughness: 0.6, metalness: 0.3 }), []);
+  const edgeMat = useMemo(() => new THREE.MeshStandardMaterial({ color: '#c9a84c', roughness: 0.4, metalness: 0.3, emissive: '#c9a84c', emissiveIntensity: 0.15 }), []);
+  const rodMat = useMemo(() => new THREE.MeshStandardMaterial({ color: '#6b3a1f', roughness: 0.5, metalness: 0.4 }), []);
+  const redAccent = useMemo(() => new THREE.MeshStandardMaterial({ color: '#b91c1c', roughness: 0.6, metalness: 0.1 }), []);
+  const blueAccent = useMemo(() => new THREE.MeshStandardMaterial({ color: '#1e40af', roughness: 0.5, metalness: 0.2 }), []);
 
   return (
     <group position={[0, -0.2, 0]}>
@@ -831,29 +920,54 @@ function MuseumFloor() {
         <planeGeometry args={[scrollW, scrollD]} />
         <primitive object={scrollMat} attach="material" />
       </mesh>
-      {/* 卷轴边框（金色） */}
+      {/* 卷轴上边框（金色双线） */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, scrollD / 2]}>
-        <planeGeometry args={[scrollW, 0.1]} />
+        <planeGeometry args={[scrollW, 0.12]} />
         <primitive object={edgeMat} attach="material" />
       </mesh>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.015, scrollD / 2 - 0.1]}>
+        <planeGeometry args={[scrollW, 0.04]} />
+        <primitive object={redAccent} attach="material" />
+      </mesh>
+      {/* 卷轴下边框 */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, -scrollD / 2]}>
-        <planeGeometry args={[scrollW, 0.1]} />
+        <planeGeometry args={[scrollW, 0.12]} />
         <primitive object={edgeMat} attach="material" />
       </mesh>
-      {/* 左侧卷轴杆 */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.015, -scrollD / 2 + 0.1]}>
+        <planeGeometry args={[scrollW, 0.04]} />
+        <primitive object={redAccent} attach="material" />
+      </mesh>
+      {/* 四角如意纹 */}
+      {[[-scrollW/2+0.5, scrollD/2-0.5], [scrollW/2-0.5, scrollD/2-0.5], [-scrollW/2+0.5, -scrollD/2+0.5], [scrollW/2-0.5, -scrollD/2+0.5]].map(([cx, cz], i) => (
+        <group key={`cn${i}`} position={[cx, 0.02, cz]}>
+          <mesh rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[0.3, 0.05]} /><primitive object={blueAccent} attach="material" /></mesh>
+          <mesh rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[0.05, 0.3]} /><primitive object={blueAccent} attach="material" /></mesh>
+        </group>
+      ))}
+      {/* 中间卷轴标题区 */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.015, 0]}>
+        <planeGeometry args={[3, 1.5]} />
+        <primitive object={edgeMat} attach="material" />
+      </mesh>
+      {/* 左侧卷轴杆（深色轴头+浅色轴身） */}
       <mesh position={[-scrollW / 2 - 0.15, 0.15, 0]} rotation={[0, 0, Math.PI / 2]}>
-        <cylinderGeometry args={[0.12, 0.12, scrollD + 0.4, 8]} />
+        <cylinderGeometry args={[0.14, 0.14, scrollD + 0.5, 8]} />
         <primitive object={rodMat} attach="material" />
       </mesh>
+      <mesh position={[-scrollW / 2 - 0.15, 0.15, scrollD/2 + 0.3]}><sphereGeometry args={[0.16, 8, 4]} /><primitive object={redAccent} attach="material" /></mesh>
+      <mesh position={[-scrollW / 2 - 0.15, 0.15, -scrollD/2 - 0.3]}><sphereGeometry args={[0.16, 8, 4]} /><primitive object={redAccent} attach="material" /></mesh>
       {/* 右侧卷轴杆 */}
       <mesh position={[scrollW / 2 + 0.15, 0.15, 0]} rotation={[0, 0, Math.PI / 2]}>
-        <cylinderGeometry args={[0.12, 0.12, scrollD + 0.4, 8]} />
+        <cylinderGeometry args={[0.14, 0.14, scrollD + 0.5, 8]} />
         <primitive object={rodMat} attach="material" />
       </mesh>
-      {/* 卷轴上的纹理线条（模拟古画纹路） */}
+      <mesh position={[scrollW / 2 + 0.15, 0.15, scrollD/2 + 0.3]}><sphereGeometry args={[0.16, 8, 4]} /><primitive object={redAccent} attach="material" /></mesh>
+      <mesh position={[scrollW / 2 + 0.15, 0.15, -scrollD/2 - 0.3]}><sphereGeometry args={[0.16, 8, 4]} /><primitive object={redAccent} attach="material" /></mesh>
+      {/* 纹理线条 */}
       {[-4, -2, 0, 2, 4].map((dx) => (
         <mesh key={dx} rotation={[-Math.PI / 2, 0, 0]} position={[dx, 0.02, 0]}>
-          <planeGeometry args={[0.03, scrollD - 0.5]} />
+          <planeGeometry args={[0.02, scrollD - 0.8]} />
           <primitive object={edgeMat} attach="material" />
         </mesh>
       ))}
@@ -950,6 +1064,8 @@ export default function MuseumScene({ onSelectCraft, timeMode = 'modern', showGu
         <fog attach="fog" args={[fogColor, 15, 35]} />
         <ambientLight intensity={ambIntensity} color={ambColor} />
         <StarField />
+        <AuspiciousClouds />
+        <Lanterns />
         <MuseumFloor />
         <NPCGuide showBubble={showGuide} />
         <ConnectionLines />

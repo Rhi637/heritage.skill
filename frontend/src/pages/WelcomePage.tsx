@@ -120,6 +120,20 @@ export default function WelcomePage() {
       fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated',
       position: 'relative', overflow: 'hidden',
     }}>
+      {/* 像素装饰框 */}
+      <div style={{ position: 'absolute', top: 14, left: 14, right: 14, bottom: 14, border: '2px solid rgba(201,168,76,0.1)', pointerEvents: 'none', zIndex: 1 }} />
+      {/* 四角装饰 */}
+      {['tl','tr','bl','br'].map((pos) => (
+        <div key={pos} style={{ position: 'absolute',
+          top: pos.startsWith('t') ? 10 : undefined, bottom: pos.startsWith('b') ? 10 : undefined,
+          left: pos.endsWith('l') ? 10 : undefined, right: pos.endsWith('r') ? 10 : undefined,
+          width: 18, height: 18, zIndex: 1, pointerEvents: 'none',
+          borderTop: pos.startsWith('t') ? '3px solid rgba(201,168,76,0.3)' : 'none',
+          borderBottom: pos.startsWith('b') ? '3px solid rgba(201,168,76,0.3)' : 'none',
+          borderLeft: pos.endsWith('l') ? '3px solid rgba(201,168,76,0.3)' : 'none',
+          borderRight: pos.endsWith('r') ? '3px solid rgba(201,168,76,0.3)' : 'none',
+        }} />
+      ))}
       {/* 像素山背景 */}
       <PixelLandscape />
 
@@ -131,32 +145,34 @@ export default function WelcomePage() {
         {/* 像素标题 */}
         <h1 style={{
           fontSize: isMobile ? 22 : 36, fontWeight: 700, letterSpacing: isMobile ? 4 : 8,
-          color: '#a5b4fc', marginBottom: 8, imageRendering: 'pixelated',
-          textShadow: '4px 4px 0 rgba(0,0,0,0.5), -2px -2px 0 rgba(99,102,241,0.3), 0 0 30px rgba(99,102,241,0.3)',
+          color: '#c9a84c', marginBottom: 8, imageRendering: 'pixelated',
+          textShadow: '4px 4px 0 rgba(0,0,0,0.5), -2px -2px 0 rgba(99,102,241,0.2), 0 0 40px rgba(201,168,76,0.3)',
           lineHeight: 1.4,
         }}>
           非遗文化博物馆
         </h1>
         <p style={{
-          fontSize: isMobile ? 11 : 14, color: '#6b7280', letterSpacing: isMobile ? 3 : 6,
+          fontSize: isMobile ? 11 : 14, color: '#7c6f56', letterSpacing: isMobile ? 3 : 6,
           imageRendering: 'pixelated', marginBottom: 4,
         }}>
           INTANGIBLE CULTURAL HERITAGE
         </p>
         <p style={{
-          fontSize: isMobile ? 10 : 12, color: '#4b5563', letterSpacing: 2,
+          fontSize: isMobile ? 10 : 12, color: '#5c5040', letterSpacing: 2,
           imageRendering: 'pixelated',
         }}>
           传承人蒸馏数字智能体
         </p>
       </div>
 
-      {/* 像素分隔线 */}
-      <div style={{
-        width: isMobile ? 180 : 280, height: 3, backgroundColor: '#6366f1',
-        marginBottom: isMobile ? 20 : 32, imageRendering: 'pixelated',
-        boxShadow: '0 0 10px rgba(99,102,241,0.5)',
-      }} />
+      {/* 中国风分隔线 */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: isMobile ? 20 : 32, zIndex: 2 }}>
+        <div style={{ width: isMobile ? 40 : 60, height: 2, backgroundColor: '#c9a84c' }} />
+        <div style={{ width: isMobile ? 8 : 12, height: isMobile ? 8 : 12, backgroundColor: '#dc2626', transform: 'rotate(45deg)' }} />
+        <div style={{ width: isMobile ? 40 : 60, height: 2, backgroundColor: '#c9a84c' }} />
+        <div style={{ width: isMobile ? 8 : 12, height: isMobile ? 8 : 12, backgroundColor: '#dc2626', transform: 'rotate(45deg)' }} />
+        <div style={{ width: isMobile ? 40 : 60, height: 2, backgroundColor: '#c9a84c' }} />
+      </div>
 
       {/* PRESS START 闪烁 */}
       <button onClick={handleStart} style={{
