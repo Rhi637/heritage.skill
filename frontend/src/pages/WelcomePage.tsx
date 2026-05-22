@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect, useMemo } from 'react';
 import { playSound, initAudioOnInteraction, startBackgroundMusic } from '../utils/audio';
+import { useLang } from '../contexts/LanguageContext';
+import { UserProfile } from '../types';
 
 // ========== 移动端检测 ==========
 function useIsMobile(): boolean {
@@ -100,6 +102,12 @@ export default function WelcomePage() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [blink, setBlink] = useState(true);
+  const { lang, toggleLang } = useLang();
+
+  const existingUser = useMemo((): UserProfile | null => {
+    try { const d = localStorage.getItem('heritage_user'); return d ? JSON.parse(d) : null; }
+    catch { return null; }
+  }, []);
 
   useEffect(() => {
     const t = setInterval(() => setBlink((b) => !b), 600);
@@ -110,7 +118,7 @@ export default function WelcomePage() {
     initAudioOnInteraction();
     startBackgroundMusic();
     playSound('click');
-    navigate('/avatar');
+    navigate(existingUser ? '/museum' : '/avatar');
   };
 
   return (
@@ -163,6 +171,11 @@ export default function WelcomePage() {
         }}>
           传承人蒸馏数字智能体
         </p>
+        {existingUser && (
+          <p style={{ fontSize: isMobile ? 10 : 12, color: '#c9a84c', letterSpacing: 2, imageRendering: 'pixelated', marginTop: 8 }}>
+            👋 欢迎回来，{existingUser.name}
+          </p>
+        )}
       </div>
 
       {/* 中国风分隔线 */}
@@ -184,7 +197,9 @@ export default function WelcomePage() {
         imageRendering: 'pixelated', boxShadow: '4px 4px 0 rgba(0,0,0,0.4)',
         transition: 'color 0.1s steps(2)',
       }}>
-        {blink ? '▶ PRESS START' : '  PRESS START'}
+        {existingUser
+          ? (blink ? '▶ 继续探索' : '  继续探索')
+          : (blink ? '▶ PRESS START' : '  PRESS START')}
       </button>
 
       {/* 底部快捷入口 */}
@@ -207,6 +222,28 @@ export default function WelcomePage() {
             {btn.emoji} {isMobile ? '' : btn.label}
           </button>
         ))}
+        {/* 语言切换 */}
+        <button onClick={() => { toggleLang(); playSound('click'); }} style={{
+          padding: isMobile ? '6px 14px' : '8px 18px',
+          backgroundColor: 'rgba(255,255,255,0.04)', border: '2px solid rgba(255,255,255,0.1)',
+          borderRadius: 0, color: '#9ca3af', fontSize: isMobile ? 10 : 12,
+          cursor: 'pointer', fontFamily: 'inherit', letterSpacing: 2,
+          imageRendering: 'pixelated',
+        }}>
+          🌐 {lang === 'zh' ? '中' : 'EN'}
+        </button>
+        {/* 返回用户可重新选择形象 */}
+        {existingUser && (
+          <button onClick={() => { initAudioOnInteraction(); playSound('click'); navigate('/avatar'); }} style={{
+            padding: isMobile ? '6px 14px' : '8px 18px',
+            backgroundColor: 'rgba(255,255,255,0.04)', border: '2px solid rgba(255,255,255,0.1)',
+            borderRadius: 0, color: '#9ca3af', fontSize: isMobile ? 10 : 12,
+            cursor: 'pointer', fontFamily: 'inherit', letterSpacing: 2,
+            imageRendering: 'pixelated',
+          }}>
+            🎭 换形象
+          </button>
+        )}
       </div>
 
       {/* 版本号 */}

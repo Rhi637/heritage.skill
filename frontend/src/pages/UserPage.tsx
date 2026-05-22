@@ -51,6 +51,49 @@ export default function UserPage() {
 
   const titleInfo = getTitle(stats.learned, stats.total);
 
+  // 生成分享卡片
+  const handleShare = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 500; canvas.height = 300;
+    const ctx = canvas.getContext('2d')!;
+    // 背景
+    ctx.fillStyle = '#050510'; ctx.fillRect(0, 0, 500, 300);
+    // 金边
+    ctx.strokeStyle = '#c9a84c'; ctx.lineWidth = 4; ctx.strokeRect(10, 10, 480, 280);
+    // 标题
+    ctx.fillStyle = '#c9a84c'; ctx.font = 'bold 22px monospace'; ctx.textAlign = 'center';
+    ctx.fillText('非遗文化博物馆', 250, 55);
+    ctx.fillText('ICH Museum', 250, 80);
+    // 用户信息
+    ctx.fillStyle = '#a5b4fc'; ctx.font = '16px monospace';
+    ctx.fillText(`${titleInfo.emoji} ${user?.name || '探索者'} · ${titleInfo.title}`, 250, 120);
+    // 数据
+    ctx.fillStyle = '#e0e7ff'; ctx.font = '14px monospace';
+    ctx.fillText(`已学 ${stats.learned}/${stats.total} 个知识点 | 打卡 ${stats.streak} 天`, 250, 155);
+    // 徽章
+    const earned = badges.filter((b) => b.earned);
+    ctx.fillText(`已获 ${earned.length}/${badges.length} 枚徽章 ${earned.map((b) => b.emoji).join('')}`, 250, 185);
+    // 底部
+    ctx.fillStyle = '#6b7280'; ctx.font = '11px monospace';
+    ctx.fillText('来非遗文化博物馆，与千年匠人对话！', 250, 230);
+    ctx.fillText('rhi637.github.io/heritage.skill', 250, 255);
+
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      // 尝试 Web Share API
+      if (navigator.share) {
+        const file = new File([blob], 'ICH_Museum.png', { type: 'image/png' });
+        navigator.share({ title: '非遗文化博物馆', text: '我在非遗文化博物馆学习了传统技艺！', files: [file] }).catch(() => {});
+      }
+      // 同时触发下载
+      const a = document.createElement('a');
+      a.download = 'ICH_Museum_Share.png';
+      a.href = url; a.click();
+      URL.revokeObjectURL(url);
+    }, 'image/png');
+  };
+
   // 徽章
   const badges = [
     { emoji: '🥉', name: '铜牌学徒', desc: '学习5个知识点', earned: stats.learned >= 5 },
@@ -189,8 +232,16 @@ export default function UserPage() {
           </div>
         </div>
 
-        {/* 设置 + 重置 */}
-        <div style={{ display: 'flex', gap: 10 }}>
+        {/* 操作按钮 */}
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          <button onClick={handleShare} style={{
+            padding: '8px 20px', backgroundColor: 'rgba(201,168,76,0.1)',
+            border: '2px solid rgba(201,168,76,0.3)', borderRadius: 0, color: '#c9a84c',
+            fontSize: 12, cursor: 'pointer', fontFamily: 'inherit', letterSpacing: 2,
+            imageRendering: 'pixelated',
+          }}>
+            📤 分享成就
+          </button>
           <button onClick={() => { playSound('click'); navigate('/settings'); }} style={{
             padding: '8px 20px', backgroundColor: 'rgba(99,102,241,0.1)',
             border: '2px solid rgba(99,102,241,0.3)', borderRadius: 0, color: '#a5b4fc',
