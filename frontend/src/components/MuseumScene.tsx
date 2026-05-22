@@ -1,9 +1,8 @@
-import { useRef, useMemo, useEffect } from 'react';
-import { Canvas, useFrame, shaderMaterial } from '@react-three/fiber';
-import { Stars, Float, Html, Sparkles, MeshReflectorMaterial, Environment, ContactShadows, SpotLight } from '@react-three/drei';
+import { useRef, useMemo } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { Stars, Float, Html, Sparkles, Environment, ContactShadows, SpotLight } from '@react-three/drei';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import * as THREE from 'three';
-import { extend } from '@react-three/fiber';
 
 // ========== 像素风格着色器 ==========
 
@@ -33,14 +32,18 @@ const PixelationShader = {
   `,
 };
 
-const PixelationMaterial = shaderMaterial(
-  PixelationShader.uniforms,
-  PixelationShader.vertexShader,
-  PixelationShader.fragmentShader
-);
-
-// 使用 extend 注册自定义材质
-extend({ PixelationMaterial });
+class PixelationMaterial extends THREE.ShaderMaterial {
+  constructor() {
+    super({
+      uniforms: {
+        uColor: { value: new THREE.Color('#ffffff') },
+        uPixelSize: { value: 0.05 },
+      },
+      vertexShader: PixelationShader.vertexShader,
+      fragmentShader: PixelationShader.fragmentShader,
+    });
+  }
+}
 
 // ========== 马赛克纹理生成（已弃用，改用像素着色器） ==========
 
@@ -1058,6 +1061,8 @@ interface MuseumSceneProps {
 }
 
 export default function MuseumScene({ onSelectCraft, pixelSize = 0.05 }: MuseumSceneProps & { pixelSize?: number }) {
+  // @react-three/postprocessing 与 @types/react 类型兼容处理
+  const FX: any = EffectComposer;
   const crafts = [
     { id: 'craft_shadow_puppet', label: '皮影戏', emoji: '🎭', color: '#f59e0b', mosaicStyle: 'shadow_puppet' as const, position: [-4, 0, -3] as [number, number, number] },
     { id: 'craft_paper_cutting', label: '剪纸', emoji: '✂️', color: '#ef4444', mosaicStyle: 'paper_cutting' as const, position: [4, 0, -3] as [number, number, number] },
@@ -1121,14 +1126,14 @@ export default function MuseumScene({ onSelectCraft, pixelSize = 0.05 }: MuseumS
       />
 
       {/* 后期处理：Bloom 辉光效果 */}
-      <EffectComposer>
+      <FX>
         <Bloom
           luminanceThreshold={0.2}
           luminanceSmoothing={0.9}
           height={300}
           intensity={0.5}
         />
-      </EffectComposer>
+      </FX>
       </Canvas>
     </div>
   );
