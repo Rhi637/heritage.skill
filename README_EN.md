@@ -12,7 +12,7 @@
 
 > Travel through time and learn face-to-face with masters of thousand-year-old crafts.
 
-An immersive learning platform for intangible cultural heritage (ICH): explore four major ICH crafts — **Shadow Puppetry, Paper Cutting, Suzhou Embroidery, and Clay Sculpture** — in a **3D pixel-art museum**. Each craft features multiple **digital agents** modeled after real inheritors (7 total, spanning modern masters and ancient artisans). Learn traditional skills through natural conversation with these AI agents — choose a modern inheritor, or **travel back in time** to study under a historical craftsman.
+An immersive learning platform for intangible cultural heritage (ICH): explore six major ICH crafts — **Shadow Puppetry, Paper Cutting, Suzhou Embroidery, Clay Sculpture, Blue & White Porcelain, and Woodblock New Year Prints** — in a **3D pixel-art museum**. Each craft features multiple **digital agents** modeled after real inheritors (9 total, spanning modern masters and ancient artisans). Learn traditional skills through natural conversation with these AI agents — choose a modern inheritor, **travel back in time** to study under a historical craftsman, take **knowledge quizzes**, and play **hands-on mini-games** for a truly immersive ICH experience.
 
 ---
 
@@ -45,12 +45,16 @@ The agent is not a general-purpose chatbot — its knowledge is strictly confine
 
 | Feature | Description |
 |---------|-------------|
-| 🏛️ 3D Pixel-Art Museum | A virtual museum built with Three.js, featuring pixel/voxel-style ICH figures (shadow puppet character, paper-cut rooster, embroidery frame, clay doll) with Bloom post-processing effects |
+| 🏛️ 3D Pixel-Art Museum | A virtual museum built with Three.js, featuring **6** pixel/voxel-style ICH exhibits (shadow puppet, paper-cut rooster, embroidery frame, clay doll, porcelain vase, New Year print door god) in a circular layout with zoom animations and light-beam connections |
 | ⏳ Time Travel | Choose between modern inheritors and ancient artisans — travel to different dynasties to learn from historical masters |
+| 🧑‍🏫 NPC Guide | A pixel-art museum guide automatically welcomes and directs new visitors to explore exhibits |
 | 🗣️ AI-Powered Learning | Powered by Zhipu GLM-4-Flash LLM, engage in natural conversations with inheritor agents to learn ICH skills |
+| 🎮 Hands-On Mini-Game | **Paper Cutting Simulator**: click and drag on folded paper to "cut" patterns, then unfold to reveal a symmetrical paper-cut artwork |
+| 📝 Knowledge Quiz | Auto-generated multiple choice questions based on learned knowledge points — test your knowledge and get instant scores |
+| 🏆 Achievement System | Daily check-in + achievement badges (Scholar/Omniscient/Rising Star tiers) + daily fun facts about ICH |
 | 📚 Knowledge Point Tracking | Auto-detect knowledge points mentioned in conversations and track mastery progress (Unlearned → Understood → Can Restate) |
-| 📝 Distillation Notes | Review all core knowledge cards revealed by the agent during your current session |
-| 🎨 Multi-Craft Support | Shadow Puppetry, Paper Cutting, Suzhou Embroidery, and Clay Sculpture — each with its own dedicated agent |
+| 🎨 Multi-Craft Support | Shadow Puppetry, Paper Cutting, Suzhou Embroidery, Clay Sculpture, Blue & White Porcelain, and Woodblock New Year Prints — **6 crafts**, each with its own dedicated agent |
+| 🎭 Unified Pixel Art Style | Zpix pixel font + global pixel CSS + pixel-art 3D avatars (16×16 Canvas rendering) |
 | 💬 Typewriter Effect | AI replies appear character by character, simulating a real conversation experience |
 | 📱 Mobile Responsive | Fully responsive layout — learn comfortably on your phone |
 
@@ -61,7 +65,7 @@ The agent is not a general-purpose chatbot — its knowledge is strictly confine
 | Layer | Technology |
 |-------|------------|
 | Frontend | React 18 + TypeScript + Vite |
-| 3D Rendering | Three.js + @react-three/fiber + @react-three/drei + @react-three/postprocessing |
+| 3D Rendering | Three.js + @react-three/fiber + @react-three/drei + @react-three/postprocessing (MeshStandardMaterial voxel models + Bloom post-processing) |
 | Backend | FastAPI (Python) — distilled knowledge base mock service |
 | AI Conversation | Zhipu GLM-4-Flash API + custom System Prompt (dynamically constructed inheritor personas) |
 | Data Storage | Distilled knowledge base JSON + browser localStorage (learning progress / API key / quota management) |
@@ -72,11 +76,13 @@ The agent is not a general-purpose chatbot — its knowledge is strictly confine
 ## 📖 Usage Guide
 
 1. Enter the welcome page and create your digital avatar
-2. In the **3D Pixel-Art Museum**, click on an exhibit to choose a craft to learn
+2. In the **3D Pixel-Art Museum**, click on an exhibit (6 total, circular layout) to choose a craft to learn
 3. Select a **modern inheritor** or an **ancient artisan** (choosing an ancient one triggers a time-travel animation)
 4. Configure your **Zhipu GLM API Key** on the Settings page ([get one free](https://open.bigmodel.cn/))
 5. Start learning through conversation — **10 free queries** per day
-6. Check your mastered knowledge points on the Learning Progress page
+6. Take a **knowledge quiz** anytime to test your learning, or play the **Paper Cutting mini-game** for hands-on practice
+7. Open the **Achievements Panel** to claim daily rewards and unlock achievement badges
+8. Review your mastered knowledge points on the Learning Progress page
 
 ---
 

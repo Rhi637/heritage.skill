@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import MuseumScene from '../components/MuseumScene';
 import { HERITAGE_CRAFTS } from '../data';
 import { HeritageCraft, UserProfile } from '../types';
+import PaperCuttingGame from '../components/PaperCuttingGame';
 import { getAllProgress } from '../utils/storage';
 import { playSound, startBackgroundMusic } from '../utils/audio';
 
@@ -33,6 +34,7 @@ export default function MuseumPage() {
     return !visited;
   });
   const [zoomingCraft, setZoomingCraft] = useState<HeritageCraft | null>(null);
+  const [gameOpen, setGameOpen] = useState(false);
 
   // 确保背景音乐已启动
   useEffect(() => {
@@ -181,6 +183,48 @@ export default function MuseumPage() {
           {!isMobile && <div style={styles.hudHint}>点击展台进入 →</div>}
         </div>
       </div>
+
+      {/* 小游戏浮动入口 */}
+      <button onClick={() => { setGameOpen(true); playSound('click'); }} style={{
+        position: 'absolute', bottom: isMobile ? 80 : 100, right: isMobile ? 12 : 24,
+        width: 50, height: 50, borderRadius: 0, backgroundColor: 'rgba(239,68,68,0.15)',
+        border: '3px solid rgba(239,68,68,0.4)', display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 20,
+        fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated',
+        boxShadow: '4px 4px 0 rgba(0,0,0,0.3)',
+        animation: 'pixelFloat 2s steps(4) infinite',
+      }}>
+        <span style={{ fontSize: 22, imageRendering: 'pixelated' }}>✂️</span>
+        <span style={{ fontSize: 8, color: '#f87171', letterSpacing: 1, imageRendering: 'pixelated' }}>小游戏</span>
+      </button>
+
+      {/* 游戏弹窗 */}
+      {gameOpen && (
+        <div onClick={() => setGameOpen(false)} style={{
+          position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+          backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center',
+          justifyContent: 'center', zIndex: 200,
+        }}>
+          <div onClick={(e) => e.stopPropagation()} style={{
+            backgroundColor: '#111127', border: '3px solid rgba(239,68,68,0.3)',
+            borderRadius: 0, padding: 24, maxWidth: 340, width: '90%',
+            boxShadow: '6px 6px 0 rgba(0,0,0,0.4)',
+            fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated',
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16, alignItems: 'center' }}>
+              <span style={{ fontSize: 15, color: '#f87171', letterSpacing: 2 }}>✂️ 剪纸模拟器</span>
+              <button onClick={() => setGameOpen(false)} style={{
+                padding: '2px 8px', backgroundColor: 'rgba(255,255,255,0.05)',
+                border: '1px solid rgba(255,255,255,0.1)', borderRadius: 0, color: '#9ca3af',
+                fontSize: 14, cursor: 'pointer', fontFamily: 'inherit',
+              }}>✕</button>
+            </div>
+            <PaperCuttingGame onComplete={(score) => {
+              if (score >= 50) playSound('click');
+            }} />
+          </div>
+        </div>
+      )}
 
       {/* 底部快捷导航 */}
       <div style={{

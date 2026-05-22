@@ -719,27 +719,27 @@ function WoodblockFigure() {
 function ConnectionLines() {
   const beamMat = useMemo(() => new THREE.MeshStandardMaterial({
     color: '#6366f1', roughness: 0.2, metalness: 0.5,
-    transparent: true, opacity: 0.25, emissive: '#6366f1', emissiveIntensity: 0.4,
+    transparent: true, opacity: 0.2, emissive: '#6366f1', emissiveIntensity: 0.3,
   }), []);
+
+  const SP = 2.6; // same as exhibit spacing
+  const conns = [
+    { s: [-5 * SP / 2, 0.3, 0], e: [-3 * SP / 2, 0.3, 0] },
+    { s: [-3 * SP / 2, 0.3, 0], e: [-1 * SP / 2, 0.3, 0] },
+    { s: [-1 * SP / 2, 0.3, 0], e: [1 * SP / 2, 0.3, 0] },
+    { s: [1 * SP / 2, 0.3, 0], e: [3 * SP / 2, 0.3, 0] },
+    { s: [3 * SP / 2, 0.3, 0], e: [5 * SP / 2, 0.3, 0] },
+  ];
 
   return (
     <group>
-      {/* 连接线：用细长方体连接展台 */}
-      {[
-        { s: [-4, 0.3, -3], e: [-4, 0.3, 3] },  // 左列连接
-        { s: [4, 0.3, -3], e: [4, 0.3, 3] },     // 右列连接
-        { s: [-4, 0.3, -3], e: [4, 0.3, -3] },   // 后排连接
-        { s: [-4, 0.3, 3], e: [4, 0.3, 3] },     // 前排连接
-      ].map((conn, i) => {
+      {conns.map((conn, i) => {
         const dx = conn.e[0] - conn.s[0];
-        const dz = conn.e[2] - conn.s[2];
-        const length = Math.sqrt(dx * dx + dz * dz);
-        const angle = Math.atan2(dx, dz);
+        const length = Math.abs(dx);
         const midX = (conn.s[0] + conn.e[0]) / 2;
-        const midZ = (conn.s[2] + conn.e[2]) / 2;
         return (
-          <mesh key={i} position={[midX, 0.3, midZ]} rotation={[0, angle, 0]}>
-            <boxGeometry args={[0.04, 0.02, length]} />
+          <mesh key={i} position={[midX, 0.3, 0]}>
+            <boxGeometry args={[length, 0.015, 0.015]} />
             <primitive object={beamMat} attach="material" />
           </mesh>
         );
@@ -815,28 +815,46 @@ function Exhibit({ position, color, label, emoji, mosaicStyle, onClick, progress
   );
 }
 
-// ========== 像素棋盘格地面 ==========
+// ========== 卷轴地面 ==========
 
 function MuseumFloor() {
-  const size = 30, tileCount = 20, tileSize = size / tileCount;
-  const darkMat = useMemo(() => new THREE.MeshStandardMaterial({ color: '#0a0a1a', roughness: 1, metalness: 0 }), []);
-  const lightMat = useMemo(() => new THREE.MeshStandardMaterial({ color: '#111128', roughness: 1, metalness: 0 }), []);
-  const mats = [darkMat, lightMat];
-
-  const tiles = useMemo(() => {
-    const t: { x: number; z: number; mat: number }[] = [];
-    for (let ix = -tileCount / 2; ix < tileCount / 2; ix++)
-      for (let iz = -tileCount / 2; iz < tileCount / 2; iz++)
-        t.push({ x: ix * tileSize + tileSize / 2, z: iz * tileSize + tileSize / 2, mat: (ix + iz) % 2 === 0 ? 0 : 1 });
-    return t;
-  }, []);
+  // 卷轴主体（横向长矩形，类似古画长卷）
+  const scrollW = 18, scrollD = 5;
+  const scrollMat = useMemo(() => new THREE.MeshStandardMaterial({ color: '#f5e6c8', roughness: 0.9, metalness: 0 }), []);
+  const edgeMat = useMemo(() => new THREE.MeshStandardMaterial({ color: '#c9a84c', roughness: 0.5, metalness: 0.2 }), []);
+  const rodMat = useMemo(() => new THREE.MeshStandardMaterial({ color: '#8b4513', roughness: 0.6, metalness: 0.3 }), []);
 
   return (
     <group position={[0, -0.2, 0]}>
-      {tiles.map((tile, i) => (
-        <mesh key={i} position={[tile.x, 0, tile.z]} rotation={[-Math.PI / 2, 0, 0]}>
-          <planeGeometry args={[tileSize, tileSize]} />
-          <primitive object={mats[tile.mat]} attach="material" />
+      {/* 卷轴主体 */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
+        <planeGeometry args={[scrollW, scrollD]} />
+        <primitive object={scrollMat} attach="material" />
+      </mesh>
+      {/* 卷轴边框（金色） */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, scrollD / 2]}>
+        <planeGeometry args={[scrollW, 0.1]} />
+        <primitive object={edgeMat} attach="material" />
+      </mesh>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, -scrollD / 2]}>
+        <planeGeometry args={[scrollW, 0.1]} />
+        <primitive object={edgeMat} attach="material" />
+      </mesh>
+      {/* 左侧卷轴杆 */}
+      <mesh position={[-scrollW / 2 - 0.15, 0.15, 0]} rotation={[0, 0, Math.PI / 2]}>
+        <cylinderGeometry args={[0.12, 0.12, scrollD + 0.4, 8]} />
+        <primitive object={rodMat} attach="material" />
+      </mesh>
+      {/* 右侧卷轴杆 */}
+      <mesh position={[scrollW / 2 + 0.15, 0.15, 0]} rotation={[0, 0, Math.PI / 2]}>
+        <cylinderGeometry args={[0.12, 0.12, scrollD + 0.4, 8]} />
+        <primitive object={rodMat} attach="material" />
+      </mesh>
+      {/* 卷轴上的纹理线条（模拟古画纹路） */}
+      {[-4, -2, 0, 2, 4].map((dx) => (
+        <mesh key={dx} rotation={[-Math.PI / 2, 0, 0]} position={[dx, 0.02, 0]}>
+          <planeGeometry args={[0.03, scrollD - 0.5]} />
+          <primitive object={edgeMat} attach="material" />
         </mesh>
       ))}
     </group>
@@ -906,8 +924,8 @@ export default function MuseumScene({ onSelectCraft, timeMode = 'modern', showGu
   const ambIntensity = isAncient ? 0.25 : 0.15;
   const spotColor = isAncient ? '#f59e0b' : '#6366f1';
 
-  // 6个展台均匀分布在半圆形上，半径5.5，前面没有展台遮挡
-  const RADIUS = 5.5;
+  // 画卷长轴布局：6个展台从左到右一字排开
+  const SPACING = 2.6;
   const TOTAL = 6;
   const crafts = [
     { id: 'craft_shadow_puppet', label: '皮影戏', emoji: '🎭', color: '#f59e0b', mosaicStyle: 'shadow_puppet' as const },
@@ -916,24 +934,18 @@ export default function MuseumScene({ onSelectCraft, timeMode = 'modern', showGu
     { id: 'craft_clay_figurine', label: '泥塑', emoji: '🏺', color: '#14b8a6', mosaicStyle: 'clay_figurine' as const },
     { id: 'craft_porcelain', label: '青花瓷', emoji: '🔵', color: '#3b82f6', mosaicStyle: 'porcelain' as const },
     { id: 'craft_woodblock', label: '木版年画', emoji: '🧧', color: '#dc2626', mosaicStyle: 'woodblock' as const },
-  ].map((craft, i) => {
-    // 半圆形排列，从-150°到+30°(最左到最右)，中间展台在前面
-    const startAngle = -Math.PI * 0.75; // -135°
-    const endAngle = Math.PI * 0.25;     // +45°
-    const angle = startAngle + (endAngle - startAngle) * (i / (TOTAL - 1));
-    return {
-      ...craft,
-      position: [
-        Math.cos(angle) * RADIUS,
-        0,
-        Math.sin(angle) * RADIUS,
-      ] as [number, number, number],
-    };
-  });
+  ].map((craft, i) => ({
+    ...craft,
+    position: [
+      (i - (TOTAL - 1) / 2) * SPACING, // -6.5 到 +6.5 均匀分布
+      0,
+      0, // 全部在同一深度，无前后遮挡
+    ] as [number, number, number],
+  }));
 
   return (
     <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
-      <Canvas dpr={[0.3, 0.5]} camera={{ position: [0, 5, 10], fov: 60 }}>
+      <Canvas dpr={[0.3, 0.5]} camera={{ position: [0, 4.5, 9], fov: 65 }}>
         <color attach="background" args={[bgColor]} />
         <fog attach="fog" args={[fogColor, 15, 35]} />
         <ambientLight intensity={ambIntensity} color={ambColor} />
