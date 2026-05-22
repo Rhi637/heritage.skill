@@ -6,6 +6,7 @@ import { getApiKey, getRemainingQuota, isQuotaExhausted, incrementDailyUsage, ma
 import { buildSystemPrompt, callGLMApi, extractKnowledgePointIds } from '../utils/api';
 import { playSound, startBackgroundMusic } from '../utils/audio';
 import InheritorAvatar from '../components/InheritorAvatar';
+import PaperCuttingGame from '../components/PaperCuttingGame';
 
 // ========== 移动端检测 hook ==========
 
@@ -39,6 +40,7 @@ export default function CraftPage() {
   const [travelPhase, setTravelPhase] = useState(0);
   const [showQuotaModal, setShowQuotaModal] = useState(false);
   const [showApiModal, setShowApiModal] = useState(false);
+  const [showGame, setShowGame] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
 
@@ -456,6 +458,29 @@ export default function CraftPage() {
         )}
         <div ref={messagesEndRef} />
       </div>
+
+      {/* 动手模拟小游戏（仅剪纸工艺显示） */}
+      {craftId === 'craft_paper_cutting' && (
+        <div style={{ padding: '0 12px', marginBottom: 8 }}>
+          <button
+            onClick={() => setShowGame(!showGame)}
+            style={{
+              padding: '6px 14px', backgroundColor: showGame ? 'rgba(239,68,68,0.15)' : 'rgba(255,255,255,0.05)',
+              border: showGame ? '2px solid rgba(239,68,68,0.3)' : '1px solid rgba(255,255,255,0.1)',
+              borderRadius: 0, color: showGame ? '#f87171' : '#9ca3af', fontSize: 12, cursor: 'pointer',
+              fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated', letterSpacing: 2,
+            }}>
+            ✂️ {showGame ? '关闭剪纸模拟' : '动手试试：剪纸模拟'}
+          </button>
+          {showGame && (
+            <div style={{ marginTop: 8, padding: 12, backgroundColor: 'rgba(255,255,255,0.02)', border: '2px solid rgba(239,68,68,0.15)' }}>
+              <PaperCuttingGame onComplete={(score) => {
+                if (score >= 50) playSound('click');
+              }} />
+            </div>
+          )}
+        </div>
+      )}
 
       {/* 推荐问题 */}
       {messages.length <= 1 && !isLoading && suggestedQuestions.length > 0 && (
