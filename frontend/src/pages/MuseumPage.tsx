@@ -4,6 +4,7 @@ import MuseumScene from '../components/MuseumScene';
 import { HERITAGE_CRAFTS } from '../data';
 import { HeritageCraft, UserProfile } from '../types';
 import PaperCuttingGame from '../components/PaperCuttingGame';
+import ScrollTreasureGame from '../components/ScrollTreasureGame';
 import { getAllProgress } from '../utils/storage';
 import { playSound, startBackgroundMusic } from '../utils/audio';
 
@@ -35,6 +36,7 @@ export default function MuseumPage() {
   });
   const [zoomingCraft, setZoomingCraft] = useState<HeritageCraft | null>(null);
   const [gameOpen, setGameOpen] = useState(false);
+  const [activeGame, setActiveGame] = useState<'cutting' | 'scroll'>('cutting');
 
   // 确保背景音乐已启动
   useEffect(() => {
@@ -213,17 +215,34 @@ export default function MuseumPage() {
             boxShadow: '6px 6px 0 rgba(0,0,0,0.4)',
             fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated',
           }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16, alignItems: 'center' }}>
-              <span style={{ fontSize: 15, color: '#f87171', letterSpacing: 2 }}>✂️ 剪纸模拟器</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12, alignItems: 'center' }}>
+              <div style={{ display: 'flex', gap: 0 }}>
+                <button onClick={() => setActiveGame('cutting')} style={{
+                  padding: '4px 12px', fontSize: 12, cursor: 'pointer', fontFamily: 'inherit',
+                  letterSpacing: 1, imageRendering: 'pixelated',
+                  borderRadius: 0, border: activeGame === 'cutting' ? '2px solid rgba(239,68,68,0.4)' : '1px solid rgba(255,255,255,0.1)',
+                  backgroundColor: activeGame === 'cutting' ? 'rgba(239,68,68,0.15)' : 'rgba(255,255,255,0.03)',
+                  color: activeGame === 'cutting' ? '#f87171' : '#6b7280',
+                }}>✂️ 剪纸</button>
+                <button onClick={() => setActiveGame('scroll')} style={{
+                  padding: '4px 12px', fontSize: 12, cursor: 'pointer', fontFamily: 'inherit',
+                  letterSpacing: 1, imageRendering: 'pixelated',
+                  borderRadius: 0, border: activeGame === 'scroll' ? '2px solid rgba(245,158,11,0.4)' : '1px solid rgba(255,255,255,0.1)',
+                  backgroundColor: activeGame === 'scroll' ? 'rgba(245,158,11,0.15)' : 'rgba(255,255,255,0.03)',
+                  color: activeGame === 'scroll' ? '#fbbf24' : '#6b7280',
+                }}>📜 寻宝</button>
+              </div>
               <button onClick={() => setGameOpen(false)} style={{
                 padding: '2px 8px', backgroundColor: 'rgba(255,255,255,0.05)',
                 border: '1px solid rgba(255,255,255,0.1)', borderRadius: 0, color: '#9ca3af',
                 fontSize: 14, cursor: 'pointer', fontFamily: 'inherit',
               }}>✕</button>
             </div>
-            <PaperCuttingGame onComplete={(score) => {
-              if (score >= 50) playSound('click');
-            }} />
+            {activeGame === 'cutting' ? (
+              <PaperCuttingGame onComplete={(score) => { if (score >= 50) playSound('click'); }} />
+            ) : (
+              <ScrollTreasureGame onComplete={(score) => { if (score >= 100) playSound('click'); }} />
+            )}
           </div>
         </div>
       )}
