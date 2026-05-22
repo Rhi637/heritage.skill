@@ -14,6 +14,59 @@ function StarField() {
   return <Stars radius={100} depth={50} count={3000} factor={4} saturation={0} fade speed={1} />;
 }
 
+// ========== NPC 导览员 (像素小人) ==========
+
+function NPCGuide({ showBubble }: { showBubble: boolean }) {
+  const g = 0.08;
+  const bodyRef = useRef<THREE.Group>(null);
+
+  useFrame((state) => {
+    if (bodyRef.current) bodyRef.current.position.y = Math.sin(state.clock.elapsedTime * 2) * 0.04;
+  });
+
+  const skin = useMemo(() => new THREE.MeshStandardMaterial({ color: '#f5d0a9', roughness: 1, metalness: 0 }), []);
+  const hair = useMemo(() => new THREE.MeshStandardMaterial({ color: '#1a1a1a', roughness: 1, metalness: 0 }), []);
+  const cloth = useMemo(() => new THREE.MeshStandardMaterial({ color: '#6366f1', roughness: 1, metalness: 0 }), []);
+  const shoe = useMemo(() => new THREE.MeshStandardMaterial({ color: '#3b2a1a', roughness: 1, metalness: 0 }), []);
+  const mats = [skin, hair, cloth, shoe];
+
+  const blocks = useMemo((): VoxelBlock[] => {
+    const b: VoxelBlock[] = [];
+    const p = (ix: number, iy: number, iz: number, mat: number) => b.push({ x: ix * g, y: iy * g, z: iz * g, size: g, mat });
+    // 头 (球)
+    for (let ix = -2; ix <= 2; ix++) for (let iy = 7; iy <= 11; iy++) for (let iz = -2; iz <= 2; iz++)
+      if ((ix/2.2)**2 + ((iy-9)/2.2)**2 + (iz/2.2)**2 <= 1) p(ix, iy, iz, iy >= 10 ? 1 : 0);
+    // 眼睛
+    p(-1, 9, 3, 1); p(1, 9, 3, 1);
+    // 身体
+    for (let ix = -2; ix <= 2; ix++) for (let iy = 3; iy <= 6; iy++) for (let iz = -1; iz <= 1; iz++) p(ix, iy, iz, 2);
+    // 双臂
+    for (let ix = -4; ix <= -3; ix++) for (let iy = 4; iy <= 5; iy++) for (let iz = -1; iz <= 1; iz++) p(ix, iy, iz, 2);
+    for (let ix = 3; ix <= 4; ix++) for (let iy = 4; iy <= 5; iy++) for (let iz = -1; iz <= 1; iz++) p(ix, iy, iz, 2);
+    // 腿
+    for (let ix = -1; ix <= 1; ix+=2) for (let iy = -1; iy <= 2; iy++) for (let iz = -1; iz <= 1; iz++) p(ix, iy, iz, 3);
+    return b;
+  }, []);
+
+  return (
+    <group ref={bodyRef} position={[0.5, 0.6, -1.5]}>
+      {blocks.map((blk, i) => (
+        <mesh key={i} position={[blk.x, blk.y, blk.z]}>
+          <boxGeometry args={[blk.size, blk.size, blk.size]} />
+          <primitive object={mats[blk.mat]} attach="material" />
+        </mesh>
+      ))}
+      {showBubble && (
+        <Html position={[0, 1.6, 0]} center distanceFactor={6}>
+          <div style={{ padding: '6px 14px', backgroundColor: 'rgba(5,5,16,0.85)', borderRadius: 0, border: '2px solid rgba(99,102,241,0.4)', color: '#a5b4fc', fontSize: 11, whiteSpace: 'nowrap', fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated', letterSpacing: 1, boxShadow: '3px 3px 0 rgba(0,0,0,0.3)' }}>
+            👋 欢迎！点击展台探索非遗技艺~
+          </div>
+        </Html>
+      )}
+    </group>
+  );
+}
+
 // ========== 皮影戏 — 扁平半透明剪影 + 三根操纵杆 ==========
 
 function ShadowPuppetFigure() {
@@ -515,14 +568,18 @@ interface ExhibitProps {
   emoji: string;
   mosaicStyle: 'paper_cutting' | 'shadow_puppet' | 'embroidery' | 'clay_figurine';
   onClick?: () => void;
+  progress?: number; // 0-100 学习进度
 }
 
-function Exhibit({ position, color, label, emoji, mosaicStyle, onClick }: ExhibitProps) {
+function Exhibit({ position, color, label, emoji, mosaicStyle, onClick, progress = 0 }: ExhibitProps) {
   const ringRef = useRef<THREE.Mesh>(null);
   const groupRef = useRef<THREE.Group>(null);
 
-  const baseMat = useMemo(() => new THREE.MeshStandardMaterial({ color, roughness: 0.7, metalness: 0.3 }), [color]);
-  const ringMat = useMemo(() => new THREE.MeshStandardMaterial({ color, roughness: 0.4, metalness: 0.6, emissive: color, emissiveIntensity: 0.5 }), [color]);
+  const baseMat = useMemo(() => new THREE.MeshStandardMaterial({ color, roughness: 0.7, metalness: 0.3, emissive: color, emissiveIntensity: progress / 200 }), [color, progress]);
+  const ringMat = useMemo(() => new THREE.MeshStandardMaterial({ color, roughness: 0.4, metalness: 0.6, emissive: color, emissiveIntensity: 0.3 + progress * 0.005 }), [color, progress]);
+  const sparkleCount = 20 + Math.floor(progress * 0.8);
+  const sparkleSize = 0.1 + progress * 0.001;
+  const sparkleOpacity = 0.5 + progress * 0.005;
 
   useFrame((state) => {
     const t = state.clock.elapsedTime;
@@ -550,7 +607,10 @@ function Exhibit({ position, color, label, emoji, mosaicStyle, onClick }: Exhibi
         <torusGeometry args={[1.3, 0.03, 8, 32]} /><primitive object={ringMat} attach="material" />
       </mesh>
       <Float speed={2} rotationIntensity={0.2} floatIntensity={0.4}>{FigureComponent}</Float>
-      <Sparkles count={30} scale={[2.5, 0.6, 2.5]} size={0.12} speed={0.6} color={color} opacity={0.7} />
+      <Sparkles count={sparkleCount} scale={[2.5, 0.6, 2.5]} size={sparkleSize} speed={0.6} color={color} opacity={sparkleOpacity} />
+      {progress >= 100 && (
+        <pointLight position={[0, 1.5, 1]} color={color} intensity={1.5} distance={3} />
+      )}
       <Html position={[0, 2.2, 0]} center distanceFactor={8}>
         <div style={{
           padding: '8px 20px', backgroundColor: 'rgba(5,5,16,0.75)', border: `1px solid ${color}60`,
@@ -639,11 +699,21 @@ function CenterHologram() {
 
 interface MuseumSceneProps {
   onSelectCraft: (craftId: string) => void;
+  timeMode?: 'ancient' | 'modern';
+  showGuide?: boolean;
+  craftProgress?: Record<string, number>; // craftId → learned percentage 0-100
 }
 
-export default function MuseumScene({ onSelectCraft }: MuseumSceneProps) {
+export default function MuseumScene({ onSelectCraft, timeMode = 'modern', showGuide = false, craftProgress = {} }: MuseumSceneProps) {
   // @react-three/postprocessing 3.x 类型兼容
   const FX = EffectComposer as any;
+
+  const isAncient = timeMode === 'ancient';
+  const bgColor = isAncient ? '#1a0f00' : '#050510';
+  const fogColor = isAncient ? '#3d2b1f' : '#050510';
+  const ambColor = isAncient ? '#ffd599' : '#6366f1';
+  const ambIntensity = isAncient ? 0.25 : 0.15;
+  const spotColor = isAncient ? '#f59e0b' : '#6366f1';
 
   const crafts = [
     { id: 'craft_shadow_puppet', label: '皮影戏', emoji: '🎭', color: '#f59e0b', mosaicStyle: 'shadow_puppet' as const, position: [-4, 0, -3] as [number, number, number] },
@@ -655,19 +725,21 @@ export default function MuseumScene({ onSelectCraft }: MuseumSceneProps) {
   return (
     <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
       <Canvas dpr={[0.3, 0.5]} camera={{ position: [0, 5, 10], fov: 60 }}>
-        <color attach="background" args={['#050510']} />
-        <fog attach="fog" args={['#050510', 15, 35]} />
-        <ambientLight intensity={0.15} />
+        <color attach="background" args={[bgColor]} />
+        <fog attach="fog" args={[fogColor, 15, 35]} />
+        <ambientLight intensity={ambIntensity} color={ambColor} />
         <StarField />
         <MuseumFloor />
+        <NPCGuide showBubble={showGuide} />
         <CenterHologram />
         {crafts.map((craft) => (
           <Exhibit key={craft.id} position={craft.position} color={craft.color} label={craft.label}
-            emoji={craft.emoji} mosaicStyle={craft.mosaicStyle} onClick={() => onSelectCraft(craft.id)} />
+            emoji={craft.emoji} mosaicStyle={craft.mosaicStyle} onClick={() => onSelectCraft(craft.id)}
+            progress={craftProgress[craft.id] || 0} />
         ))}
-        <SpotLight position={[0, 10, 0]} angle={0.5} penumbra={0.5} decay={1} intensity={2} color="#6366f1" castShadow />
+        <SpotLight position={[0, 10, 0]} angle={0.5} penumbra={0.5} decay={1} intensity={2} color={spotColor} castShadow />
         <FX>
-          <Bloom luminanceThreshold={0.2} luminanceSmoothing={0.9} height={300} intensity={0.5} />
+          <Bloom luminanceThreshold={0.2} luminanceSmoothing={0.9} height={300} intensity={isAncient ? 0.7 : 0.5} />
         </FX>
       </Canvas>
     </div>

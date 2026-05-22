@@ -25,33 +25,54 @@ export default function MuseumPage() {
     const data = localStorage.getItem('heritage_user');
     return data ? JSON.parse(data) : null;
   });
+  const [timeMode, setTimeMode] = useState<'ancient' | 'modern'>(() => {
+    return (localStorage.getItem('heritage_timemode') as 'ancient' | 'modern') || 'modern';
+  });
+  const [showGuide, setShowGuide] = useState(() => {
+    const visited = localStorage.getItem('heritage_visited');
+    return !visited;
+  });
 
   // 确保背景音乐已启动
   useEffect(() => {
     startBackgroundMusic();
+    localStorage.setItem('heritage_visited', 'true');
+    if (showGuide) setTimeout(() => setShowGuide(false), 8000);
   }, []);
 
-  // 计算总学习进度
-  const totalLearned = (() => {
+  // 计算总学习进度 & 每个 craft 的进度
+  const { totalLearned, totalPoints, craftProgress } = (() => {
     const allProgress = getAllProgress();
     let count = 0;
+    const cp: Record<string, number> = {};
     for (const craft of HERITAGE_CRAFTS) {
-      const cp = allProgress.find((p) => p.craftId === craft.id);
-      if (cp) count += cp.learnedPointIds.length;
+      const prog = allProgress.find((p) => p.craftId === craft.id);
+      const learned = prog?.learnedPointIds.length || 0;
+      count += learned;
+      cp[craft.id] = craft.knowledgePoints.length > 0
+        ? Math.round((learned / craft.knowledgePoints.length) * 100)
+        : 0;
     }
-    return count;
+    const total = HERITAGE_CRAFTS.reduce((sum, c) => sum + c.knowledgePoints.length, 0);
+    return { totalLearned: count, totalPoints: total, craftProgress: cp };
   })();
-  const totalPoints = HERITAGE_CRAFTS.reduce((sum, c) => sum + c.knowledgePoints.length, 0);
 
   const handleSelectCraft = (craftId: string) => {
     playSound('navigate');
     navigate(`/craft/${craftId}`);
   };
 
+  const toggleTimeMode = () => {
+    const next = timeMode === 'modern' ? 'ancient' : 'modern';
+    setTimeMode(next);
+    localStorage.setItem('heritage_timemode', next);
+    playSound('click');
+  };
+
   return (
     <div style={styles.container}>
-      {/* 3D 场景（含中文标签） */}
-      <MuseumScene onSelectCraft={handleSelectCraft} />
+      {/* 3D 场景 */}
+      <MuseumScene onSelectCraft={handleSelectCraft} timeMode={timeMode} showGuide={showGuide} craftProgress={craftProgress} />
 
       {/* 顶部 HUD */}
       <div style={{
@@ -92,6 +113,21 @@ export default function MuseumPage() {
                 fontSize: isMobile ? 9 : 11,
               }}>{totalLearned}/{totalPoints}</span>
             )}
+          </button>
+          {/* 时空切换按钮 */}
+          <button
+            onClick={toggleTimeMode}
+            style={{
+              ...styles.progressBtn,
+              padding: isMobile ? '4px 8px' : '6px 12px',
+              fontSize: isMobile ? 10 : 12,
+              backgroundColor: timeMode === 'ancient' ? 'rgba(245,158,11,0.15)' : 'rgba(99,102,241,0.15)',
+              border: `2px solid ${timeMode === 'ancient' ? 'rgba(245,158,11,0.3)' : 'rgba(99,102,241,0.3)'}`,
+              color: timeMode === 'ancient' ? '#fbbf24' : '#a5b4fc',
+              letterSpacing: 1,
+            }}
+          >
+            {timeMode === 'ancient' ? '🏮 古代' : '💡 现代'}
           </button>
           {!isMobile && <div style={styles.hudHint}>点击展台进入 →</div>}
         </div>
