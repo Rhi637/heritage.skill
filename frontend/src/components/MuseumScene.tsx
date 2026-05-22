@@ -884,7 +884,7 @@ function CenterHologram() {
   });
 
   return (
-    <group position={[0, 7, -2]}>
+    <group position={[0, 18, -4]}>
       <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
         <mesh ref={inner}><icosahedronGeometry args={[0.5, 1]} /><primitive object={sphereM} attach="material" /></mesh>
         <mesh><sphereGeometry args={[0.2, 8, 8]} /><primitive object={coreM} attach="material" /></mesh>
