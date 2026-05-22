@@ -559,6 +559,195 @@ function ClayFigurineFigure() {
   );
 }
 
+// ========== 青花瓷 — 瓷瓶造型 ==========
+
+function PorcelainFigure() {
+  const g = 0.06;
+
+  const mats = useMemo(() => [
+    new THREE.MeshStandardMaterial({ color: '#f8fafc', roughness: 0.3, metalness: 0.1 }), // 0 white porcelain
+    new THREE.MeshStandardMaterial({ color: '#1e40af', roughness: 0.3, metalness: 0.1 }), // 1 cobalt blue
+    new THREE.MeshStandardMaterial({ color: '#3b82f6', roughness: 0.3, metalness: 0.2 }), // 2 light blue
+    new THREE.MeshStandardMaterial({ color: '#1e3a8a', roughness: 0.3, metalness: 0.2 }), // 3 dark blue
+    new THREE.MeshStandardMaterial({ color: '#94a3b8', roughness: 0.4, metalness: 0.3 }), // 4 rim
+  ], []);
+
+  const blocks = useMemo((): VoxelBlock[] => {
+    const b: VoxelBlock[] = [];
+    const p = (ix: number, iy: number, iz: number, mat: number) => b.push({ x: ix * g, y: iy * g, z: iz * g, size: g, mat });
+
+    // 瓶底
+    for (let iy = -8; iy <= -6; iy++) {
+      const r = 3;
+      for (let ix = -r; ix <= r; ix++) for (let iz = -r; iz <= r; iz++)
+        if (Math.sqrt(ix * ix + iz * iz) <= r + 0.5) p(ix, iy, iz, 0);
+    }
+
+    // 瓶腹 (大肚子)
+    for (let iy = -5; iy <= 3; iy++) {
+      const r = 4 + Math.sin(((iy + 5) / 8) * Math.PI) * 2;
+      for (let ix = -6; ix <= 6; ix++) for (let iz = -6; iz <= 6; iz++) {
+        const dist = Math.sqrt(ix * ix + iz * iz);
+        if (dist <= r + 0.3 && dist >= 0) {
+          if (iy >= -3 && iy <= 1 && Math.abs(dist - r * 0.6) <= 1) {
+            // 缠枝莲纹样环
+            p(ix, iy, iz, (Math.abs(ix + iz) % 4 === 0) ? 2 : 1);
+          } else {
+            p(ix, iy, iz, 0);
+          }
+        }
+      }
+    }
+
+    // 瓶肩 (收缩)
+    for (let iy = 4; iy <= 6; iy++) {
+      const r = 6 - (iy - 3) * 1.2;
+      for (let ix = -6; ix <= 6; ix++) for (let iz = -6; iz <= 6; iz++)
+        if (Math.sqrt(ix * ix + iz * iz) <= r + 0.3) p(ix, iy, iz, 0);
+    }
+
+    // 瓶颈
+    for (let iy = 7; iy <= 10; iy++) {
+      for (let ix = -2; ix <= 2; ix++) for (let iz = -2; iz <= 2; iz++)
+        if (Math.sqrt(ix * ix + iz * iz) <= 2.3) p(ix, iy, iz, 0);
+    }
+
+    // 瓶口
+    for (let iy = 11; iy <= 12; iy++) {
+      for (let ix = -3; ix <= 3; ix++) for (let iz = -3; iz <= 3; iz++)
+        if (Math.sqrt(ix * ix + iz * iz) <= 3.3) p(ix, iy, iz, 4);
+    }
+    for (let ix = -3; ix <= 3; ix++) for (let iz = -3; iz <= 3; iz++)
+      if (Math.sqrt(ix * ix + iz * iz) <= 3.3) p(ix, 13, iz, 4);
+
+    // 瓶身蓝色缠枝纹装饰
+    for (let iy = -3; iy <= 2; iy++) {
+      const a = (iy + 3) * 0.8;
+      const rx = Math.round(Math.cos(a) * 3.5);
+      const rz = Math.round(Math.sin(a) * 3.5);
+      p(rx, iy, rz, 3);
+      p(-rx, iy, -rz, 1);
+    }
+
+    // 蓝色云纹在瓶腹
+    for (let iy = -1; iy <= 1; iy++) {
+      p(0, iy, 5, 1); p(0, iy, -5, 1);
+      p(5, iy, 0, 1); p(-5, iy, 0, 1);
+    }
+
+    return b;
+  }, []);
+
+  return (
+    <group position={[0, 1.3, 0]}>
+      {blocks.map((blk, i) => (
+        <mesh key={i} position={[blk.x, blk.y, blk.z]}>
+          <boxGeometry args={[blk.size, blk.size, blk.size]} />
+          <primitive object={mats[blk.mat]} attach="material" />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+// ========== 木版年画 — 长方形雕版 ==========
+
+function WoodblockFigure() {
+  const g = 0.06;
+
+  const mats = useMemo(() => [
+    new THREE.MeshStandardMaterial({ color: '#d4a574', roughness: 1, metalness: 0 }), // 0 wood
+    new THREE.MeshStandardMaterial({ color: '#b8733c', roughness: 1, metalness: 0 }), // 1 dark wood
+    new THREE.MeshStandardMaterial({ color: '#dc2626', roughness: 0.6, metalness: 0 }), // 2 red ink
+    new THREE.MeshStandardMaterial({ color: '#1a1a1a', roughness: 1, metalness: 0 }), // 3 black ink
+    new THREE.MeshStandardMaterial({ color: '#facc15', roughness: 0.5, metalness: 0 }), // 4 yellow ink
+  ], []);
+
+  const blocks = useMemo((): VoxelBlock[] => {
+    const b: VoxelBlock[] = [];
+    const p = (ix: number, iy: number, iz: number, mat: number) => b.push({ x: ix * g, y: iy * g, z: iz * g, size: g, mat });
+
+    // 木板主体 (扁平长方体)
+    for (let ix = -8; ix <= 8; ix++) for (let iy = -6; iy <= 6; iy++) for (let iz = -1; iz <= 1; iz++) {
+      if (Math.abs(ix) <= 8 && Math.abs(iy) <= 6) {
+        if (iz === -1 || iz === 1) p(ix, iy, iz, 1);
+        else p(ix, iy, iz, 0);
+      }
+    }
+
+    // 雕版凸起图案 (门神简化轮廓 - 在木板正面)
+    // 人物轮廓
+    for (let ix = -3; ix <= 3; ix++) for (let iy = -3; iy <= 5; iy++)
+      if (Math.abs(ix) + Math.abs(iy - 1) <= 6) p(ix, iy, 2, 3);
+
+    // 红色装饰 (服饰)
+    for (let ix = -2; ix <= 2; ix++) for (let iy = -3; iy <= 0; iy++)
+      p(ix, iy, 3, 2);
+
+    // 黄色点缀
+    p(0, -4, 3, 4);
+    p(0, 5, 3, 4);
+    p(-3, 2, 3, 4);
+    p(3, 2, 3, 4);
+
+    // 刻痕纹理 (凹线)
+    for (let ix = -4; ix <= 4; ix += 2) p(ix, -5, 2, 1);
+    for (let iy = -4; iy <= 4; iy += 2) p(-5, iy, 2, 1);
+    for (let iy = -4; iy <= 4; iy += 2) p(5, iy, 2, 1);
+
+    // 底座
+    for (let ix = -9; ix <= 9; ix++) for (let iy = -8; iy <= -7; iy++) for (let iz = -3; iz <= 3; iz++)
+      if (Math.abs(ix) <= 10) p(ix, iy, iz, 1);
+
+    return b;
+  }, []);
+
+  return (
+    <group position={[0, 1.3, 0]}>
+      {blocks.map((blk, i) => (
+        <mesh key={i} position={[blk.x, blk.y, blk.z]}>
+          <boxGeometry args={[blk.size, blk.size, blk.size]} />
+          <primitive object={mats[blk.mat]} attach="material" />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+// ========== 展台关联光连线 ==========
+
+function ConnectionLines() {
+  const beamMat = useMemo(() => new THREE.MeshStandardMaterial({
+    color: '#6366f1', roughness: 0.2, metalness: 0.5,
+    transparent: true, opacity: 0.25, emissive: '#6366f1', emissiveIntensity: 0.4,
+  }), []);
+
+  return (
+    <group>
+      {/* 连接线：用细长方体连接展台 */}
+      {[
+        { s: [-4, 0.3, -3], e: [-4, 0.3, 3] },  // 左列连接
+        { s: [4, 0.3, -3], e: [4, 0.3, 3] },     // 右列连接
+        { s: [-4, 0.3, -3], e: [4, 0.3, -3] },   // 后排连接
+        { s: [-4, 0.3, 3], e: [4, 0.3, 3] },     // 前排连接
+      ].map((conn, i) => {
+        const dx = conn.e[0] - conn.s[0];
+        const dz = conn.e[2] - conn.s[2];
+        const length = Math.sqrt(dx * dx + dz * dz);
+        const angle = Math.atan2(dx, dz);
+        const midX = (conn.s[0] + conn.e[0]) / 2;
+        const midZ = (conn.s[2] + conn.e[2]) / 2;
+        return (
+          <mesh key={i} position={[midX, 0.3, midZ]} rotation={[0, angle, 0]}>
+            <boxGeometry args={[0.04, 0.02, length]} />
+            <primitive object={beamMat} attach="material" />
+          </mesh>
+        );
+      })}
+    </group>
+  );
+}
+
 // ========== 展台 ==========
 
 interface ExhibitProps {
@@ -566,9 +755,9 @@ interface ExhibitProps {
   color: string;
   label: string;
   emoji: string;
-  mosaicStyle: 'paper_cutting' | 'shadow_puppet' | 'embroidery' | 'clay_figurine';
+  mosaicStyle: 'paper_cutting' | 'shadow_puppet' | 'embroidery' | 'clay_figurine' | 'porcelain' | 'woodblock';
   onClick?: () => void;
-  progress?: number; // 0-100 学习进度
+  progress?: number;
 }
 
 function Exhibit({ position, color, label, emoji, mosaicStyle, onClick, progress = 0 }: ExhibitProps) {
@@ -596,6 +785,8 @@ function Exhibit({ position, color, label, emoji, mosaicStyle, onClick, progress
       case 'paper_cutting': return <PaperCuttingFigure />;
       case 'embroidery': return <EmbroideryFigure />;
       case 'clay_figurine': return <ClayFigurineFigure />;
+      case 'porcelain': return <PorcelainFigure />;
+      case 'woodblock': return <WoodblockFigure />;
       default: return null;
     }
   }, [mosaicStyle]);
@@ -716,10 +907,12 @@ export default function MuseumScene({ onSelectCraft, timeMode = 'modern', showGu
   const spotColor = isAncient ? '#f59e0b' : '#6366f1';
 
   const crafts = [
-    { id: 'craft_shadow_puppet', label: '皮影戏', emoji: '🎭', color: '#f59e0b', mosaicStyle: 'shadow_puppet' as const, position: [-4, 0, -3] as [number, number, number] },
-    { id: 'craft_paper_cutting', label: '剪纸', emoji: '✂️', color: '#ef4444', mosaicStyle: 'paper_cutting' as const, position: [4, 0, -3] as [number, number, number] },
-    { id: 'craft_embroidery', label: '苏绣', emoji: '🪡', color: '#ec4899', mosaicStyle: 'embroidery' as const, position: [-4, 0, 3] as [number, number, number] },
-    { id: 'craft_clay_figurine', label: '泥塑', emoji: '🏺', color: '#14b8a6', mosaicStyle: 'clay_figurine' as const, position: [4, 0, 3] as [number, number, number] },
+    { id: 'craft_shadow_puppet', label: '皮影戏', emoji: '🎭', color: '#f59e0b', mosaicStyle: 'shadow_puppet' as const, position: [-5, 0, -3.5] as [number, number, number] },
+    { id: 'craft_paper_cutting', label: '剪纸', emoji: '✂️', color: '#ef4444', mosaicStyle: 'paper_cutting' as const, position: [0, 0, -3.5] as [number, number, number] },
+    { id: 'craft_embroidery', label: '苏绣', emoji: '🪡', color: '#ec4899', mosaicStyle: 'embroidery' as const, position: [5, 0, -3.5] as [number, number, number] },
+    { id: 'craft_clay_figurine', label: '泥塑', emoji: '🏺', color: '#14b8a6', mosaicStyle: 'clay_figurine' as const, position: [-5, 0, 3.5] as [number, number, number] },
+    { id: 'craft_porcelain', label: '青花瓷', emoji: '🔵', color: '#3b82f6', mosaicStyle: 'porcelain' as const, position: [0, 0, 3.5] as [number, number, number] },
+    { id: 'craft_woodblock', label: '木版年画', emoji: '🧧', color: '#ef4444', mosaicStyle: 'woodblock' as const, position: [5, 0, 3.5] as [number, number, number] },
   ];
 
   return (
@@ -731,6 +924,7 @@ export default function MuseumScene({ onSelectCraft, timeMode = 'modern', showGu
         <StarField />
         <MuseumFloor />
         <NPCGuide showBubble={showGuide} />
+        <ConnectionLines />
         <CenterHologram />
         {crafts.map((craft) => (
           <Exhibit key={craft.id} position={craft.position} color={craft.color} label={craft.label}

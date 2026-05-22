@@ -41,7 +41,7 @@ export interface HeritageCraft {
   inheritors: Inheritor[];
   sceneColor: string;      // 3D 场景主题色
   knowledgePoints: KnowledgePoint[];
-  mosaicStyle: 'paper_cutting' | 'shadow_puppet' | 'embroidery' | 'clay_figurine'; // 马赛克样式
+  mosaicStyle: 'paper_cutting' | 'shadow_puppet' | 'embroidery' | 'clay_figurine' | 'porcelain' | 'woodblock';
 }
 
 // ========== 知识点相关类型 ==========

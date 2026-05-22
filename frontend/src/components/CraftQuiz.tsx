@@ -1,13 +1,6 @@
 import { useState, useMemo } from 'react';
 import { KnowledgePoint } from '../types';
 
-interface QuizQuestion {
-  question: string;
-  options: string[];
-  correct: number;
-  kpId: string;
-}
-
 interface CraftQuizProps {
   knowledgePoints: KnowledgePoint[];
   craftName: string;
@@ -15,38 +8,7 @@ interface CraftQuizProps {
   onComplete: (score: number, total: number) => void;
 }
 
-// 从知识点生成测验题
-function generateQuestions(knowledgePoints: KnowledgePoint[]): QuizQuestion[] {
-  const pool = [...knowledgePoints].sort(() => Math.random() - 0.5).slice(0, 5);
-  return pool.map((kp) => {
-    // 简单规则：从 content 中提取关键信息生成题目
-    const sentences = kp.content.replace(/[，。；：、！？]/g, '|').split('|').filter((s) => s.length > 6);
-    const target = sentences[Math.floor(Math.random() * sentences.length)] || kp.title;
-
-    return {
-      question: `关于"${kp.title}"，以下哪个说法是正确的？`,
-      options: [
-        target.slice(0, Math.min(28, target.length)), // 正确答案（截断）
-        generateFakeOption(kp),
-        generateFakeOption(kp),
-      ].sort(() => Math.random() - 0.5),
-      correct: -1, // 稍后填充
-      kpId: kp.id,
-    };
-  }).map((q) => ({
-    ...q,
-    correct: q.options.indexOf(q.options.find((o) => q.options.filter((x) => x === o).length === 1 && o === q.options.filter((_, i) => {
-      const originalCorrect = q.options.filter((oo, ii) => {
-        // 找到原始正确选项的索引
-        return true;
-      });
-      return true;
-    })[0]) || 0),
-    correct: q.options.findIndex((o, i) => i === 0), // 正确答案在排序后变了，需要重新找
-  }));
-}
-
-// 简化版：用固定模板生成
+// 用固定模板生成干扰选项
 function generateFakeOption(kp: KnowledgePoint): string {
   const fakes = [
     `${kp.category}最早起源于宋代`,

@@ -344,4 +344,42 @@ export const HERITAGE_CRAFTS: HeritageCraft[] = [
       },
     ],
   },
+  {
+    id: 'craft_porcelain',
+    name: '青花瓷',
+    emoji: '🏺',
+    category: '传统工艺',
+    description: '青花瓷是中国瓷器的主流品种之一，以含钴的矿物颜料在瓷胎上绘制纹饰，罩以透明釉，高温烧制而成。始于唐宋，盛于元明，是中国瓷器艺术的巅峰。',
+    sceneColor: '#0a1a2e',
+    knowledgePoints: [
+      { id: 'kp_po_001', title: '青花瓷的原料与配方', category: '基本技法', difficulty: 'beginner', content: '青花瓷的主要原料有高岭土（瓷土）、钴料（青料）和釉料。高岭土决定了瓷胎的白度和强度，钴料决定了青花的发色。古代青料多从波斯进口"苏麻离青"，发色浓艳。现代也用国产钴料，发色清雅。', suggestedQuestions: ['青花瓷用什么原料做的？', '苏麻离青是什么？', '高岭土有什么特点？'] },
+      { id: 'kp_po_002', title: '拉坯成型技法', category: '基本技法', difficulty: 'beginner', content: '拉坯是将泥料放在转盘上，通过手的推拉提压塑造器型。基本步骤包括：揉泥（排空气）、定中心、开孔、提泥、修型。拉坯要求双手配合默契，心手合一。一个碗从揉泥到成型大约需要15-30分钟。', suggestedQuestions: ['拉坯是怎么操作的？', '拉坯最关键的步骤是什么？', '学习拉坯要多久？'] },
+      { id: 'kp_po_003', title: '青花绘画技法', category: '核心技艺', difficulty: 'intermediate', content: '青花绘画用毛笔蘸钴料水在素烧过的瓷胎上作画。讲究"意在笔先，笔断意连"。常用技法有勾线（描绘轮廓）、分水（渲染层次）和点染（点缀细节）。分水是最难的技法，需要控制笔中水分，一笔下去浓淡分明。', suggestedQuestions: ['青花怎么画上去的？', '什么是分水技法？', '青花绘画用什么笔？'] },
+      { id: 'kp_po_004', title: '青花瓷的经典纹样', category: '核心技艺', difficulty: 'intermediate', content: '青花瓷的装饰纹样极其丰富。常见有缠枝莲（连续不断的莲花藤蔓）、龙凤纹、海水江崖纹、折枝花果纹、人物故事图等。元青花以繁复密集的纹饰著称，明宣德青花以浓艳厚重闻名，清康熙青花以层次分明见长。', suggestedQuestions: ['青花瓷有哪些经典纹样？', '缠枝莲是什么样的？', '不同朝代的青花有什么特点？'] },
+      { id: 'kp_po_005', title: '施釉与烧制工艺', category: '核心技艺', difficulty: 'advanced', content: '釉是覆盖在瓷胎表面的玻璃质薄层。施釉方法有浸釉、浇釉、吹釉等。青花瓷烧制温度一般在1280-1350℃，需要烧制十几个小时。烧制过程中要控制窑内气氛（氧化或还原），这直接影响青花的发色效果。', suggestedQuestions: ['青花瓷怎么烧制的？', '施釉有哪些方法？', '烧制温度是多少？'] },
+    ],
+    mosaicStyle: 'porcelain' as const,
+    inheritors: [
+      { id: 'inheritor_chen', name: '陈师傅', era: 'modern', region: '江西景德镇', experienceYears: 45, description: '景德镇青花瓷工艺美术大师，精通拉坯与青花分水技法。', avatarEmoji: '👨‍🎨', avatarImage: '', catchphrases: ['瓷器是有灵魂的', '一笔分水见功夫'], skills: ['拉坯成型', '青花绘画', '分水技法', '釉料配制'], story: '陈师傅14岁进景德镇瓷厂学徒，从揉泥、拉坯做起，练就了一手精湛的青花绘画技艺。他的分水技法达到了浓淡五色的境界，一支笔能画出水墨画般的层次。' },
+    ],
+  },
+  {
+    id: 'craft_woodblock',
+    name: '木版年画',
+    emoji: '🧧',
+    category: '传统美术',
+    description: '木版年画是中国历史悠久的传统民间艺术，以木版雕刻、手工套色印刷而成。始于唐宋，盛于明清，民间过年张贴年画寓意吉祥。以天津杨柳青、苏州桃花坞最为著名。',
+    sceneColor: '#2e0a0a',
+    knowledgePoints: [
+      { id: 'kp_wb_001', title: '木版年画的材料与工具', category: '基本技法', difficulty: 'beginner', content: '年画木版一般选用梨木或枣木，木质细密坚硬，适合精细雕刻。刻刀有平口刀、圆口刀、三角刀等十余种。颜料传统用矿物和植物颜料，如朱砂（红）、石青（蓝）、藤黄（黄）等，色泽鲜艳耐久。', suggestedQuestions: ['年画用什么木板？', '年画颜料有什么特别？', '刻刀有哪些种类？'] },
+      { id: 'kp_wb_002', title: '线版雕刻技法', category: '基本技法', difficulty: 'beginner', content: '线版是年画的骨架，所有轮廓和细节都由线版印出。雕刻线版要求线条流畅、深浅一致。基本刀法有"冲刀"（向前推）、"切刀"（向下切）、"挑刀"（向上挑）。线版刻好后，沿线纹凸起0.5-1mm，太浅印不出，太深线条会糊。', suggestedQuestions: ['线版怎么刻？', '线版雕刻要注意什么？', '什么是冲刀和切刀？'] },
+      { id: 'kp_wb_003', title: '套色印刷技法', category: '核心技艺', difficulty: 'intermediate', content: '年画是分色套印的，每种颜色需要一块独立的色版。印刷顺序一般是先印线版（黑色轮廓），再依次印黄版、红版、绿版、蓝版等。每次套印必须精准对位，稍有偏差图案就会重叠错位。一幅精品年画需要套印十几次甚至几十次。', suggestedQuestions: ['年画怎么套色的？', '套色印刷的顺序是什么？', '对位不准怎么办？'] },
+      { id: 'kp_wb_004', title: '年画的常见题材', category: '核心技艺', difficulty: 'beginner', content: '年画题材丰富多样。主要分为：门神类（秦琼敬德、钟馗驱鬼）、吉祥类（连年有余、五子登科）、戏曲类（三国、西厢记故事）、风俗类（耕织图、百子图）、时事类（反映当朝大事）等。每幅年画都有特定的寓意和祝福。', suggestedQuestions: ['年画有哪些种类？', '门神是谁？', '连年有余是什么意思？'] },
+      { id: 'kp_wb_005', title: '开脸与点睛', category: '核心技艺', difficulty: 'advanced', content: '开脸是年画最关键的步骤，指用细笔勾画人物的五官和面部表情。开脸的好坏直接决定了年画的神韵。老艺人说"画人难画手，画手难画口"，开脸时需要多年的经验积累，要求心静手稳，一气呵成。', suggestedQuestions: ['什么是开脸？', '开脸为什么最重要？', '怎么练习开脸？'] },
+    ],
+    mosaicStyle: 'woodblock' as const,
+    inheritors: [
+      { id: 'inheritor_liu', name: '刘师傅', era: 'modern', region: '天津杨柳青', experienceYears: 35, description: '杨柳青年画传承人，精通线版雕刻和套色印刷。', avatarEmoji: '🧔', avatarImage: '', catchphrases: ['年画要讲个喜气', '一刀一线都是功夫'], skills: ['线版雕刻', '套色印刷', '颜料配制', '年画修复'], story: '刘师傅出生于杨柳青年画世家，从小看着父亲刻版印画长大。他26岁就掌握了全套年画制作技艺，尤其擅长开脸，他画的童子憨态可掬，眼神灵动。' },
+    ],
+  },
 ];
