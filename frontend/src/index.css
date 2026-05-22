@@ -1,3 +1,10 @@
+/* ========== 像素字体 ========== */
+@font-face {
+  font-family: 'Zpix';
+  src: url('https://cdn.jsdelivr.net/npm/zpix@3.1.8/dist/Zpix.woff2') format('woff2');
+  font-display: swap;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -10,66 +17,122 @@ html, body, #root {
   overflow: hidden;
   background-color: #050510;
   color: #e0e7ff;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft YaHei", sans-serif;
+  font-family: 'Zpix', 'Microsoft YaHei', monospace;
+  image-rendering: pixelated;
 }
 
-/* 像素风渲染：canvas 低分辨率放大使用最近邻插值 */
+/* ========== Canvas 像素缩放 ========== */
 canvas {
   image-rendering: pixelated;
 }
 
-/* 滚动条样式 */
-::-webkit-scrollbar {
-  width: 4px;
-}
+/* ========== 像素风滚动条 ========== */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #0a0a1a; }
+::-webkit-scrollbar-thumb { background: #333366; border-radius: 0; }
+::-webkit-scrollbar-thumb:hover { background: #4444aa; }
 
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 2px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-/* 时空穿梭旋转动画 */
+/* ========== 时空穿梭旋转动画 ========== */
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
 
-/* 马赛克闪烁动画 */
-@keyframes mosaicPulse {
-  0%, 100% { opacity: 0.8; }
-  50% { opacity: 1; }
+/* ========== 像素闪烁 ========== */
+@keyframes pixelPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }
 
-/* 打字指示器闪烁 */
+/* ========== 打字光标闪烁 ========== */
 @keyframes blink {
-  0%, 80%, 100% { opacity: 0.3; }
+  0%, 80%, 100% { opacity: 0; }
   40% { opacity: 1; }
 }
 
-/* 按钮悬停效果 */
+/* ========== 像素步进动画 ========== */
+@keyframes pixelFloat {
+  0%, 100% { transform: translateY(0); }
+  25% { transform: translateY(-4px); }
+  75% { transform: translateY(4px); }
+}
+
+/* ========== 像素按钮通用样式 ========== */
+.pixel-btn {
+  font-family: 'Zpix', 'Microsoft YaHei', monospace;
+  border-radius: 0;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: none;
+  image-rendering: pixelated;
+  text-transform: uppercase;
+}
+.pixel-btn:hover { filter: brightness(1.3); }
+.pixel-btn:active { transform: translate(1px, 1px); }
+
+/* ========== 像素卡片通用样式 ========== */
+.pixel-card {
+  font-family: 'Zpix', 'Microsoft YaHei', monospace;
+  border-radius: 0;
+  image-rendering: pixelated;
+  border: 2px solid;
+}
+
+/* ========== 像素输入框 ========== */
+.pixel-input {
+  font-family: 'Zpix', 'Microsoft YaHei', monospace;
+  border-radius: 0;
+  image-rendering: pixelated;
+  outline: none;
+  background-color: rgba(255,255,255,0.05);
+  border: 2px solid rgba(255,255,255,0.15);
+  color: #e0e7ff;
+}
+.pixel-input:focus {
+  border-color: rgba(99,102,241,0.5);
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+}
+
+/* ========== 像素阴影工具类 ========== */
+.pixel-shadow-sm { box-shadow: 2px 2px 0 rgba(0,0,0,0.3); }
+.pixel-shadow-md { box-shadow: 4px 4px 0 rgba(0,0,0,0.3); }
+.pixel-shadow-lg { box-shadow: 6px 6px 0 rgba(0,0,0,0.3); }
+
+/* ========== 输入框聚焦 ========== */
+input:focus, textarea:focus {
+  border-color: rgba(99, 102, 241, 0.5) !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+/* ========== 像素按钮 hover ========== */
 button:hover {
   filter: brightness(1.2);
 }
-
 button:active {
-  transform: scale(0.98);
+  transform: translate(1px, 1px);
 }
 
-/* 输入框聚焦 */
-input:focus, textarea:focus {
-  border-color: rgba(99, 102, 241, 0.5) !important;
-  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+/* ========== 像素进度条 ========== */
+.pixel-progress {
+  height: 12px;
+  border-radius: 0;
+  background: #1a1a2e;
+  border: 2px solid #333366;
+  overflow: hidden;
+}
+.pixel-progress > div {
+  height: 100%;
+  border-radius: 0;
+  transition: width 0.3s steps(8);
 }
 
-/* 卡片悬停效果 */
-div[style*="cursor: pointer"]:hover {
-  filter: brightness(1.1);
+/* ========== 像素标签 ========== */
+.pixel-tag {
+  font-family: 'Zpix', 'Microsoft YaHei', monospace;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 0;
+  letter-spacing: 1px;
+  image-rendering: pixelated;
+  border: 1px solid;
 }

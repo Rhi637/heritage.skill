@@ -277,49 +277,49 @@ export default function CraftPage() {
     const cardMinWidth = isMobile ? 'minmax(260px, 1fr)' : 'minmax(320px, 1fr)';
 
     return (
-      <div style={{ width: '100vw', minHeight: '100vh', backgroundColor: '#050510', fontFamily: '"Microsoft YaHei", sans-serif', color: '#e0e7ff', padding: isMobile ? '24px 12px' : '40px 24px' }}>
-        <button onClick={() => { playSound('click'); navigate('/museum'); }} style={{ position: 'absolute', top: isMobile ? 12 : 20, left: isMobile ? 12 : 20, padding: '8px 16px', backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, color: '#9ca3af', fontSize: 14, cursor: 'pointer' }}>← 返回博物馆</button>
+      <div style={{ width: '100vw', minHeight: '100vh', backgroundColor: '#050510', fontFamily: "'Zpix','Microsoft YaHei',monospace", color: '#e0e7ff', padding: isMobile ? '24px 12px' : '40px 24px', imageRendering: 'pixelated' }}>
+        <button onClick={() => { playSound('click'); navigate('/museum'); }} style={{ position: 'absolute', top: isMobile ? 12 : 20, left: isMobile ? 12 : 20, padding: '8px 16px', backgroundColor: 'rgba(255,255,255,0.05)', border: '2px solid rgba(255,255,255,0.1)', borderRadius: 0, color: '#9ca3af', fontSize: 14, cursor: 'pointer', fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated', letterSpacing: 2 }}>← 返回博物馆</button>
 
         <div style={{ textAlign: 'center', marginBottom: isMobile ? 24 : 40 }}>
-          <div style={{ fontSize: isMobile ? 28 : 36, fontWeight: 700, marginBottom: 12 }}>{craft?.emoji} {craft?.name}</div>
-          <div style={{ fontSize: isMobile ? 13 : 14, color: '#6b7280', maxWidth: 500, margin: '0 auto', lineHeight: 1.6 }}>{craft?.description}</div>
+          <div style={{ fontSize: isMobile ? 28 : 36, fontWeight: 700, marginBottom: 12, fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated', letterSpacing: 3, textShadow: '3px 3px 0 rgba(0,0,0,0.3)' }}>{craft?.emoji} {craft?.name}</div>
+          <div style={{ fontSize: isMobile ? 13 : 14, color: '#6b7280', maxWidth: 500, margin: '0 auto', lineHeight: 1.6, fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated', letterSpacing: 1 }}>{craft?.description}</div>
         </div>
-        <div style={{ textAlign: 'center', fontSize: isMobile ? 14 : 16, color: '#9ca3af', marginBottom: isMobile ? 16 : 24 }}>选择一位传承人开始学习</div>
+        <div style={{ textAlign: 'center', fontSize: isMobile ? 14 : 16, color: '#9ca3af', marginBottom: isMobile ? 16 : 24, fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated', letterSpacing: 2 }}>选择一位传承人开始学习</div>
 
         <div style={{ display: 'grid', gridTemplateColumns: `repeat(auto-fit, ${cardMinWidth})`, gap: isMobile ? 16 : 24, maxWidth: 750, margin: '0 auto' }}>
           {craft?.inheritors.map((inh) => (
-            <div key={inh.id} style={{ position: 'relative', padding: isMobile ? 20 : 28, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', textAlign: 'center', cursor: 'pointer', transition: 'all 0.3s ease', overflow: 'hidden' }} onClick={() => handleSelectInheritor(inh)}>
+            <div key={inh.id} style={{ position: 'relative', padding: isMobile ? 20 : 28, borderRadius: 0, backgroundColor: 'rgba(255,255,255,0.03)', border: '3px solid rgba(255,255,255,0.1)', textAlign: 'center', cursor: 'pointer', overflow: 'hidden', fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated', boxShadow: '4px 4px 0 rgba(0,0,0,0.3)' }} onClick={() => handleSelectInheritor(inh)}>
               {/* 时代标签 */}
-              <div style={{ position: 'absolute', top: 16, right: 16, padding: '4px 12px', borderRadius: 20, backgroundColor: inh.era === 'ancient' ? 'rgba(245,158,11,0.15)' : 'rgba(99,102,241,0.15)', color: inh.era === 'ancient' ? '#fbbf24' : '#a5b4fc', fontSize: 12 }}>
+              <div style={{ position: 'absolute', top: 16, right: 16, padding: '4px 12px', borderRadius: 0, backgroundColor: inh.era === 'ancient' ? 'rgba(245,158,11,0.15)' : 'rgba(99,102,241,0.15)', color: inh.era === 'ancient' ? '#fbbf24' : '#a5b4fc', fontSize: 12, fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated', letterSpacing: 2, border: '1px solid rgba(255,255,255,0.1)' }}>
                 {inh.era === 'ancient' ? `${inh.dynasty}` : '现代'}
               </div>
 
               {/* AI 头像 */}
-              <div style={{ width: isMobile ? 80 : 100, height: isMobile ? 80 : 100, borderRadius: '50%', overflow: 'hidden', margin: '0 auto 16px', border: '3px solid rgba(255,255,255,0.15)', boxShadow: '0 0 30px rgba(99,102,241,0.2)' }}>
+              <div style={{ width: isMobile ? 80 : 100, height: isMobile ? 80 : 100, borderRadius: 0, overflow: 'hidden', margin: '0 auto 16px', border: '3px solid rgba(255,255,255,0.15)', boxShadow: '3px 3px 0 rgba(99,102,241,0.2)' }}>
                 {inh.avatarImage ? (
-                  <img src={inh.avatarImage} alt={inh.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img src={inh.avatarImage} alt={inh.name} style={{ width: '100%', height: '100%', objectFit: 'cover', imageRendering: 'pixelated' }} />
                 ) : (
-                  <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: isMobile ? 36 : 48, backgroundColor: 'rgba(255,255,255,0.05)' }}>{inh.avatarEmoji}</div>
+                  <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: isMobile ? 36 : 48, backgroundColor: 'rgba(255,255,255,0.05)', imageRendering: 'pixelated' }}>{inh.avatarEmoji}</div>
                 )}
               </div>
 
-              <div style={{ fontSize: isMobile ? 20 : 22, fontWeight: 600, marginBottom: 4 }}>{inh.name}</div>
-              <div style={{ fontSize: 13, color: '#6b7280', marginBottom: 12 }}>📍 {inh.region} · 从艺{inh.experienceYears}年</div>
-              <div style={{ fontSize: 13, color: '#9ca3af', lineHeight: 1.6, marginBottom: 12 }}>{inh.description}</div>
+              <div style={{ fontSize: isMobile ? 20 : 22, fontWeight: 600, marginBottom: 4, fontFamily: "'Zpix','Microsoft YaHei',monospace", letterSpacing: 2 }}>{inh.name}</div>
+              <div style={{ fontSize: 13, color: '#6b7280', marginBottom: 12, fontFamily: "'Zpix','Microsoft YaHei',monospace" }}>📍 {inh.region} · 从艺{inh.experienceYears}年</div>
+              <div style={{ fontSize: 13, color: '#9ca3af', lineHeight: 1.6, marginBottom: 12, fontFamily: "'Zpix','Microsoft YaHei',monospace" }}>{inh.description}</div>
 
               {/* 技能标签 */}
               {inh.skills && (
                 <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 6, marginBottom: 16 }}>
                   {inh.skills.map((skill) => (
-                    <span key={skill} style={{ padding: '3px 10px', borderRadius: 10, backgroundColor: 'rgba(255,255,255,0.05)', fontSize: 11, color: '#9ca3af' }}>{skill}</span>
+                    <span key={skill} style={{ padding: '3px 10px', borderRadius: 0, backgroundColor: 'rgba(255,255,255,0.05)', fontSize: 11, color: '#9ca3af', fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated', border: '1px solid rgba(255,255,255,0.08)' }}>{skill}</span>
                   ))}
                 </div>
               )}
 
               {/* 查看详情 + 开始按钮 */}
               <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
-                <div onClick={(e) => { e.stopPropagation(); setShowDetail(inh); }} style={{ padding: '8px 16px', backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, color: '#9ca3af', fontSize: 13, cursor: 'pointer' }}>📋 详情</div>
-                <div style={{ padding: '8px 20px', backgroundColor: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.3)', borderRadius: 8, color: '#a5b4fc', fontSize: 13 }}>
+                <div onClick={(e) => { e.stopPropagation(); setShowDetail(inh); }} style={{ padding: '8px 16px', backgroundColor: 'rgba(255,255,255,0.05)', border: '2px solid rgba(255,255,255,0.1)', borderRadius: 0, color: '#9ca3af', fontSize: 13, cursor: 'pointer', fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated', letterSpacing: 2 }}>📋 详情</div>
+                <div style={{ padding: '8px 20px', backgroundColor: 'rgba(99,102,241,0.15)', border: '2px solid rgba(99,102,241,0.3)', borderRadius: 0, color: '#a5b4fc', fontSize: 13, fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated', letterSpacing: 2 }}>
                   {inh.era === 'ancient' ? '穿梭时空' : '前往学习'} →
                 </div>
               </div>
@@ -330,42 +330,42 @@ export default function CraftPage() {
         {/* 详情面板 */}
         {showDetail && (
           <div onClick={() => setShowDetail(null)} style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
-            <div onClick={(e) => e.stopPropagation()} style={{ maxWidth: isMobile ? '95%' : 480, width: isMobile ? '95%' : '90%', backgroundColor: '#111127', borderRadius: 20, padding: isMobile ? 20 : 32, border: '1px solid rgba(255,255,255,0.1)', maxHeight: '80vh', overflowY: 'auto' }}>
+            <div onClick={(e) => e.stopPropagation()} style={{ maxWidth: isMobile ? '95%' : 480, width: isMobile ? '95%' : '90%', backgroundColor: '#111127', borderRadius: 0, padding: isMobile ? 20 : 32, border: '3px solid rgba(255,255,255,0.15)', maxHeight: '80vh', overflowY: 'auto', fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated', boxShadow: '6px 6px 0 rgba(0,0,0,0.3)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
-                <div style={{ width: isMobile ? 56 : 72, height: isMobile ? 56 : 72, borderRadius: '50%', overflow: 'hidden', border: '2px solid rgba(255,255,255,0.15)', flexShrink: 0 }}>
+                <div style={{ width: isMobile ? 56 : 72, height: isMobile ? 56 : 72, borderRadius: 0, overflow: 'hidden', border: '3px solid rgba(255,255,255,0.15)', flexShrink: 0 }}>
                   {showDetail.avatarImage ? (
-                    <img src={showDetail.avatarImage} alt={showDetail.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={showDetail.avatarImage} alt={showDetail.name} style={{ width: '100%', height: '100%', objectFit: 'cover', imageRendering: 'pixelated' }} />
                   ) : (
-                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: isMobile ? 24 : 32, backgroundColor: 'rgba(255,255,255,0.05)' }}>{showDetail.avatarEmoji}</div>
+                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: isMobile ? 24 : 32, backgroundColor: 'rgba(255,255,255,0.05)', imageRendering: 'pixelated' }}>{showDetail.avatarEmoji}</div>
                   )}
                 </div>
                 <div>
-                  <div style={{ fontSize: isMobile ? 18 : 22, fontWeight: 600 }}>{showDetail.name}</div>
-                  <div style={{ fontSize: 13, color: '#6b7280', marginTop: 4 }}>
+                  <div style={{ fontSize: isMobile ? 18 : 22, fontWeight: 600, fontFamily: "'Zpix','Microsoft YaHei',monospace", letterSpacing: 2 }}>{showDetail.name}</div>
+                  <div style={{ fontSize: 13, color: '#6b7280', marginTop: 4, fontFamily: "'Zpix','Microsoft YaHei',monospace" }}>
                     {showDetail.era === 'ancient' ? `${showDetail.dynasty}` : '现代'} · 📍 {showDetail.region} · 从艺{showDetail.experienceYears}年
                   </div>
                 </div>
               </div>
-              <div style={{ fontSize: 14, color: '#9ca3af', lineHeight: 1.8, marginBottom: 20 }}>{showDetail.story}</div>
+              <div style={{ fontSize: 14, color: '#9ca3af', lineHeight: 1.8, marginBottom: 20, fontFamily: "'Zpix','Microsoft YaHei',monospace" }}>{showDetail.story}</div>
               {showDetail.skills && (
                 <div style={{ marginBottom: 20 }}>
-                  <div style={{ fontSize: 13, color: '#6b7280', marginBottom: 8 }}>擅长技能</div>
+                  <div style={{ fontSize: 13, color: '#6b7280', marginBottom: 8, fontFamily: "'Zpix','Microsoft YaHei',monospace" }}>擅长技能</div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                     {showDetail.skills.map((skill) => (
-                      <span key={skill} style={{ padding: '4px 12px', borderRadius: 10, backgroundColor: 'rgba(99,102,241,0.1)', color: '#a5b4fc', fontSize: 12 }}>{skill}</span>
+                      <span key={skill} style={{ padding: '4px 12px', borderRadius: 0, backgroundColor: 'rgba(99,102,241,0.1)', color: '#a5b4fc', fontSize: 12, fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated', border: '1px solid rgba(99,102,241,0.2)' }}>{skill}</span>
                     ))}
                   </div>
                 </div>
               )}
               {showDetail.catchphrases.length > 0 && (
                 <div>
-                  <div style={{ fontSize: 13, color: '#6b7280', marginBottom: 8 }}>口头禅</div>
+                  <div style={{ fontSize: 13, color: '#6b7280', marginBottom: 8, fontFamily: "'Zpix','Microsoft YaHei',monospace" }}>口头禅</div>
                   {showDetail.catchphrases.map((cp) => (
-                    <div key={cp} style={{ padding: '8px 12px', marginBottom: 6, backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: 8, fontSize: 13, color: '#d1d5db', fontStyle: 'italic' }}>"{cp}"</div>
+                    <div key={cp} style={{ padding: '8px 12px', marginBottom: 6, backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: 0, fontSize: 13, color: '#d1d5db', fontFamily: "'Zpix','Microsoft YaHei',monospace", border: '1px solid rgba(255,255,255,0.05)' }}>"{cp}"</div>
                   ))}
                 </div>
               )}
-              <div onClick={() => setShowDetail(null)} style={{ marginTop: 20, textAlign: 'center', padding: '10px', color: '#6b7280', fontSize: 14, cursor: 'pointer' }}>关闭</div>
+              <div onClick={() => setShowDetail(null)} style={{ marginTop: 20, textAlign: 'center', padding: '10px', color: '#6b7280', fontSize: 14, cursor: 'pointer', fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated' }}>关闭</div>
             </div>
           </div>
         )}
@@ -377,15 +377,15 @@ export default function CraftPage() {
   const remaining = getRemainingQuota();
 
   return (
-    <div style={{ width: '100vw', height: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#0a0a1a', fontFamily: '"Microsoft YaHei", sans-serif' }}>
+    <div style={{ width: '100vw', height: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#0a0a1a', fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated' }}>
       {/* 顶部栏 */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 8 : 12, padding: isMobile ? '8px 12px' : '12px 20px', backgroundColor: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-        <button onClick={() => { playSound('click'); setSelectedInheritor(null); if (abortRef.current) abortRef.current.abort(); }} style={{ padding: '6px 12px', backgroundColor: 'transparent', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 6, color: '#9ca3af', fontSize: 13, cursor: 'pointer' }}>← 返回</button>
-        <div style={{ width: isMobile ? 30 : 36, height: isMobile ? 30 : 36, borderRadius: '50%', overflow: 'hidden', border: '2px solid rgba(255,255,255,0.1)', flexShrink: 0 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 8 : 12, padding: isMobile ? '8px 12px' : '12px 20px', backgroundColor: 'rgba(255,255,255,0.03)', borderBottom: '2px solid rgba(255,255,255,0.06)' }}>
+        <button onClick={() => { playSound('click'); setSelectedInheritor(null); if (abortRef.current) abortRef.current.abort(); }} style={{ padding: '6px 12px', backgroundColor: 'transparent', border: '2px solid rgba(255,255,255,0.1)', borderRadius: 0, color: '#9ca3af', fontSize: 13, cursor: 'pointer', fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated', letterSpacing: 2 }}>← 返回</button>
+        <div style={{ width: isMobile ? 30 : 36, height: isMobile ? 30 : 36, borderRadius: 0, overflow: 'hidden', border: '2px solid rgba(255,255,255,0.1)', flexShrink: 0, imageRendering: 'pixelated' }}>
           {selectedInheritor.avatarImage ? (
-            <img src={selectedInheritor.avatarImage} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <img src={selectedInheritor.avatarImage} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', imageRendering: 'pixelated' }} />
           ) : (
-            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: isMobile ? 16 : 20, backgroundColor: 'rgba(255,255,255,0.05)' }}>{selectedInheritor.avatarEmoji}</div>
+            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: isMobile ? 16 : 20, backgroundColor: 'rgba(255,255,255,0.05)', imageRendering: 'pixelated' }}>{selectedInheritor.avatarEmoji}</div>
           )}
         </div>
         <div style={{ flex: 1 }}>
@@ -399,7 +399,7 @@ export default function CraftPage() {
           {isMobile ? `${remaining}次` : `今日剩余 ${remaining} 次`}
         </div>
         {/* 设置按钮 */}
-        <button onClick={() => { playSound('click'); navigate('/settings'); }} style={{ padding: '6px 10px', backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 6, color: '#9ca3af', fontSize: 14, cursor: 'pointer' }}>⚙️</button>
+        <button onClick={() => { playSound('click'); navigate('/settings'); }} style={{ padding: '6px 10px', backgroundColor: 'rgba(255,255,255,0.05)', border: '2px solid rgba(255,255,255,0.1)', borderRadius: 0, color: '#9ca3af', fontSize: 14, cursor: 'pointer', imageRendering: 'pixelated' }}>⚙️</button>
       </div>
 
       {/* 消息列表 */}
@@ -474,8 +474,8 @@ export default function CraftPage() {
 
       {/* 推荐问题 */}
       {messages.length <= 1 && !isLoading && suggestedQuestions.length > 0 && (
-        <div style={{ padding: isMobile ? '6px 12px' : '8px 16px', display: 'flex', gap: isMobile ? 6 : 8, flexWrap: 'wrap', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-          <span style={{ fontSize: 12, color: '#6b7280', lineHeight: '30px' }}>推荐问题：</span>
+        <div style={{ padding: isMobile ? '6px 12px' : '8px 16px', display: 'flex', gap: isMobile ? 6 : 8, flexWrap: 'wrap', borderTop: '2px solid rgba(255,255,255,0.04)' }}>
+          <span style={{ fontSize: 12, color: '#6b7280', lineHeight: '30px', fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated' }}>推荐问题：</span>
           {suggestedQuestions.map((q, i) => (
             <button
               key={i}
@@ -483,12 +483,14 @@ export default function CraftPage() {
               style={{
                 padding: isMobile ? '5px 10px' : '6px 14px',
                 backgroundColor: 'rgba(99,102,241,0.1)',
-                border: '1px solid rgba(99,102,241,0.25)',
-                borderRadius: 16,
+                border: '2px solid rgba(99,102,241,0.25)',
+                borderRadius: 0,
                 color: '#a5b4fc',
                 fontSize: isMobile ? 11 : 12,
                 cursor: 'pointer',
-                transition: 'all 0.2s ease',
+                fontFamily: "'Zpix','Microsoft YaHei',monospace",
+                imageRendering: 'pixelated',
+                letterSpacing: 1,
               }}
             >
               {q}
@@ -498,9 +500,9 @@ export default function CraftPage() {
       )}
 
       {/* 输入区域 */}
-      <div style={{ display: 'flex', gap: isMobile ? 6 : 8, padding: isMobile ? '8px 12px' : '12px 16px', backgroundColor: 'rgba(255,255,255,0.03)', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+      <div style={{ display: 'flex', gap: isMobile ? 6 : 8, padding: isMobile ? '8px 12px' : '12px 16px', backgroundColor: 'rgba(255,255,255,0.03)', borderTop: '2px solid rgba(255,255,255,0.06)' }}>
         <input
-          style={{ flex: 1, padding: isMobile ? '8px 12px' : '10px 16px', backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, color: '#e0e7ff', fontSize: isMobile ? 14 : 15, outline: 'none', fontFamily: 'inherit' }}
+          style={{ flex: 1, padding: isMobile ? '8px 12px' : '10px 16px', backgroundColor: 'rgba(255,255,255,0.05)', border: '2px solid rgba(255,255,255,0.1)', borderRadius: 0, color: '#e0e7ff', fontSize: isMobile ? 14 : 15, outline: 'none', fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated' }}
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -509,7 +511,7 @@ export default function CraftPage() {
           disabled={isLoading}
         />
         <button
-          style={{ padding: isMobile ? '8px 16px' : '10px 24px', backgroundColor: '#6366f1', color: '#fff', border: 'none', borderRadius: 12, fontSize: isMobile ? 14 : 15, fontWeight: 500, cursor: 'pointer', opacity: isLoading || !input.trim() ? 0.4 : 1 }}
+          style={{ padding: isMobile ? '8px 16px' : '10px 24px', backgroundColor: '#6366f1', color: '#fff', border: '3px solid #818cf8', borderRadius: 0, fontSize: isMobile ? 14 : 15, fontWeight: 500, cursor: 'pointer', opacity: isLoading || !input.trim() ? 0.4 : 1, fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated', letterSpacing: 3, boxShadow: '3px 3px 0 rgba(0,0,0,0.3)' }}
           onClick={() => handleSend()}
           disabled={isLoading || !input.trim()}
         >
@@ -520,17 +522,17 @@ export default function CraftPage() {
       {/* API Key 未配置弹窗 */}
       {showApiModal && (
         <div onClick={() => setShowApiModal(false)} style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200 }}>
-          <div onClick={(e) => e.stopPropagation()} style={{ maxWidth: 400, width: isMobile ? '92%' : '90%', backgroundColor: '#111127', borderRadius: 20, padding: isMobile ? 24 : 32, border: '1px solid rgba(255,255,255,0.1)', textAlign: 'center' }}>
-            <div style={{ fontSize: 40, marginBottom: 16 }}>🔑</div>
-            <div style={{ fontSize: 18, fontWeight: 600, marginBottom: 8, color: '#e0e7ff' }}>需要配置 API Key</div>
-            <div style={{ fontSize: 14, color: '#9ca3af', lineHeight: 1.6, marginBottom: 24 }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ maxWidth: 400, width: isMobile ? '92%' : '90%', backgroundColor: '#111127', borderRadius: 0, padding: isMobile ? 24 : 32, border: '3px solid rgba(255,255,255,0.15)', textAlign: 'center', fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated', boxShadow: '6px 6px 0 rgba(0,0,0,0.3)' }}>
+            <div style={{ fontSize: 40, marginBottom: 16, imageRendering: 'pixelated' }}>🔑</div>
+            <div style={{ fontSize: 18, fontWeight: 600, marginBottom: 8, color: '#e0e7ff', fontFamily: "'Zpix','Microsoft YaHei',monospace", letterSpacing: 2 }}>需要配置 API Key</div>
+            <div style={{ fontSize: 14, color: '#9ca3af', lineHeight: 1.6, marginBottom: 24, fontFamily: "'Zpix','Microsoft YaHei',monospace" }}>
               请先前往设置页面配置智谱 GLM API Key，才能开始对话。
             </div>
             <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
-              <button onClick={() => setShowApiModal(false)} style={{ padding: '10px 24px', backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: '#9ca3af', fontSize: 14, cursor: 'pointer' }}>
+              <button onClick={() => setShowApiModal(false)} style={{ padding: '10px 24px', backgroundColor: 'rgba(255,255,255,0.05)', border: '2px solid rgba(255,255,255,0.1)', borderRadius: 0, color: '#9ca3af', fontSize: 14, cursor: 'pointer', fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated', letterSpacing: 2 }}>
                 稍后再说
               </button>
-              <button onClick={() => { setShowApiModal(false); navigate('/settings'); }} style={{ padding: '10px 24px', backgroundColor: '#6366f1', border: 'none', borderRadius: 10, color: '#fff', fontSize: 14, cursor: 'pointer' }}>
+              <button onClick={() => { setShowApiModal(false); navigate('/settings'); }} style={{ padding: '10px 24px', backgroundColor: '#6366f1', border: '3px solid #818cf8', borderRadius: 0, color: '#fff', fontSize: 14, cursor: 'pointer', fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated', letterSpacing: 2, boxShadow: '3px 3px 0 rgba(0,0,0,0.3)' }}>
                 前往设置
               </button>
             </div>
@@ -541,19 +543,19 @@ export default function CraftPage() {
       {/* 配额用完弹窗 */}
       {showQuotaModal && (
         <div onClick={() => setShowQuotaModal(false)} style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200 }}>
-          <div onClick={(e) => e.stopPropagation()} style={{ maxWidth: 400, width: isMobile ? '92%' : '90%', backgroundColor: '#111127', borderRadius: 20, padding: isMobile ? 24 : 32, border: '1px solid rgba(255,255,255,0.1)', textAlign: 'center' }}>
-            <div style={{ fontSize: 40, marginBottom: 16 }}>⏰</div>
-            <div style={{ fontSize: 18, fontWeight: 600, marginBottom: 8, color: '#e0e7ff' }}>今日免费次数已用完</div>
-            <div style={{ fontSize: 14, color: '#9ca3af', lineHeight: 1.6, marginBottom: 24 }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ maxWidth: 400, width: isMobile ? '92%' : '90%', backgroundColor: '#111127', borderRadius: 0, padding: isMobile ? 24 : 32, border: '3px solid rgba(255,255,255,0.15)', textAlign: 'center', fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated', boxShadow: '6px 6px 0 rgba(0,0,0,0.3)' }}>
+            <div style={{ fontSize: 40, marginBottom: 16, imageRendering: 'pixelated' }}>⏰</div>
+            <div style={{ fontSize: 18, fontWeight: 600, marginBottom: 8, color: '#e0e7ff', fontFamily: "'Zpix','Microsoft YaHei',monospace", letterSpacing: 2 }}>今日免费次数已用完</div>
+            <div style={{ fontSize: 14, color: '#9ca3af', lineHeight: 1.6, marginBottom: 24, fontFamily: "'Zpix','Microsoft YaHei',monospace" }}>
               每天免费 10 次问答，请明天再来继续学习！
               <br />
               你可以前往学习进度页面回顾已学知识。
             </div>
             <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
-              <button onClick={() => { setShowQuotaModal(false); navigate('/learning'); }} style={{ padding: '10px 24px', backgroundColor: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.3)', borderRadius: 10, color: '#a5b4fc', fontSize: 14, cursor: 'pointer' }}>
+              <button onClick={() => { setShowQuotaModal(false); navigate('/learning'); }} style={{ padding: '10px 24px', backgroundColor: 'rgba(99,102,241,0.15)', border: '2px solid rgba(99,102,241,0.3)', borderRadius: 0, color: '#a5b4fc', fontSize: 14, cursor: 'pointer', fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated', letterSpacing: 2 }}>
                 查看学习进度
               </button>
-              <button onClick={() => setShowQuotaModal(false)} style={{ padding: '10px 24px', backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: '#9ca3af', fontSize: 14, cursor: 'pointer' }}>
+              <button onClick={() => setShowQuotaModal(false)} style={{ padding: '10px 24px', backgroundColor: 'rgba(255,255,255,0.05)', border: '2px solid rgba(255,255,255,0.1)', borderRadius: 0, color: '#9ca3af', fontSize: 14, cursor: 'pointer', fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated', letterSpacing: 2 }}>
                 知道了
               </button>
             </div>
