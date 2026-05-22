@@ -6,6 +6,7 @@ import { getAllProgress } from '../utils/storage';
 import { playSound } from '../utils/audio';
 import InheritorAvatar from '../components/InheritorAvatar';
 import Certificate from '../components/Certificate';
+import { useLang, t } from '../contexts/LanguageContext';
 
 function useIsMobile(): boolean {
   const [m, setM] = useState(window.innerWidth < 768);
@@ -49,6 +50,7 @@ export default function UserPage() {
     return { learned, total, streak, craftDetails };
   }, []);
 
+  const { lang } = useLang();
   const titleInfo = getTitle(stats.learned, stats.total);
 
   // 生成分享卡片
@@ -172,7 +174,7 @@ export default function UserPage() {
 
         {/* 学习进度条（每个非遗） */}
         <div style={{ marginBottom: 24 }}>
-          <div style={{ fontSize: 13, fontWeight: 600, color: '#e0e7ff', letterSpacing: 2, marginBottom: 12 }}>📊 学习进度</div>
+          <div style={{ fontSize: 13, fontWeight: 600, color: '#e0e7ff', letterSpacing: 2, marginBottom: 12 }}>{t('user_learning_progress', lang)}</div>
           {stats.craftDetails.map((craft) => (
             <div key={craft.name} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
               <span style={{ fontSize: 16, imageRendering: 'pixelated', width: 24 }}>{craft.emoji}</span>
@@ -197,7 +199,7 @@ export default function UserPage() {
             boxShadow: '4px 4px 0 rgba(0,0,0,0.3)',
           }}>
             <div style={{ fontSize: 13, fontWeight: 600, color: '#f59e0b', letterSpacing: 2, marginBottom: 12 }}>
-              📜 学习证书 · {craft.name}
+              {t('user_cert_title', lang)}{craft.name}
             </div>
             <Certificate
               userName={user?.name || '探索者'}
@@ -240,7 +242,7 @@ export default function UserPage() {
             fontSize: 12, cursor: 'pointer', fontFamily: 'inherit', letterSpacing: 2,
             imageRendering: 'pixelated',
           }}>
-            📤 分享成就
+            {t('user_share', lang)}
           </button>
           <button onClick={() => { playSound('click'); navigate('/settings'); }} style={{
             padding: '8px 20px', backgroundColor: 'rgba(99,102,241,0.1)',
@@ -256,7 +258,7 @@ export default function UserPage() {
             fontSize: 12, cursor: 'pointer', fontFamily: 'inherit', letterSpacing: 2,
             imageRendering: 'pixelated',
           }}>
-            🗑️ 重置数据
+            {t('user_reset', lang)}
           </button>
         </div>
       </div>
