@@ -196,7 +196,7 @@ export default function ScrollTreasureGame({ onComplete }: { onComplete?: (score
     // HUD
     ctx.fillStyle = 'rgba(0,0,0,0.6)';
     ctx.fillRect(0, 0, GAME_WIDTH, 22);
-    ctx.font = "10px 'Zpix','Microsoft YaHei',monospace";
+    ctx.font = "bold 10px monospace";
     ctx.textAlign = 'left';
     ctx.fillStyle = '#f5e6c8';
     ctx.fillText(`🏆${scoreRef.current}`, 16, 15);
@@ -216,7 +216,7 @@ export default function ScrollTreasureGame({ onComplete }: { onComplete?: (score
       ctx.fillStyle = 'rgba(0,0,0,0.7)';
       ctx.fillRect(0, GAME_HEIGHT / 2 - 30, GAME_WIDTH, 60);
       ctx.fillStyle = '#f87171';
-      ctx.font = "18px 'Zpix','Microsoft YaHei',monospace";
+      ctx.font = "bold 16px monospace";
       ctx.textAlign = 'center';
       ctx.fillText('收集结束！', GAME_WIDTH / 2, GAME_HEIGHT / 2);
     }

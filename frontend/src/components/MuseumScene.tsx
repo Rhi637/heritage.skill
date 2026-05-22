@@ -49,7 +49,7 @@ function NPCGuide({ showBubble }: { showBubble: boolean }) {
   }, []);
 
   return (
-    <group ref={bodyRef} position={[0.5, 0.6, -1.5]}>
+    <group ref={bodyRef} position={[0, 0.6, -2.5]}>
       {blocks.map((blk, i) => (
         <mesh key={i} position={[blk.x, blk.y, blk.z]}>
           <boxGeometry args={[blk.size, blk.size, blk.size]} />
@@ -805,7 +805,7 @@ function Exhibit({ position, color, label, emoji, mosaicStyle, onClick, progress
       <Html position={[0, 2.2, 0]} center distanceFactor={8}>
         <div style={{
           padding: '8px 20px', backgroundColor: 'rgba(5,5,16,0.75)', border: `1px solid ${color}60`,
-          borderRadius: 20, color: '#e0e7ff', fontSize: 15, fontWeight: 600, whiteSpace: 'nowrap',
+          borderRadius: 0, color: '#e0e7ff', fontSize: 15, fontWeight: 600, whiteSpace: 'nowrap',
           textAlign: 'center', cursor: 'pointer', backdropFilter: 'blur(8px)',
           textShadow: `0 0 10px ${color}`, letterSpacing: 2, userSelect: 'none', imageRendering: 'pixelated',
         }}>{emoji} {label}</div>

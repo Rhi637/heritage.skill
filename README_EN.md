@@ -120,10 +120,14 @@ heritage.skill/
 ├── frontend/                            # React 18 frontend
 │   ├── src/
 │   │   ├── components/
-│   │   │   └── MuseumScene.tsx          # 3D museum scene (Three.js pixel/voxel rendering)
+│   │   │   ├── MuseumScene.tsx          # 3D museum scene (6 voxel figures + NPC guide + Bloom post-processing)
+│   │   │   ├── InheritorAvatar.tsx      # Pixel-art 3D avatar (16×16 Canvas rendering)
+│   │   │   ├── PaperCuttingGame.tsx     # Hands-on mini-game: paper cutting simulator (fold + cut + unfold)
+│   │   │   ├── CraftQuiz.tsx            # Knowledge quiz (multiple choice + auto scoring)
+│   │   │   └── AchievementsPanel.tsx    # Achievement system + daily challenges (check-in/badges/fun facts)
 │   │   ├── pages/
-│   │   │   ├── MuseumPage.tsx           # Museum main page (3D exhibit interaction)
-│   │   │   ├── CraftPage.tsx            # Craft learning page (inheritor selection + AI chat + time-travel animation)
+│   │   │   ├── MuseumPage.tsx           # Museum main page (circular layout + light-beam interaction)
+│   │   │   ├── CraftPage.tsx            # Craft learning page (inheritor selection + AI chat + time travel)
 │   │   │   ├── LearningPage.tsx         # Learning progress tracking page
 │   │   │   ├── AvatarSelectPage.tsx     # User avatar selection page
 │   │   │   ├── WelcomePage.tsx          # Welcome page
@@ -133,12 +137,12 @@ heritage.skill/
 │   │   ├── utils/
 │   │   │   ├── api.ts                   # Zhipu GLM API calls + system prompt construction
 │   │   │   ├── audio.ts                 # Web Audio sound effects / background music management
-│   │   │   └── storage.ts              # localStorage persistence (progress / quota / settings)
-│   │   ├── data.ts                      # ICH craft data & knowledge point definitions
+│   │   │   └── storage.ts              # localStorage persistence (progress / quota / achievements / settings)
+│   │   ├── data.ts                      # Six ICH craft data & knowledge point definitions
 │   │   ├── types.ts                     # Global TypeScript type definitions
 │   │   ├── App.tsx                      # Routing & main component (HashRouter)
 │   │   ├── main.tsx                     # Entry point
-│   │   └── index.css                    # Global styles
+│   │   └── index.css                    # Global pixel-art styles (Zpix font + CSS pixelation)
 │   ├── public/avatars/                  # Inheritor avatar images
 │   ├── index.html                       # HTML entry point
 │   ├── package.json
@@ -173,13 +177,18 @@ Submit bugs or feature suggestions via [Issues](https://github.com/Rhi637/herita
 
 ## 🔮 Roadmap
 
-- [x] 3D pixel-art virtual museum (Three.js + pixel shader + Bloom post-processing) ✅
+- [x] 3D pixel-art virtual museum (Three.js + MeshStandardMaterial voxel models + Bloom, 6 exhibits in circular layout) ✅
 - [x] Time-travel animation (modern/ancient inheritor selection + transition effects) ✅
 - [x] Real LLM integration (Zhipu GLM-4-Flash with dynamic System Prompt construction) ✅
 - [x] Typewriter effect + auto knowledge-point tagging ✅
 - [x] Mobile responsive layout ✅
+- [x] Unified pixel art style (Zpix font + pixel-art 3D avatars + global CSS pixelation) ✅
+- [x] New crafts: Blue & White Porcelain + Woodblock New Year Prints (6 total) ✅
+- [x] Knowledge quiz + hands-on mini-game (Paper Cutting) ✅
+- [x] Achievement system + daily challenges (check-in/badges/fun facts) ✅
+- [x] NPC guide (auto welcome & museum tour) ✅
 - [ ] RAG retrieval pipeline (upgrade from keyword matching to semantic search)
-- [ ] More ICH craft agents (Face-Changing, Peking Opera, extended embroidery...)
+- [ ] More interactive mini-games (clay sculpting, porcelain painting...)
 - [ ] Knowledge mastery visualization dashboard
 - [ ] Voice conversation support (ASR + TTS)
 - [ ] Cloud-based learning progress persistence (Supabase)

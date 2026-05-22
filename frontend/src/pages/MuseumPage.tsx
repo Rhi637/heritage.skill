@@ -132,19 +132,20 @@ export default function MuseumPage() {
         ...styles.hud,
         padding: isMobile ? '10px 12px' : '16px 24px',
       }}>
-        <button onClick={() => { playSound('click'); navigate('/user'); }} style={{
-          ...styles.userInfo, background: 'none', border: 'none', cursor: 'pointer', padding: 0,
-        }}>
-          {user && (
-            <>
-              <span style={{
-                ...styles.userEmoji,
-                fontSize: isMobile ? 18 : 24,
-              }}>{user.avatar.emoji}</span>
-              {!isMobile && <span style={styles.userName}>{user.name}</span>}
-            </>
-          )}
-        </button>
+        {user ? (
+          <button onClick={() => { playSound('click'); navigate('/user'); }} style={{
+            ...styles.userInfo, background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+          }}>
+            <span style={{ ...styles.userEmoji, fontSize: isMobile ? 18 : 24 }}>{user.avatar.emoji}</span>
+            {!isMobile && <span style={styles.userName}>{user.name}</span>}
+          </button>
+        ) : (
+          <button onClick={() => { playSound('click'); navigate('/avatar'); }} style={{
+            ...styles.userInfo, background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+          }}>
+            <span style={{ fontSize: 12, color: '#6b7280', letterSpacing: 2, fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated' }}>👤 创建形象</span>
+          </button>
+        )}
         <div style={{
           ...styles.hudRight,
           gap: isMobile ? 8 : 16,
@@ -261,8 +262,7 @@ export default function MuseumPage() {
               ...styles.craftChip,
               padding: isMobile ? '6px 10px' : '8px 16px',
               fontSize: isMobile ? 11 : 13,
-              imageRendering: 'pixelated', // 像素风格
-              borderImage: 'repeating-linear-gradient(45deg, rgba(255,255,255,0.1) 0px, rgba(255,255,255,0.1) 2px, transparent 2px, transparent 4px) 1', // 像素边框
+              imageRendering: 'pixelated',
             }}
             onClick={() => handleSelectCraft(craft.id)}
           >

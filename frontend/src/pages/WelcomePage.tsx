@@ -37,20 +37,22 @@ function PixelLandscape() {
           imageRendering: 'pixelated',
         }} />
       ))}
-      {/* 像素星星 */}
-      {Array.from({ length: 40 }).map((_, i) => (
-        <div key={`s${i}`} style={{
-          position: 'absolute',
-          left: `${Math.random() * 100}%`,
-          top: `${Math.random() * 60}%`,
-          width: `${Math.random() > 0.7 ? 3 : 2}px`,
-          height: `${Math.random() > 0.7 ? 3 : 2}px`,
-          backgroundColor: '#6366f1',
-          opacity: 0.3 + Math.random() * 0.5,
-          imageRendering: 'pixelated',
-          animation: `blink ${1.5 + Math.random() * 2}s steps(2) infinite`,
-        }} />
-      ))}
+      {/* 像素星星（useMemo 避免重渲染闪烁） */}
+      {useMemo(() => Array.from({ length: 40 }).map((_, i) => {
+        const left = Math.random() * 100;
+        const top = Math.random() * 60;
+        const size = Math.random() > 0.7 ? 3 : 2;
+        const alpha = 0.3 + Math.random() * 0.5;
+        const dur = 1.5 + Math.random() * 2;
+        return (
+          <div key={`s${i}`} style={{
+            position: 'absolute', left: `${left}%`, top: `${top}%`,
+            width: size, height: size, backgroundColor: '#6366f1',
+            opacity: alpha, imageRendering: 'pixelated',
+            animation: `blink ${dur}s steps(2) infinite`,
+          }} />
+        );
+      }), [])}
     </div>
   );
 }
@@ -179,7 +181,7 @@ export default function WelcomePage() {
           { label: '学习进度', emoji: '📖', action: () => navigate('/learning') },
           { label: '用户', emoji: '👤', action: () => navigate('/user') },
         ].map((btn) => (
-          <button key={btn.label} onClick={() => { playSound('click'); btn.action(); }} style={{
+          <button key={btn.label} onClick={() => { initAudioOnInteraction(); playSound('click'); btn.action(); }} style={{
             padding: isMobile ? '6px 14px' : '8px 18px',
             backgroundColor: 'rgba(255,255,255,0.04)', border: '2px solid rgba(255,255,255,0.1)',
             borderRadius: 0, color: '#9ca3af', fontSize: isMobile ? 10 : 12,
