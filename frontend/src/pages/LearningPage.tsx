@@ -5,6 +5,7 @@ import { getAllProgress } from '../utils/storage';
 import { KnowledgePoint, DifficultyLevel } from '../types';
 import { playSound, startBackgroundMusic } from '../utils/audio';
 import AchievementsPanel from '../components/AchievementsPanel';
+import { useLang, t } from '../contexts/LanguageContext';
 
 // ========== 移动端检测 hook ==========
 
@@ -59,6 +60,7 @@ function DifficultyBadge({ difficulty }: { difficulty: DifficultyLevel }) {
 export default function LearningPage() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { lang } = useLang();
   const [expandedCraft, setExpandedCraft] = useState<string | null>(null);
 
   // 确保背景音乐已启动
@@ -91,13 +93,13 @@ export default function LearningPage() {
       <div style={styles.content}>
         {/* 返回按钮 */}
         <button onClick={() => { playSound('click'); navigate('/museum'); }} style={styles.backBtn}>
-          ← 返回博物馆
+          {t('back_museum', lang)}
         </button>
 
         {/* 标题 */}
         <div style={styles.header}>
           <div style={{ ...styles.titleIcon, fontSize: isMobile ? 24 : 32 }}>📚</div>
-          <h1 style={{ ...styles.title, fontSize: isMobile ? 22 : 28 }}>学习进度</h1>
+          <h1 style={{ ...styles.title, fontSize: isMobile ? 22 : 28 }}>{t('learning_progress', lang)}</h1>
         </div>
 
         {/* 总进度概览 */}
@@ -115,7 +117,7 @@ export default function LearningPage() {
             <RingProgress percent={overallPercent} size={isMobile ? 80 : 100} strokeWidth={isMobile ? 6 : 8} color="#6366f1" />
             <div style={styles.overviewText}>
               <div style={{ ...styles.overviewPercent, fontSize: isMobile ? 18 : 22 }}>{overallPercent}%</div>
-              <div style={styles.overviewLabel}>总进度</div>
+              <div style={styles.overviewLabel}>{t('overview_total', lang)}</div>
             </div>
           </div>
           <div style={{
@@ -125,17 +127,17 @@ export default function LearningPage() {
           }}>
             <div style={styles.statItem}>
               <div style={{ ...styles.statNumber, fontSize: isMobile ? 20 : 24 }}>{totalLearned}</div>
-              <div style={styles.statLabel}>已学知识点</div>
+              <div style={styles.statLabel}>{t('learned_kp', lang)}</div>
             </div>
             <div style={styles.statDivider} />
             <div style={styles.statItem}>
               <div style={{ ...styles.statNumber, fontSize: isMobile ? 20 : 24 }}>{totalPoints}</div>
-              <div style={styles.statLabel}>总知识点</div>
+              <div style={styles.statLabel}>{t('total_kp', lang)}</div>
             </div>
             <div style={styles.statDivider} />
             <div style={styles.statItem}>
               <div style={{ ...styles.statNumber, fontSize: isMobile ? 20 : 24 }}>{HERITAGE_CRAFTS.length}</div>
-              <div style={styles.statLabel}>非遗项目</div>
+              <div style={styles.statLabel}>{t('heritage_count', lang)}</div>
             </div>
           </div>
         </div>
@@ -209,12 +211,12 @@ export default function LearningPage() {
                   })}
                   {learned === 0 && (
                     <div style={styles.emptyHint}>
-                      还没有学习记录，去和传承人对话吧！
+                      {t('empty_learning', lang)}
                       <div
                         style={styles.goChatBtn}
                         onClick={(e) => { e.stopPropagation(); navigate(`/craft/${craft.id}`); }}
                       >
-                        前往学习 →
+                        {t('go_learn_btn', lang)}
                       </div>
                     </div>
                   )}

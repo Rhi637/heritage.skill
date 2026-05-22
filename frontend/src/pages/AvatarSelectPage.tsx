@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AVATARS } from '../data';
 import { UserAvatar } from '../types';
 import { playSound, startBackgroundMusic } from '../utils/audio';
+import { useLang, t } from '../contexts/LanguageContext';
 
 // ========== 移动端检测 hook ==========
 
@@ -19,6 +20,7 @@ function useIsMobile(): boolean {
 export default function AvatarSelectPage() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { lang } = useLang();
   const [selected, setSelected] = useState<UserAvatar | null>(null);
   const [name, setName] = useState('');
 
@@ -45,8 +47,8 @@ export default function AvatarSelectPage() {
         <h1 style={{
           ...styles.title,
           fontSize: isMobile ? 22 : 28,
-        }}>选择你的数字形象</h1>
-        <p style={styles.subtitle}>你将以这个形象穿梭于非遗文化博物馆</p>
+        }}>{t('choose_avatar', lang)}</h1>
+        <p style={styles.subtitle}>{t('avatar_sub', lang)}</p>
 
         <div style={{
           ...styles.grid,
@@ -93,7 +95,7 @@ export default function AvatarSelectPage() {
               fontSize: isMobile ? 14 : 16,
             }}
             type="text"
-            placeholder="输入你的探索者名称..."
+            placeholder={t('enter_name', lang)}
             value={name}
             onChange={(e) => setName(e.target.value)}
             maxLength={12}
@@ -110,7 +112,7 @@ export default function AvatarSelectPage() {
           }}
           onClick={handleConfirm}
         >
-          进入博物馆 →
+          {t('enter_btn', lang)}
         </button>
       </div>
     </div>
