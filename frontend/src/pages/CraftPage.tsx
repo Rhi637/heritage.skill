@@ -7,6 +7,7 @@ import { buildSystemPrompt, callGLMApi, extractKnowledgePointIds } from '../util
 import { playSound, startBackgroundMusic } from '../utils/audio';
 import InheritorAvatar from '../components/InheritorAvatar';
 import PaperCuttingGame from '../components/PaperCuttingGame';
+import CraftQuiz from '../components/CraftQuiz';
 
 // ========== 移动端检测 hook ==========
 
@@ -41,6 +42,7 @@ export default function CraftPage() {
   const [showQuotaModal, setShowQuotaModal] = useState(false);
   const [showApiModal, setShowApiModal] = useState(false);
   const [showGame, setShowGame] = useState(false);
+  const [showQuiz, setShowQuiz] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
 
@@ -479,6 +481,34 @@ export default function CraftPage() {
               }} />
             </div>
           )}
+        </div>
+      )}
+
+      {/* 知识闯关测验按钮 */}
+      {messages.length > 2 && !showQuiz && craft && (
+        <div style={{ padding: '0 12px', marginBottom: 8 }}>
+          <button onClick={() => setShowQuiz(true)} style={{
+            padding: '6px 14px', backgroundColor: 'rgba(245,158,11,0.1)', border: '2px solid rgba(245,158,11,0.3)',
+            borderRadius: 0, color: '#fbbf24', fontSize: 12, cursor: 'pointer',
+            fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated', letterSpacing: 2,
+          }}>
+            📝 测验一下学到的知识
+          </button>
+        </div>
+      )}
+      {showQuiz && craft && (
+        <div style={{ padding: '0 12px', marginBottom: 8 }}>
+          <div style={{ padding: 12, backgroundColor: 'rgba(255,255,255,0.02)', border: '2px solid rgba(245,158,11,0.15)' }}>
+            <CraftQuiz
+              knowledgePoints={craft.knowledgePoints}
+              craftName={craft.name}
+              craftColor={craftColor}
+              onComplete={() => {
+                setShowQuiz(false);
+                playSound('click');
+              }}
+            />
+          </div>
         </div>
       )}
 
