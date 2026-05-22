@@ -5,6 +5,7 @@ import { UserProfile } from '../types';
 import { getAllProgress } from '../utils/storage';
 import { playSound } from '../utils/audio';
 import InheritorAvatar from '../components/InheritorAvatar';
+import Certificate from '../components/Certificate';
 
 function useIsMobile(): boolean {
   const [m, setM] = useState(window.innerWidth < 768);
@@ -144,6 +145,27 @@ export default function UserPage() {
             </div>
           ))}
         </div>
+
+        {/* 证书：完成100%的非遗项目可下载 */}
+        {stats.craftDetails.filter((c) => c.learned >= c.total && c.total > 0).map((craft) => (
+          <div key={craft.name} style={{
+            marginBottom: 20, padding: 16, backgroundColor: 'rgba(255,255,255,0.03)',
+            border: '3px solid rgba(245,158,11,0.3)', borderRadius: 0,
+            boxShadow: '4px 4px 0 rgba(0,0,0,0.3)',
+          }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: '#f59e0b', letterSpacing: 2, marginBottom: 12 }}>
+              📜 学习证书 · {craft.name}
+            </div>
+            <Certificate
+              userName={user?.name || '探索者'}
+              craftName={craft.name}
+              craftEmoji={craft.emoji}
+              score={craft.learned}
+              total={craft.total}
+              date={new Date().toLocaleDateString('zh-CN')}
+            />
+          </div>
+        ))}
 
         {/* 徽章墙 */}
         <div style={{ marginBottom: 24 }}>

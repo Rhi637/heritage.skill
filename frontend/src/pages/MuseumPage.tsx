@@ -7,6 +7,7 @@ import PaperCuttingGame from '../components/PaperCuttingGame';
 import ScrollTreasureGame from '../components/ScrollTreasureGame';
 import { getAllProgress } from '../utils/storage';
 import { playSound, startBackgroundMusic } from '../utils/audio';
+import { useLang } from '../contexts/LanguageContext';
 
 // ========== 移动端检测 hook ==========
 
@@ -73,6 +74,8 @@ export default function MuseumPage() {
       navigate(`/craft/${craftId}`);
     }, 1200);
   }, [navigate]);
+
+  const { lang, toggleLang } = useLang();
 
   const toggleTimeMode = () => {
     const next = timeMode === 'modern' ? 'ancient' : 'modern';
@@ -184,6 +187,18 @@ export default function MuseumPage() {
             }}
           >
             {timeMode === 'ancient' ? '🏮 古代' : '💡 现代'}
+          </button>
+          {/* 语言切换 */}
+          <button onClick={() => { toggleLang(); playSound('click'); }} style={{
+            ...styles.progressBtn,
+            padding: isMobile ? '4px 6px' : '6px 10px',
+            fontSize: isMobile ? 10 : 12,
+            backgroundColor: 'rgba(255,255,255,0.05)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            color: '#9ca3af',
+            letterSpacing: 1,
+          }}>
+            {lang === 'zh' ? '🌐 中' : '🌐 EN'}
           </button>
           {!isMobile && <div style={styles.hudHint}>点击展台进入 →</div>}
         </div>

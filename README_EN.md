@@ -49,8 +49,9 @@ The agent is not a general-purpose chatbot — its knowledge is strictly confine
 | ⏳ Time Travel | Choose between modern inheritors and ancient artisans — travel to different dynasties to learn from historical masters |
 | 🧑‍🏫 NPC Guide | A pixel-art museum guide automatically welcomes and directs new visitors to explore exhibits |
 | 🗣️ AI-Powered Learning | Powered by Zhipu GLM-4-Flash LLM, engage in natural conversations with inheritor agents to learn ICH skills |
-| 🎮 Hands-On Mini-Game | **Paper Cutting Simulator**: click and drag on folded paper to "cut" patterns, then unfold to reveal a symmetrical paper-cut artwork |
+| 🎮 Interactive Mini-Games | **Paper Cutting Simulator**: click and drag on folded paper to "cut" patterns, then unfold to reveal symmetrical artwork; **Scroll Treasure Hunt**: collect ICH treasures on an ancient scroll while dodging obstacles |
 | 📝 Knowledge Quiz | Auto-generated multiple choice questions based on learned knowledge points — test your knowledge and get instant scores |
+| 👤 User Center | Personal profile page + **Title System** (Grandmaster/Heritage Guardian/Culture Keeper tiers) + pixel-art 3D avatar + learning statistics |
 | 🏆 Achievement System | Daily check-in + achievement badges (Scholar/Omniscient/Rising Star tiers) + daily fun facts about ICH |
 | 📚 Knowledge Point Tracking | Auto-detect knowledge points mentioned in conversations and track mastery progress (Unlearned → Understood → Can Restate) |
 | 🎨 Multi-Craft Support | Shadow Puppetry, Paper Cutting, Suzhou Embroidery, Clay Sculpture, Blue & White Porcelain, and Woodblock New Year Prints — **6 crafts**, each with its own dedicated agent |
@@ -80,9 +81,10 @@ The agent is not a general-purpose chatbot — its knowledge is strictly confine
 3. Select a **modern inheritor** or an **ancient artisan** (choosing an ancient one triggers a time-travel animation)
 4. Configure your **Zhipu GLM API Key** on the Settings page ([get one free](https://open.bigmodel.cn/))
 5. Start learning through conversation — **10 free queries** per day
-6. Take a **knowledge quiz** anytime to test your learning, or play the **Paper Cutting mini-game** for hands-on practice
+6. Take a **knowledge quiz** anytime to test your learning, or play the **Paper Cutting** / **Scroll Treasure Hunt** mini-games
 7. Open the **Achievements Panel** to claim daily rewards and unlock achievement badges
-8. Review your mastered knowledge points on the Learning Progress page
+8. Visit the **User Center** to view your title, learning stats, and pixel-art avatar
+9. Review your mastered knowledge points on the Learning Progress page
 
 ---
 
@@ -123,6 +125,7 @@ heritage.skill/
 │   │   │   ├── MuseumScene.tsx          # 3D museum scene (6 voxel figures + NPC guide + Bloom post-processing)
 │   │   │   ├── InheritorAvatar.tsx      # Pixel-art 3D avatar (16×16 Canvas rendering)
 │   │   │   ├── PaperCuttingGame.tsx     # Hands-on mini-game: paper cutting simulator (fold + cut + unfold)
+│   │   │   ├── ScrollTreasureGame.tsx   # Scroll treasure hunt game (collect ICH items + dodge obstacles)
 │   │   │   ├── CraftQuiz.tsx            # Knowledge quiz (multiple choice + auto scoring)
 │   │   │   └── AchievementsPanel.tsx    # Achievement system + daily challenges (check-in/badges/fun facts)
 │   │   ├── pages/
@@ -131,6 +134,7 @@ heritage.skill/
 │   │   │   ├── LearningPage.tsx         # Learning progress tracking page
 │   │   │   ├── AvatarSelectPage.tsx     # User avatar selection page
 │   │   │   ├── WelcomePage.tsx          # Welcome page
+│   │   │   ├── UserPage.tsx             # User center (title system + learning stats + pixel avatar)
 │   │   │   ├── SettingsPage.tsx         # Settings page (API key configuration)
 │   │   │   ├── data.ts                  # Page-level data
 │   │   │   └── types.ts                 # Page-level type definitions
@@ -184,9 +188,10 @@ Submit bugs or feature suggestions via [Issues](https://github.com/Rhi637/herita
 - [x] Mobile responsive layout ✅
 - [x] Unified pixel art style (Zpix font + pixel-art 3D avatars + global CSS pixelation) ✅
 - [x] New crafts: Blue & White Porcelain + Woodblock New Year Prints (6 total) ✅
-- [x] Knowledge quiz + hands-on mini-game (Paper Cutting) ✅
+- [x] Knowledge quiz + two interactive mini-games (Paper Cutting + Scroll Treasure Hunt) ✅
 - [x] Achievement system + daily challenges (check-in/badges/fun facts) ✅
 - [x] NPC guide (auto welcome & museum tour) ✅
+- [x] User center + title system (profile page / learning stats / pixel-art avatar) ✅
 - [ ] RAG retrieval pipeline (upgrade from keyword matching to semantic search)
 - [ ] More interactive mini-games (clay sculpting, porcelain painting...)
 - [ ] Knowledge mastery visualization dashboard

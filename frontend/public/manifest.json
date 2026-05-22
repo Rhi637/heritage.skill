@@ -1,0 +1,17 @@
+{
+  "name": "非遗文化博物馆 - ICH Museum",
+  "short_name": "非遗博物馆",
+  "description": "Intangible Cultural Heritage Digital Museum - Explore traditional Chinese crafts through pixel art 3D exhibits, AI inheritor conversations, and interactive mini-games",
+  "start_url": "/heritage.skill/",
+  "scope": "/heritage.skill/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#050510",
+  "theme_color": "#6366f1",
+  "icons": [
+    { "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23050510' rx='0'/><text y='65' font-size='50' text-anchor='middle' x='50'>🏛️</text></svg>", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ],
+  "categories": ["education", "culture", "entertainment"],
+  "lang": "zh-CN",
+  "dir": "ltr"
+}
