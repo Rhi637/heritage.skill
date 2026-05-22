@@ -654,7 +654,7 @@ export default function MuseumScene({ onSelectCraft }: MuseumSceneProps) {
 
   return (
     <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
-      <Canvas dpr={[0.15, 0.25]} camera={{ position: [0, 5, 10], fov: 60 }}>
+      <Canvas dpr={[0.3, 0.5]} camera={{ position: [0, 5, 10], fov: 60 }}>
         <color attach="background" args={['#050510']} />
         <fog attach="fog" args={['#050510', 15, 35]} />
         <ambientLight intensity={0.15} />
