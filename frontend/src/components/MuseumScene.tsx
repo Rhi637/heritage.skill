@@ -884,7 +884,7 @@ function CenterHologram() {
   });
 
   return (
-    <group position={[0, 1.5, 0]}>
+    <group position={[0, 7, -2]}>
       <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
         <mesh ref={inner}><icosahedronGeometry args={[0.5, 1]} /><primitive object={sphereM} attach="material" /></mesh>
         <mesh><sphereGeometry args={[0.2, 8, 8]} /><primitive object={coreM} attach="material" /></mesh>
@@ -894,7 +894,7 @@ function CenterHologram() {
       <mesh ref={r3}><torusGeometry args={[1.8, 0.02, 8, 32]} /><primitive object={m3} attach="material" /></mesh>
       <mesh ref={r4}><torusGeometry args={[2.1, 0.015, 8, 32]} /><primitive object={m4} attach="material" /></mesh>
       <Sparkles count={80} scale={[4, 0.5, 4]} size={0.12} speed={0.4} color="#a5b4fc" opacity={0.9} />
-      <Html position={[0, 3.5, 0]} center distanceFactor={8}>
+      <Html position={[0, -5, 0]} center distanceFactor={8}>
         <div style={{ color: '#a5b4fc', fontSize: 22, fontWeight: 700, letterSpacing: 6, textShadow: '0 0 20px rgba(99,102,241,0.8), 0 0 40px rgba(99,102,241,0.4)', whiteSpace: 'nowrap', userSelect: 'none', pointerEvents: 'none', imageRendering: 'pixelated' }}>
           非遗文化博物馆
         </div>
