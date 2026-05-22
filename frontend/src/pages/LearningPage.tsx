@@ -4,6 +4,7 @@ import { HERITAGE_CRAFTS } from '../data';
 import { getAllProgress } from '../utils/storage';
 import { KnowledgePoint, DifficultyLevel } from '../types';
 import { playSound, startBackgroundMusic } from '../utils/audio';
+import AchievementsPanel from '../components/AchievementsPanel';
 
 // ========== 移动端检测 hook ==========
 
@@ -137,6 +138,15 @@ export default function LearningPage() {
               <div style={styles.statLabel}>非遗项目</div>
             </div>
           </div>
+        </div>
+
+        {/* 成就 + 每日打卡 */}
+        <div style={{ marginBottom: 24 }}>
+          <AchievementsPanel
+            totalLearned={totalLearned}
+            totalPoints={totalPoints}
+            craftCount={HERITAGE_CRAFTS.length}
+          />
         </div>
 
         {/* 各项目进度 */}
