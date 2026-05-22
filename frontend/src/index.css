@@ -13,6 +13,11 @@ html, body, #root {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft YaHei", sans-serif;
 }
 
+/* 像素风渲染：canvas 低分辨率放大使用最近邻插值 */
+canvas {
+  image-rendering: pixelated;
+}
+
 /* 滚动条样式 */
 ::-webkit-scrollbar {
   width: 4px;

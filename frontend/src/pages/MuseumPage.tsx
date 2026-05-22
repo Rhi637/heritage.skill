@@ -51,8 +51,7 @@ export default function MuseumPage() {
   return (
     <div style={styles.container}>
       {/* 3D 场景（含中文标签） */}
-      <MuseumScene onSelectCraft={handleSelectCraft} pixelSize={0.05} />
-      {/* 注意：MuseumScene 内部已经根据 craft 数据定义了 mosaicStyle，无需额外传递 */}
+      <MuseumScene onSelectCraft={handleSelectCraft} />
 
       {/* 顶部 HUD */}
       <div style={{
