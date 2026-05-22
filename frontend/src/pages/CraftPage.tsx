@@ -5,6 +5,7 @@ import { HeritageCraft, Inheritor, Message, GLMMessage } from '../types';
 import { getApiKey, getRemainingQuota, isQuotaExhausted, incrementDailyUsage, markKnowledgePointsLearned } from '../utils/storage';
 import { buildSystemPrompt, callGLMApi, extractKnowledgePointIds } from '../utils/api';
 import { playSound, startBackgroundMusic } from '../utils/audio';
+import InheritorAvatar from '../components/InheritorAvatar';
 
 // ========== 移动端检测 hook ==========
 
@@ -23,6 +24,10 @@ export default function CraftPage() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const craft: HeritageCraft | undefined = HERITAGE_CRAFTS.find((c) => c.id === craftId);
+  const craftColor = craft?.id === 'craft_shadow_puppet' ? '#f59e0b'
+    : craft?.id === 'craft_paper_cutting' ? '#ef4444'
+    : craft?.id === 'craft_embroidery' ? '#ec4899'
+    : '#14b8a6';
 
   const [selectedInheritor, setSelectedInheritor] = useState<Inheritor | null>(null);
   const [travelingInheritor, setTravelingInheritor] = useState<Inheritor | null>(null);
@@ -241,21 +246,17 @@ export default function CraftPage() {
           <div style={{ position: 'absolute', width: ring2Size, height: ring2Size, borderRadius: '50%', border: `2px solid ${accentColor}`, opacity: travelPhase >= 1 ? 0.6 : 0.2, transition: 'all 0.5s ease', animation: 'spin 1.5s linear infinite reverse', imageRendering: 'pixelated', borderImage: `repeating-linear-gradient(45deg, ${accentColor} 0px, ${accentColor} 2px, transparent 2px, transparent 4px) 1` }} />
           <div style={{ position: 'absolute', width: ring3Size, height: ring3Size, borderRadius: '50%', border: `2px solid ${accentColor}`, opacity: travelPhase >= 2 ? 0.5 : 0.1, transition: 'all 0.5s ease', animation: 'spin 1s linear infinite', imageRendering: 'pixelated', borderImage: `repeating-linear-gradient(45deg, ${accentColor} 0px, ${accentColor} 2px, transparent 2px, transparent 4px) 1` }} />
 
-          {/* 传承人头像（像素风格） */}
+          {/* 传承人像素头像 */}
           <div style={{
-            width: avatarSize, height: avatarSize, borderRadius: '50%', overflow: 'hidden',
+            width: avatarSize, height: avatarSize, borderRadius: 0, overflow: 'hidden',
             border: `3px solid ${accentColor}`,
             opacity: travelPhase >= 2 ? 1 : 0.3,
             transform: travelPhase >= 2 ? 'scale(1)' : 'scale(0.5)',
-            transition: 'all 0.8s ease',
+            transition: 'all 0.8s steps(4)',
             imageRendering: 'pixelated',
-            boxShadow: `0 0 0 2px ${accentColor}, 0 0 0 4px rgba(0,0,0,0.5)`, // 像素阴影
+            boxShadow: `0 0 0 2px ${accentColor}, 0 0 0 4px rgba(0,0,0,0.5)`,
           }}>
-            {travelingInheritor.avatarImage ? (
-              <img src={travelingInheritor.avatarImage} alt={travelingInheritor.name} style={{ width: '100%', height: '100%', objectFit: 'cover', imageRendering: 'pixelated' }} />
-            ) : (
-              <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: isMobile ? 28 : 36, backgroundColor: 'rgba(255,255,255,0.05)', imageRendering: 'pixelated' }}>{travelingInheritor.avatarEmoji}</div>
-            )}
+            <InheritorAvatar era={travelingInheritor.era} craftColor={craftColor} size={avatarSize} />
           </div>
         </div>
 
@@ -294,13 +295,9 @@ export default function CraftPage() {
                 {inh.era === 'ancient' ? `${inh.dynasty}` : '现代'}
               </div>
 
-              {/* AI 头像 */}
+              {/* 像素头像 */}
               <div style={{ width: isMobile ? 80 : 100, height: isMobile ? 80 : 100, borderRadius: 0, overflow: 'hidden', margin: '0 auto 16px', border: '3px solid rgba(255,255,255,0.15)', boxShadow: '3px 3px 0 rgba(99,102,241,0.2)' }}>
-                {inh.avatarImage ? (
-                  <img src={inh.avatarImage} alt={inh.name} style={{ width: '100%', height: '100%', objectFit: 'cover', imageRendering: 'pixelated' }} />
-                ) : (
-                  <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: isMobile ? 36 : 48, backgroundColor: 'rgba(255,255,255,0.05)', imageRendering: 'pixelated' }}>{inh.avatarEmoji}</div>
-                )}
+                <InheritorAvatar era={inh.era} craftColor={craftColor} size={isMobile ? 80 : 100} />
               </div>
 
               <div style={{ fontSize: isMobile ? 20 : 22, fontWeight: 600, marginBottom: 4, fontFamily: "'Zpix','Microsoft YaHei',monospace", letterSpacing: 2 }}>{inh.name}</div>
@@ -333,11 +330,7 @@ export default function CraftPage() {
             <div onClick={(e) => e.stopPropagation()} style={{ maxWidth: isMobile ? '95%' : 480, width: isMobile ? '95%' : '90%', backgroundColor: '#111127', borderRadius: 0, padding: isMobile ? 20 : 32, border: '3px solid rgba(255,255,255,0.15)', maxHeight: '80vh', overflowY: 'auto', fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated', boxShadow: '6px 6px 0 rgba(0,0,0,0.3)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
                 <div style={{ width: isMobile ? 56 : 72, height: isMobile ? 56 : 72, borderRadius: 0, overflow: 'hidden', border: '3px solid rgba(255,255,255,0.15)', flexShrink: 0 }}>
-                  {showDetail.avatarImage ? (
-                    <img src={showDetail.avatarImage} alt={showDetail.name} style={{ width: '100%', height: '100%', objectFit: 'cover', imageRendering: 'pixelated' }} />
-                  ) : (
-                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: isMobile ? 24 : 32, backgroundColor: 'rgba(255,255,255,0.05)', imageRendering: 'pixelated' }}>{showDetail.avatarEmoji}</div>
-                  )}
+                  <InheritorAvatar era={showDetail.era} craftColor={craftColor} size={isMobile ? 56 : 72} />
                 </div>
                 <div>
                   <div style={{ fontSize: isMobile ? 18 : 22, fontWeight: 600, fontFamily: "'Zpix','Microsoft YaHei',monospace", letterSpacing: 2 }}>{showDetail.name}</div>
@@ -382,11 +375,7 @@ export default function CraftPage() {
       <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 8 : 12, padding: isMobile ? '8px 12px' : '12px 20px', backgroundColor: 'rgba(255,255,255,0.03)', borderBottom: '2px solid rgba(255,255,255,0.06)' }}>
         <button onClick={() => { playSound('click'); setSelectedInheritor(null); if (abortRef.current) abortRef.current.abort(); }} style={{ padding: '6px 12px', backgroundColor: 'transparent', border: '2px solid rgba(255,255,255,0.1)', borderRadius: 0, color: '#9ca3af', fontSize: 13, cursor: 'pointer', fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated', letterSpacing: 2 }}>← 返回</button>
         <div style={{ width: isMobile ? 30 : 36, height: isMobile ? 30 : 36, borderRadius: 0, overflow: 'hidden', border: '2px solid rgba(255,255,255,0.1)', flexShrink: 0, imageRendering: 'pixelated' }}>
-          {selectedInheritor.avatarImage ? (
-            <img src={selectedInheritor.avatarImage} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', imageRendering: 'pixelated' }} />
-          ) : (
-            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: isMobile ? 16 : 20, backgroundColor: 'rgba(255,255,255,0.05)', imageRendering: 'pixelated' }}>{selectedInheritor.avatarEmoji}</div>
-          )}
+          <InheritorAvatar era={selectedInheritor.era} craftColor={craftColor} size={isMobile ? 30 : 36} />
         </div>
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: isMobile ? 14 : 15, fontWeight: 600, color: '#e0e7ff' }}>{selectedInheritor.name}</div>
@@ -407,12 +396,8 @@ export default function CraftPage() {
         {messages.map((msg) => (
           <div key={msg.id} style={{ display: 'flex', justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start', marginBottom: 16, padding: '0 12px' }}>
             {msg.role === 'assistant' && (
-              <div style={{ width: isMobile ? 28 : 32, height: isMobile ? 28 : 32, borderRadius: '50%', overflow: 'hidden', marginRight: 8, flexShrink: 0, border: '1px solid rgba(255,255,255,0.1)' }}>
-                {selectedInheritor.avatarImage ? (
-                  <img src={selectedInheritor.avatarImage} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                ) : (
-                  <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: isMobile ? 14 : 16, backgroundColor: 'rgba(255,255,255,0.05)' }}>{selectedInheritor.avatarEmoji}</div>
-                )}
+              <div style={{ width: isMobile ? 28 : 32, height: isMobile ? 28 : 32, borderRadius: 0, overflow: 'hidden', marginRight: 8, flexShrink: 0, border: '2px solid rgba(255,255,255,0.1)' }}>
+                <InheritorAvatar era={selectedInheritor.era} craftColor={craftColor} size={isMobile ? 28 : 32} />
               </div>
             )}
             <div style={{ maxWidth: isMobile ? '85%' : '75%' }}>
@@ -459,8 +444,8 @@ export default function CraftPage() {
         ))}
         {isLoading && (
           <div style={{ display: 'flex', padding: '0 12px', marginBottom: 16 }}>
-            <div style={{ width: isMobile ? 28 : 32, height: isMobile ? 28 : 32, borderRadius: '50%', overflow: 'hidden', marginRight: 8, flexShrink: 0, border: '1px solid rgba(255,255,255,0.1)' }}>
-              {selectedInheritor.avatarImage ? <img src={selectedInheritor.avatarImage} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: isMobile ? 14 : 16, backgroundColor: 'rgba(255,255,255,0.05)' }}>{selectedInheritor.avatarEmoji}</div>}
+            <div style={{ width: isMobile ? 28 : 32, height: isMobile ? 28 : 32, borderRadius: 0, overflow: 'hidden', marginRight: 8, flexShrink: 0, border: '2px solid rgba(255,255,255,0.1)' }}>
+              <InheritorAvatar era={selectedInheritor.era} craftColor={craftColor} size={isMobile ? 28 : 32} />
             </div>
             <div style={{ padding: '12px 20px', backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 16 }}>
               <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', backgroundColor: '#6b7280', margin: '0 2px', animation: 'blink 1s infinite' }}>●</span>
