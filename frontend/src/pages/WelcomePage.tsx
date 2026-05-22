@@ -1,38 +1,108 @@
 import { useNavigate } from 'react-router-dom';
-import { Canvas } from '@react-three/fiber';
-import { Stars } from '@react-three/drei';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { playSound, initAudioOnInteraction, startBackgroundMusic } from '../utils/audio';
 
-// ========== 移动端检测 hook ==========
-
+// ========== 移动端检测 ==========
 function useIsMobile(): boolean {
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [m, setM] = useState(window.innerWidth < 768);
   useEffect(() => {
-    const handler = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener('resize', handler);
-    return () => window.removeEventListener('resize', handler);
+    const h = () => setM(window.innerWidth < 768);
+    window.addEventListener('resize', h);
+    return () => window.removeEventListener('resize', h);
   }, []);
-  return isMobile;
+  return m;
 }
 
-// ========== 3D 星空场景（纯视觉，不含文字） ==========
-
-function StarScene() {
+// ========== 像素浮岛（CSS 像素山） ==========
+function PixelLandscape() {
   return (
-    <>
-      <Stars radius={80} depth={50} count={2000} factor={4} fade speed={1} />
-      <ambientLight intensity={0.2} />
-      <pointLight position={[0, 3, 3]} color="#6366f1" intensity={2} />
-    </>
+    <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '40%', overflow: 'hidden', pointerEvents: 'none' }}>
+      {/* 远山 */}
+      {[20, 50, 75].map((l, i) => (
+        <div key={`m${i}`} style={{
+          position: 'absolute', bottom: 0, left: `${l}%`,
+          width: 0, height: 0,
+          borderLeft: `${60 + i * 30}px solid transparent`,
+          borderRight: `${40 + i * 20}px solid transparent`,
+          borderBottom: `${100 + i * 50}px solid #0f0f2e`,
+          transform: 'translateX(-50%)',
+        }} />
+      ))}
+      {/* 像素风格地面条纹 */}
+      {Array.from({ length: 20 }).map((_, i) => (
+        <div key={`g${i}`} style={{
+          position: 'absolute', bottom: 0, left: `${i * 5}%`,
+          width: '5%', height: `${4 + (i % 3) * 3}px`,
+          backgroundColor: i % 2 === 0 ? '#111133' : '#0d0d28',
+          imageRendering: 'pixelated',
+        }} />
+      ))}
+      {/* 像素星星 */}
+      {Array.from({ length: 40 }).map((_, i) => (
+        <div key={`s${i}`} style={{
+          position: 'absolute',
+          left: `${Math.random() * 100}%`,
+          top: `${Math.random() * 60}%`,
+          width: `${Math.random() > 0.7 ? 3 : 2}px`,
+          height: `${Math.random() > 0.7 ? 3 : 2}px`,
+          backgroundColor: '#6366f1',
+          opacity: 0.3 + Math.random() * 0.5,
+          imageRendering: 'pixelated',
+          animation: `blink ${1.5 + Math.random() * 2}s steps(2) infinite`,
+        }} />
+      ))}
+    </div>
+  );
+}
+
+// ========== 飘落的非遗 icon ==========
+const CRAFT_ICONS = ['🎭', '✂️', '🪡', '🏺', '🔵', '🧧'];
+
+function FallingIcons() {
+  const icons = useMemo(() =>
+    Array.from({ length: 15 }).map((_, i) => ({
+      icon: CRAFT_ICONS[i % CRAFT_ICONS.length],
+      left: Math.random() * 100,
+      delay: Math.random() * 8,
+      duration: 6 + Math.random() * 10,
+      size: 14 + Math.random() * 20,
+    })), []
+  );
+
+  return (
+    <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', overflow: 'hidden', pointerEvents: 'none' }}>
+      {icons.map((ic, i) => (
+        <div key={i} style={{
+          position: 'absolute',
+          left: `${ic.left}%`,
+          top: -40,
+          fontSize: ic.size,
+          imageRendering: 'pixelated',
+          animation: `iconFall ${ic.duration}s linear ${ic.delay}s infinite`,
+          opacity: 0.5,
+        }}>{ic.icon}</div>
+      ))}
+      <style>{`
+        @keyframes iconFall {
+          0% { transform: translateY(-40px) rotate(0deg); opacity: 0.6; }
+          80% { opacity: 0.4; }
+          100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+        }
+      `}</style>
+    </div>
   );
 }
 
 // ========== 欢迎页 ==========
-
 export default function WelcomePage() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const [blink, setBlink] = useState(true);
+
+  useEffect(() => {
+    const t = setInterval(() => setBlink((b) => !b), 600);
+    return () => clearInterval(t);
+  }, []);
 
   const handleStart = () => {
     initAudioOnInteraction();
@@ -42,131 +112,92 @@ export default function WelcomePage() {
   };
 
   return (
-    <div style={styles.container}>
-      {/* 3D 星空背景 */}
-      <div style={styles.canvasWrapper}>
-        <Canvas camera={{ position: [0, 0, 6], fov: 50 }}>
-          <color attach="background" args={['#050510']} />
-          <StarScene />
-        </Canvas>
-      </div>
+    <div style={{
+      width: '100vw', height: '100vh', backgroundColor: '#050510',
+      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+      fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated',
+      position: 'relative', overflow: 'hidden',
+    }}>
+      {/* 像素山背景 */}
+      <PixelLandscape />
 
-      {/* HTML 文字覆盖层（像素风格） */}
-      <div style={styles.textOverlay}>
+      {/* 飘落的非遗 icon */}
+      <FallingIcons />
+
+      {/* 主标题区 */}
+      <div style={{ textAlign: 'center', zIndex: 2, marginBottom: isMobile ? 32 : 48 }}>
+        {/* 像素标题 */}
         <h1 style={{
-          ...styles.title,
-          fontSize: isMobile ? 28 : 42,
-          letterSpacing: isMobile ? 2 : 4,
-          imageRendering: 'pixelated',
-          textShadow: '2px 2px 0 rgba(99,102,241,0.5), -2px -2px 0 rgba(99,102,241,0.5)',
+          fontSize: isMobile ? 22 : 36, fontWeight: 700, letterSpacing: isMobile ? 4 : 8,
+          color: '#a5b4fc', marginBottom: 8, imageRendering: 'pixelated',
+          textShadow: '4px 4px 0 rgba(0,0,0,0.5), -2px -2px 0 rgba(99,102,241,0.3), 0 0 30px rgba(99,102,241,0.3)',
+          lineHeight: 1.4,
         }}>
-          非遗传承人蒸馏数字智能体
+          非遗文化博物馆
         </h1>
         <p style={{
-          ...styles.subtitle,
-          fontSize: isMobile ? 14 : 18,
+          fontSize: isMobile ? 11 : 14, color: '#6b7280', letterSpacing: isMobile ? 3 : 6,
+          imageRendering: 'pixelated', marginBottom: 4,
+        }}>
+          INTANGIBLE CULTURAL HERITAGE
+        </p>
+        <p style={{
+          fontSize: isMobile ? 10 : 12, color: '#4b5563', letterSpacing: 2,
           imageRendering: 'pixelated',
         }}>
-          穿越时空，与千年匠人对话
+          传承人蒸馏数字智能体
         </p>
       </div>
 
-      {/* 按钮（像素风格） */}
+      {/* 像素分隔线 */}
       <div style={{
-        ...styles.buttonOverlay,
-        bottom: isMobile ? 60 : 80,
+        width: isMobile ? 180 : 280, height: 3, backgroundColor: '#6366f1',
+        marginBottom: isMobile ? 20 : 32, imageRendering: 'pixelated',
+        boxShadow: '0 0 10px rgba(99,102,241,0.5)',
+      }} />
+
+      {/* PRESS START 闪烁 */}
+      <button onClick={handleStart} style={{
+        padding: isMobile ? '12px 32px' : '16px 48px',
+        backgroundColor: 'rgba(99,102,241,0.15)', border: '3px solid rgba(99,102,241,0.5)',
+        borderRadius: 0, color: blink ? '#a5b4fc' : '#6366f1',
+        fontSize: isMobile ? 14 : 18, fontWeight: 700, cursor: 'pointer',
+        fontFamily: "'Zpix','Microsoft YaHei',monospace", letterSpacing: isMobile ? 4 : 6,
+        imageRendering: 'pixelated', boxShadow: '4px 4px 0 rgba(0,0,0,0.4)',
+        transition: 'color 0.1s steps(2)',
       }}>
-        <button
-          style={{
-            ...styles.button,
-            padding: isMobile ? '12px 28px' : '16px 40px',
-            fontSize: isMobile ? 16 : 18,
+        {blink ? '▶ PRESS START' : '  PRESS START'}
+      </button>
+
+      {/* 底部快捷入口 */}
+      <div style={{
+        position: 'absolute', bottom: isMobile ? 24 : 40,
+        display: 'flex', gap: isMobile ? 10 : 20, zIndex: 2,
+      }}>
+        {[
+          { label: '进入博物馆', emoji: '🏛️', action: () => navigate('/museum') },
+          { label: '学习进度', emoji: '📖', action: () => navigate('/learning') },
+          { label: '用户', emoji: '👤', action: () => navigate('/user') },
+        ].map((btn) => (
+          <button key={btn.label} onClick={() => { playSound('click'); btn.action(); }} style={{
+            padding: isMobile ? '6px 14px' : '8px 18px',
+            backgroundColor: 'rgba(255,255,255,0.04)', border: '2px solid rgba(255,255,255,0.1)',
+            borderRadius: 0, color: '#9ca3af', fontSize: isMobile ? 10 : 12,
+            cursor: 'pointer', fontFamily: 'inherit', letterSpacing: 2,
             imageRendering: 'pixelated',
-            borderImage: 'repeating-linear-gradient(45deg, rgba(99,102,241,0.5) 0px, rgba(99,102,241,0.5) 2px, transparent 2px, transparent 4px) 1',
-            boxShadow: '4px 4px 0 rgba(99,102,241,0.3), -2px -2px 0 rgba(99,102,241,0.1)',
-          }}
-          onClick={handleStart}
-        >
-          <span style={{
-            ...styles.buttonIcon,
-            fontSize: isMobile ? 20 : 24,
-            imageRendering: 'pixelated',
-          }}>🚀</span>
-          <span style={{ ...styles.buttonText, imageRendering: 'pixelated' }}>开始探索</span>
-        </button>
+          }}>
+            {btn.emoji} {isMobile ? '' : btn.label}
+          </button>
+        ))}
+      </div>
+
+      {/* 版本号 */}
+      <div style={{
+        position: 'absolute', bottom: 12, right: 16, zIndex: 2,
+        fontSize: 9, color: '#333355', letterSpacing: 2, imageRendering: 'pixelated',
+      }}>
+        v2.0
       </div>
     </div>
   );
 }
-
-const styles: Record<string, React.CSSProperties> = {
-  container: {
-    width: '100vw',
-    height: '100vh',
-    position: 'relative',
-    backgroundColor: '#050510',
-  },
-  canvasWrapper: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-  },
-  textOverlay: {
-    position: 'absolute',
-    top: '35%',
-    left: 0,
-    right: 0,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    zIndex: 10,
-    pointerEvents: 'none',
-  },
-  title: {
-    fontFamily: "'Zpix','Microsoft YaHei',monospace",
-    fontWeight: 700,
-    color: '#a5b4fc',
-    textAlign: 'center' as const,
-    marginBottom: 16,
-    textShadow: '0 0 40px rgba(99,102,241,0.5), 3px 3px 0 rgba(0,0,0,0.3)',
-    imageRendering: 'pixelated' as const,
-  },
-  subtitle: {
-    fontFamily: "'Zpix','Microsoft YaHei',monospace",
-    color: '#6b7280',
-    textAlign: 'center' as const,
-    letterSpacing: 4,
-    imageRendering: 'pixelated' as const,
-  },
-  buttonOverlay: {
-    position: 'absolute' as const,
-    left: 0,
-    right: 0,
-    display: 'flex',
-    justifyContent: 'center',
-    zIndex: 10,
-  },
-  button: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 12,
-    backgroundColor: 'rgba(99, 102, 241, 0.2)',
-    border: '3px solid rgba(99, 102, 241, 0.6)',
-    borderRadius: 0,
-    color: '#e0e7ff',
-    cursor: 'pointer',
-    fontFamily: "'Zpix','Microsoft YaHei',monospace",
-    transition: 'none',
-    imageRendering: 'pixelated' as const,
-    boxShadow: '4px 4px 0 rgba(99,102,241,0.2)',
-    letterSpacing: 3,
-  },
-  buttonIcon: { imageRendering: 'pixelated' as const },
-  buttonText: {
-    fontWeight: 600,
-    letterSpacing: 4,
-    imageRendering: 'pixelated' as const,
-  },
-};

@@ -130,7 +130,9 @@ export default function MuseumPage() {
         ...styles.hud,
         padding: isMobile ? '10px 12px' : '16px 24px',
       }}>
-        <div style={styles.userInfo}>
+        <button onClick={() => { playSound('click'); navigate('/user'); }} style={{
+          ...styles.userInfo, background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+        }}>
           {user && (
             <>
               <span style={{
@@ -140,7 +142,7 @@ export default function MuseumPage() {
               {!isMobile && <span style={styles.userName}>{user.name}</span>}
             </>
           )}
-        </div>
+        </button>
         <div style={{
           ...styles.hudRight,
           gap: isMobile ? 8 : 16,

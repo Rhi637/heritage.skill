@@ -5,6 +5,7 @@ import MuseumPage from './pages/MuseumPage';
 import CraftPage from './pages/CraftPage';
 import LearningPage from './pages/LearningPage';
 import SettingsPage from './pages/SettingsPage';
+import UserPage from './pages/UserPage';
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
         <Route path="/craft/:craftId" element={<CraftPage />} />
         <Route path="/learning" element={<LearningPage />} />
         <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/user" element={<UserPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </HashRouter>
