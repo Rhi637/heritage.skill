@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect, useMemo } from 'react';
 import { playSound, initAudioOnInteraction, startBackgroundMusic } from '../utils/audio';
-import { useLang } from '../contexts/LanguageContext';
+import { useLang, t } from '../contexts/LanguageContext';
 import { UserProfile } from '../types';
 
 // ========== 移动端检测 ==========
@@ -157,23 +157,23 @@ export default function WelcomePage() {
           textShadow: '4px 4px 0 rgba(0,0,0,0.5), -2px -2px 0 rgba(99,102,241,0.2), 0 0 40px rgba(201,168,76,0.3)',
           lineHeight: 1.4,
         }}>
-          非遗文化博物馆
+          {t('welcome_title', lang)}
         </h1>
         <p style={{
           fontSize: isMobile ? 11 : 14, color: '#7c6f56', letterSpacing: isMobile ? 3 : 6,
           imageRendering: 'pixelated', marginBottom: 4,
         }}>
-          INTANGIBLE CULTURAL HERITAGE
+          {t('welcome_sub', lang)}
         </p>
         <p style={{
           fontSize: isMobile ? 10 : 12, color: '#5c5040', letterSpacing: 2,
           imageRendering: 'pixelated',
         }}>
-          传承人蒸馏数字智能体
+          {t('welcome_tag', lang)}
         </p>
         {existingUser && (
           <p style={{ fontSize: isMobile ? 10 : 12, color: '#c9a84c', letterSpacing: 2, imageRendering: 'pixelated', marginTop: 8 }}>
-            👋 欢迎回来，{existingUser.name}
+            {t('welcome_back', lang)}{existingUser.name}
           </p>
         )}
       </div>
@@ -198,8 +198,8 @@ export default function WelcomePage() {
         transition: 'color 0.1s steps(2)',
       }}>
         {existingUser
-          ? (blink ? '▶ 继续探索' : '  继续探索')
-          : (blink ? '▶ PRESS START' : '  PRESS START')}
+          ? (blink ? t('continue_explore', lang) : t('continue_explore', lang).replace('▶ ', '  '))
+          : (blink ? t('press_start', lang) : t('press_start', lang).replace('▶ ', '  '))}
       </button>
 
       {/* 底部快捷入口 */}
@@ -208,9 +208,9 @@ export default function WelcomePage() {
         display: 'flex', gap: isMobile ? 10 : 20, zIndex: 2,
       }}>
         {[
-          { label: '进入博物馆', emoji: '🏛️', action: () => navigate('/museum') },
-          { label: '学习进度', emoji: '📖', action: () => navigate('/learning') },
-          { label: '用户', emoji: '👤', action: () => navigate('/user') },
+          { label: t('enter_museum', lang), emoji: '🏛️', action: () => navigate('/museum') },
+          { label: t('learning_progress', lang), emoji: '📖', action: () => navigate('/learning') },
+          { label: t('user_page', lang), emoji: '👤', action: () => navigate('/user') },
         ].map((btn) => (
           <button key={btn.label} onClick={() => { initAudioOnInteraction(); playSound('click'); btn.action(); }} style={{
             padding: isMobile ? '6px 14px' : '8px 18px',
@@ -241,7 +241,7 @@ export default function WelcomePage() {
             cursor: 'pointer', fontFamily: 'inherit', letterSpacing: 2,
             imageRendering: 'pixelated',
           }}>
-            🎭 换形象
+            {t('change_avatar', lang)}
           </button>
         )}
       </div>
@@ -251,7 +251,7 @@ export default function WelcomePage() {
         position: 'absolute', bottom: 12, right: 16, zIndex: 2,
         fontSize: 9, color: '#333355', letterSpacing: 2, imageRendering: 'pixelated',
       }}>
-        v2.0
+        {t('v_label', lang)}
       </div>
     </div>
   );

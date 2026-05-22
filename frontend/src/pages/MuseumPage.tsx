@@ -7,7 +7,7 @@ import PaperCuttingGame from '../components/PaperCuttingGame';
 import ScrollTreasureGame from '../components/ScrollTreasureGame';
 import { getAllProgress } from '../utils/storage';
 import { playSound, startBackgroundMusic } from '../utils/audio';
-import { useLang } from '../contexts/LanguageContext';
+import { useLang, t } from '../contexts/LanguageContext';
 
 // ========== 移动端检测 hook ==========
 
@@ -115,7 +115,7 @@ export default function MuseumPage() {
             fontFamily: "'Zpix','Microsoft YaHei',monospace", fontSize: 12, color: '#6b7280',
             letterSpacing: 2, imageRendering: 'pixelated',
           }}>
-            时空之门开启中...
+            {t('space_gate', lang)}
           </div>
           {/* 像素进度条 */}
           <div style={{
@@ -146,7 +146,7 @@ export default function MuseumPage() {
           <button onClick={() => { playSound('click'); navigate('/avatar'); }} style={{
             ...styles.userInfo, background: 'none', border: 'none', cursor: 'pointer', padding: 0,
           }}>
-            <span style={{ fontSize: 12, color: '#6b7280', letterSpacing: 2, fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated' }}>👤 创建形象</span>
+            <span style={{ fontSize: 12, color: '#6b7280', letterSpacing: 2, fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated' }}>{t('create_avatar_hint', lang)}</span>
           </button>
         )}
         <div style={{
@@ -165,7 +165,7 @@ export default function MuseumPage() {
               navigate('/learning');
             }}
           >
-            📚 学习进度
+            📚 {t('learning_progress', lang)}
             {totalLearned > 0 && (
               <span style={{
                 ...styles.progressBadge,
@@ -186,7 +186,7 @@ export default function MuseumPage() {
               letterSpacing: 1,
             }}
           >
-            {timeMode === 'ancient' ? '🏮 古代' : '💡 现代'}
+            {timeMode === 'ancient' ? t('ancient', lang) : t('modern', lang)}
           </button>
           {/* 语言切换 */}
           <button onClick={() => { toggleLang(); playSound('click'); }} style={{
@@ -198,9 +198,9 @@ export default function MuseumPage() {
             color: '#9ca3af',
             letterSpacing: 1,
           }}>
-            {lang === 'zh' ? '🌐 中' : '🌐 EN'}
+            {lang === 'zh' ? t('language_zh', lang) : t('language_en', lang)}
           </button>
-          {!isMobile && <div style={styles.hudHint}>点击展台进入 →</div>}
+          {!isMobile && <div style={styles.hudHint}>{t('click_exhibit', lang)}</div>}
         </div>
       </div>
 
@@ -215,7 +215,7 @@ export default function MuseumPage() {
         animation: 'pixelFloat 2s steps(4) infinite',
       }}>
         <span style={{ fontSize: 22, imageRendering: 'pixelated' }}>✂️</span>
-        <span style={{ fontSize: 8, color: '#f87171', letterSpacing: 1, imageRendering: 'pixelated' }}>小游戏</span>
+        <span style={{ fontSize: 8, color: '#f87171', letterSpacing: 1, imageRendering: 'pixelated' }}>{t('game_btn', lang)}</span>
       </button>
 
       {/* 游戏弹窗 */}
@@ -239,14 +239,14 @@ export default function MuseumPage() {
                   borderRadius: 0, border: activeGame === 'cutting' ? '2px solid rgba(239,68,68,0.4)' : '1px solid rgba(255,255,255,0.1)',
                   backgroundColor: activeGame === 'cutting' ? 'rgba(239,68,68,0.15)' : 'rgba(255,255,255,0.03)',
                   color: activeGame === 'cutting' ? '#f87171' : '#6b7280',
-                }}>✂️ 剪纸</button>
+                }}>{t('game_paper_cut', lang)}</button>
                 <button onClick={() => setActiveGame('scroll')} style={{
                   padding: '4px 12px', fontSize: 12, cursor: 'pointer', fontFamily: 'inherit',
                   letterSpacing: 1, imageRendering: 'pixelated',
                   borderRadius: 0, border: activeGame === 'scroll' ? '2px solid rgba(245,158,11,0.4)' : '1px solid rgba(255,255,255,0.1)',
                   backgroundColor: activeGame === 'scroll' ? 'rgba(245,158,11,0.15)' : 'rgba(255,255,255,0.03)',
                   color: activeGame === 'scroll' ? '#fbbf24' : '#6b7280',
-                }}>📜 寻宝</button>
+                }}>{t('game_scroll', lang)}</button>
               </div>
               <button onClick={() => setGameOpen(false)} style={{
                 padding: '2px 8px', backgroundColor: 'rgba(255,255,255,0.05)',
