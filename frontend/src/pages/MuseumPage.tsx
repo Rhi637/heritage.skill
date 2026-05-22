@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MuseumScene from '../components/MuseumScene';
 import { HERITAGE_CRAFTS } from '../data';
-import { UserProfile } from '../types';
+import { HeritageCraft, UserProfile } from '../types';
 import { getAllProgress } from '../utils/storage';
 import { playSound, startBackgroundMusic } from '../utils/audio';
 
@@ -32,6 +32,7 @@ export default function MuseumPage() {
     const visited = localStorage.getItem('heritage_visited');
     return !visited;
   });
+  const [zoomingCraft, setZoomingCraft] = useState<HeritageCraft | null>(null);
 
   // 确保背景音乐已启动
   useEffect(() => {
@@ -57,10 +58,17 @@ export default function MuseumPage() {
     return { totalLearned: count, totalPoints: total, craftProgress: cp };
   })();
 
-  const handleSelectCraft = (craftId: string) => {
-    playSound('navigate');
-    navigate(`/craft/${craftId}`);
-  };
+  const handleSelectCraft = useCallback((craftId: string) => {
+    const craft = HERITAGE_CRAFTS.find((c) => c.id === craftId);
+    if (!craft) { navigate(`/craft/${craftId}`); return; }
+    playSound('travel');
+    setZoomingCraft(craft);
+    // 1.2秒后进入对话页
+    setTimeout(() => {
+      setZoomingCraft(null);
+      navigate(`/craft/${craftId}`);
+    }, 1200);
+  }, [navigate]);
 
   const toggleTimeMode = () => {
     const next = timeMode === 'modern' ? 'ancient' : 'modern';
@@ -73,6 +81,47 @@ export default function MuseumPage() {
     <div style={styles.container}>
       {/* 3D 场景 */}
       <MuseumScene onSelectCraft={handleSelectCraft} timeMode={timeMode} showGuide={showGuide} craftProgress={craftProgress} />
+
+      {/* 放大过渡动画 */}
+      {zoomingCraft && (
+        <div style={{
+          position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          backgroundColor: 'rgba(5,5,16,0.85)', zIndex: 100,
+          backdropFilter: 'blur(4px)',
+          animation: 'pixelPulse 0.3s steps(3)',
+        }}>
+          <div style={{
+            fontSize: 64, imageRendering: 'pixelated', marginBottom: 16,
+            animation: 'pixelFloat 0.6s steps(4) infinite',
+          }}>
+            {zoomingCraft.emoji}
+          </div>
+          <div style={{
+            fontFamily: "'Zpix','Microsoft YaHei',monospace", fontSize: 28, fontWeight: 700,
+            color: '#a5b4fc', letterSpacing: 6, textShadow: '3px 3px 0 rgba(0,0,0,0.3)',
+            imageRendering: 'pixelated', marginBottom: 8,
+          }}>
+            {zoomingCraft.name}
+          </div>
+          <div style={{
+            fontFamily: "'Zpix','Microsoft YaHei',monospace", fontSize: 12, color: '#6b7280',
+            letterSpacing: 2, imageRendering: 'pixelated',
+          }}>
+            时空之门开启中...
+          </div>
+          {/* 像素进度条 */}
+          <div style={{
+            width: 120, height: 6, marginTop: 16, backgroundColor: '#1a1a2e',
+            border: '1px solid rgba(99,102,241,0.3)', overflow: 'hidden',
+          }}>
+            <div style={{
+              width: '100%', height: '100%', backgroundColor: '#6366f1',
+              animation: 'shrink 1.2s steps(12) forwards',
+            }} />
+          </div>
+        </div>
+      )}
 
       {/* 顶部 HUD */}
       <div style={{

@@ -43,6 +43,7 @@ export default function CraftPage() {
   const [showApiModal, setShowApiModal] = useState(false);
   const [showGame, setShowGame] = useState(false);
   const [showQuiz, setShowQuiz] = useState(false);
+  const [directGame, setDirectGame] = useState(false); // 不经过对话直接打开游戏
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
 
@@ -213,6 +214,21 @@ export default function CraftPage() {
 
   const suggestedQuestions = getSuggestedQuestions();
 
+  // ========== 直接游戏模式（剪纸模拟器快捷入口） ==========
+  if (directGame && craft) {
+    return (
+      <div style={{ width: '100vw', minHeight: '100vh', backgroundColor: '#0a0a1a', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated' }}>
+        <button onClick={() => { setDirectGame(false); playSound('click'); }} style={{ position: 'absolute', top: 20, left: 20, padding: '8px 16px', backgroundColor: 'rgba(255,255,255,0.05)', border: '2px solid rgba(255,255,255,0.1)', borderRadius: 0, color: '#9ca3af', fontSize: 13, cursor: 'pointer', fontFamily: 'inherit', imageRendering: 'pixelated', letterSpacing: 2 }}>← 返回</button>
+        <div style={{ fontSize: 24, fontWeight: 700, color: '#f87171', marginBottom: 8, letterSpacing: 4, textShadow: '3px 3px 0 rgba(0,0,0,0.3)' }}>✂️ {craft.name}模拟器</div>
+        <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 24, letterSpacing: 2 }}>用剪刀在折叠的红纸上剪出图案，展开看看！</div>
+        <PaperCuttingGame onComplete={(score) => { if (score >= 50) playSound('click'); }} />
+        <button onClick={() => { setDirectGame(false); navigate('/museum'); }} style={{ marginTop: 20, padding: '8px 20px', backgroundColor: 'rgba(255,255,255,0.05)', border: '2px solid rgba(255,255,255,0.1)', borderRadius: 0, color: '#9ca3af', fontSize: 13, cursor: 'pointer', fontFamily: 'inherit', imageRendering: 'pixelated', letterSpacing: 2 }}>
+          返回博物馆 →
+        </button>
+      </div>
+    );
+  }
+
   // ========== 时空穿梭动画 ==========
   if (isTraveling && travelingInheritor) {
     const isAncient = travelingInheritor.era === 'ancient';
@@ -326,6 +342,48 @@ export default function CraftPage() {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* 功能入口：动手体验 */}
+        <div style={{ maxWidth: 750, margin: '24px auto 0', display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
+          {craftId === 'craft_paper_cutting' && (
+            <button onClick={() => {
+              playSound('click');
+              setDirectGame(true);
+            }} style={{
+              padding: '8px 18px', backgroundColor: 'rgba(239,68,68,0.1)', border: '2px solid rgba(239,68,68,0.3)',
+              borderRadius: 0, color: '#f87171', fontSize: 13, cursor: 'pointer',
+              fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated', letterSpacing: 2,
+              boxShadow: '3px 3px 0 rgba(0,0,0,0.3)',
+            }}>
+              ✂️ 剪纸模拟器
+            </button>
+          )}
+          <button onClick={() => {
+            // 快捷测验：直接进入对话后展示测验
+            const firstInheritor = craft?.inheritors[0];
+            if (firstInheritor) {
+              handleSelectInheritor(firstInheritor);
+              // 测验按钮会在对话页自动出现（3条消息后）
+            }
+          }} style={{
+            padding: '8px 18px', backgroundColor: 'rgba(245,158,11,0.1)', border: '2px solid rgba(245,158,11,0.3)',
+            borderRadius: 0, color: '#fbbf24', fontSize: 13, cursor: 'pointer',
+            fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated', letterSpacing: 2,
+            boxShadow: '3px 3px 0 rgba(0,0,0,0.3)',
+          }}>
+            📝 知识闯关测验
+          </button>
+          <button onClick={() => {
+            navigate('/learning');
+          }} style={{
+            padding: '8px 18px', backgroundColor: 'rgba(99,102,241,0.1)', border: '2px solid rgba(99,102,241,0.3)',
+            borderRadius: 0, color: '#a5b4fc', fontSize: 13, cursor: 'pointer',
+            fontFamily: "'Zpix','Microsoft YaHei',monospace", imageRendering: 'pixelated', letterSpacing: 2,
+            boxShadow: '3px 3px 0 rgba(0,0,0,0.3)',
+          }}>
+            🏅 查看成就
+          </button>
         </div>
 
         {/* 详情面板 */}
@@ -485,7 +543,7 @@ export default function CraftPage() {
       )}
 
       {/* 知识闯关测验按钮 */}
-      {messages.length > 2 && !showQuiz && craft && (
+      {messages.length >= 1 && !showQuiz && craft && (
         <div style={{ padding: '0 12px', marginBottom: 8 }}>
           <button onClick={() => setShowQuiz(true)} style={{
             padding: '6px 14px', backgroundColor: 'rgba(245,158,11,0.1)', border: '2px solid rgba(245,158,11,0.3)',

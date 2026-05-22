@@ -57,6 +57,12 @@ canvas {
   75% { transform: translateY(4px); }
 }
 
+/* ========== 进度条缩小动画 ========== */
+@keyframes shrink {
+  from { width: 100%; }
+  to { width: 0%; }
+}
+
 /* ========== 像素按钮通用样式 ========== */
 .pixel-btn {
   font-family: 'Zpix', 'Microsoft YaHei', monospace;

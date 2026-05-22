@@ -906,14 +906,30 @@ export default function MuseumScene({ onSelectCraft, timeMode = 'modern', showGu
   const ambIntensity = isAncient ? 0.25 : 0.15;
   const spotColor = isAncient ? '#f59e0b' : '#6366f1';
 
+  // 6个展台均匀分布在半圆形上，半径5.5，前面没有展台遮挡
+  const RADIUS = 5.5;
+  const TOTAL = 6;
   const crafts = [
-    { id: 'craft_shadow_puppet', label: '皮影戏', emoji: '🎭', color: '#f59e0b', mosaicStyle: 'shadow_puppet' as const, position: [-5, 0, -3.5] as [number, number, number] },
-    { id: 'craft_paper_cutting', label: '剪纸', emoji: '✂️', color: '#ef4444', mosaicStyle: 'paper_cutting' as const, position: [0, 0, -3.5] as [number, number, number] },
-    { id: 'craft_embroidery', label: '苏绣', emoji: '🪡', color: '#ec4899', mosaicStyle: 'embroidery' as const, position: [5, 0, -3.5] as [number, number, number] },
-    { id: 'craft_clay_figurine', label: '泥塑', emoji: '🏺', color: '#14b8a6', mosaicStyle: 'clay_figurine' as const, position: [-5, 0, 3.5] as [number, number, number] },
-    { id: 'craft_porcelain', label: '青花瓷', emoji: '🔵', color: '#3b82f6', mosaicStyle: 'porcelain' as const, position: [0, 0, 3.5] as [number, number, number] },
-    { id: 'craft_woodblock', label: '木版年画', emoji: '🧧', color: '#ef4444', mosaicStyle: 'woodblock' as const, position: [5, 0, 3.5] as [number, number, number] },
-  ];
+    { id: 'craft_shadow_puppet', label: '皮影戏', emoji: '🎭', color: '#f59e0b', mosaicStyle: 'shadow_puppet' as const },
+    { id: 'craft_paper_cutting', label: '剪纸', emoji: '✂️', color: '#ef4444', mosaicStyle: 'paper_cutting' as const },
+    { id: 'craft_embroidery', label: '苏绣', emoji: '🪡', color: '#ec4899', mosaicStyle: 'embroidery' as const },
+    { id: 'craft_clay_figurine', label: '泥塑', emoji: '🏺', color: '#14b8a6', mosaicStyle: 'clay_figurine' as const },
+    { id: 'craft_porcelain', label: '青花瓷', emoji: '🔵', color: '#3b82f6', mosaicStyle: 'porcelain' as const },
+    { id: 'craft_woodblock', label: '木版年画', emoji: '🧧', color: '#dc2626', mosaicStyle: 'woodblock' as const },
+  ].map((craft, i) => {
+    // 半圆形排列，从-150°到+30°(最左到最右)，中间展台在前面
+    const startAngle = -Math.PI * 0.75; // -135°
+    const endAngle = Math.PI * 0.25;     // +45°
+    const angle = startAngle + (endAngle - startAngle) * (i / (TOTAL - 1));
+    return {
+      ...craft,
+      position: [
+        Math.cos(angle) * RADIUS,
+        0,
+        Math.sin(angle) * RADIUS,
+      ] as [number, number, number],
+    };
+  });
 
   return (
     <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
