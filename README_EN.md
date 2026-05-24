@@ -20,21 +20,15 @@ An immersive learning platform for intangible cultural heritage (ICH): explore s
 
 **"Distillation"** is the process of extracting and structuring knowledge from an inheritor's raw materials to build a lightweight, expert-level conversational model.
 
-```
-Raw Materials                       Distilled Output
-┌──────────────┐               ┌──────────────┐
-│ Interview text│               │ Knowledge base│
-│ Video captions│  ──distill──▶ │ Q&A pairs     │
-│ Teaching logs │               │ Common errors │
-│ FAQ lists     │               │ System prompt │
-└──────────────┘               └──────┬───────┘
-                                      │
-                                      ▼
-                              ┌──────────────┐
-                              │ Digital Agent │
-                              │ (Conversational│
-                              │      AI)      │
-                              └──────────────┘
+```mermaid
+flowchart LR
+    A["Raw Materials\n━━━━━━━━━\nInterview text\nVideo captions\nTeaching logs\nFAQ lists"]
+    
+    B["Distilled Output\n━━━━━━━━━\nKnowledge base\nQ&A pairs\nCommon errors\nSystem prompt"]
+    
+    C["Digital Agent\n━━━━━━━━━\n(Conversational AI)"]
+
+    A -->|distill| B --> C
 ```
 
 The agent is not a general-purpose chatbot — its knowledge is strictly confined to the distilled knowledge base, its speaking style mimics the real inheritor, and every response gently guides the user toward a micro-exercise.
